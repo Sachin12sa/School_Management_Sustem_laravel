@@ -8,24 +8,13 @@
                 <i class="bi bi-list"></i>
               </a>
             </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="#" class="nav-link">Home</a>
-            </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="#" class="nav-link">Contact</a>
-            </li>
+         
           </ul>
           <!--end::Start Navbar Links-->
 
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
-            <!--begin::Navbar Search-->
-            <li class="nav-item">
-              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="bi bi-search"></i>
-              </a>
-            </li>
-            <!--end::Navbar Search-->
+       
 
             <!--begin::Messages Dropdown Menu-->
             <li class="nav-item dropdown">
@@ -146,65 +135,9 @@
             </li>
             <!--end::Notifications Dropdown Menu-->
 
-            <!--begin::Fullscreen Toggle-->
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-              </a>
-            </li>
-            <!--end::Fullscreen Toggle-->
+      
 
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img
-                src="{{asset('dist//assets/img/user2-160x160.jpg')}}"
-                  class="user-image rounded-circle shadow"
-                  alt="User Image"
-                />
-                <span class="d-none d-md-inline">Alexander Pierce</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
-                  <img
-                     src="{{asset('dist//assets/img/user2-160x160.jpg')}}"
-                    class="rounded-circle shadow"
-                    alt="User Image"
-                  />
-                  <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
-                  </p>
-                </li>
-                <!--end::User Image-->
-                <!--begin::Menu Body-->
-                <li class="user-body">
-                  <!--begin::Row-->
-                  <div class="row">
-                    <div class="col-4 text-center">
-                      <a href="#">Followers</a>
-                    </div>
-                    <div class="col-4 text-center">
-                      <a href="#">Sales</a>
-                    </div>
-                    <div class="col-4 text-center">
-                      <a href="#">Friends</a>
-                    </div>
-                  </div>
-                  <!--end::Row-->
-                </li>
-                <!--end::Menu Body-->
-                <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <a href="#" class="btn btn-outline-secondary">Profile</a>
-                  <a href="#" class="btn btn-outline-danger float-end">Sign out</a>
-                </li>
-                <!--end::Menu Footer-->
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
+
           </ul>
           <!--end::End Navbar Links-->
         </div>
@@ -212,71 +145,112 @@
       </nav>
 
 
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="./index.html" class="brand-link">
-            <!--begin::Brand Image-->
-            <img
-              src="{{asset('dist//assets/img/AdminLTELogo.png')}}"
-              alt="AdminLTE Logo"
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+
+      {{-- Brand --}}
+      <div class="sidebar-brand">
+        <a href="#" class="brand-link">
+          <img src="{{ asset('dist/assets/img/AdminLTELogo.png') }}"
               class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">AdminLTE 4</span>
-            <!--end::Brand Text-->
+              alt="Logo">
+          <span class="brand-text fw-light">School System</span>
+        </a>
+      </div>
+
+      {{-- User Panel --}}
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+        <div class="image ps-3">
+          <img src="{{ asset('dist/assets/img/user3-128x128.jpg') }}"
+              class="img-circle elevation-2"
+              style="width:40px;height:40px;object-fit:cover;">
+        </div>
+        <div class="info ps-3">
+          <a href="#" class="d-block text-white">
+            {{ Auth::user()->name }}
           </a>
-          <!--end::Brand Link-->
         </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              aria-label="Main navigation"
-              data-accordion="false"
-              id="navigation"
-            >
-              <li class="nav-item menu-open">
-                <a href="{{url('admin/dashboard')}}" class="nav-link active">
+      </div>
+
+      {{-- Sidebar Menu --}}
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview">
+
+            {{-- Admin --}}
+              @if(Auth::user()->user_type == 1)
+                  <li class="nav-item">
+                    <a href="{{ url('admin/dashboard') }}"
+                      class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-speedometer"></i>
+                      <p>Dashboard</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="{{ url('admin/admin/list') }}"
+                      class="nav-link {{ Request::segment(3) == 'list' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-person"></i>
+                      <p>Admin</p>
+                    </a>
+                  </li>
+                @endif
+
+
+            {{-- Teacher --}}
+            @if(Auth::user()->user_type == 2)
+              <li class="nav-item">
+                <a href="{{ url('teacher/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
                   <i class="nav-icon bi bi-speedometer"></i>
-                  
-                  <p>
-                    Dashboard
-                  </p>
+                  <p>Dashboard</p>
                 </a>
-              
+              </li>
+            @endif
 
+            {{-- Student --}}
+            @if(Auth::user()->user_type == 3)
               <li class="nav-item">
-                <a href="{{url('admin/admin/list')}}" class="nav-link">
-                  <i class="nav-icon bi bi-person"></i>
-                  <p>Admin</p>
+                <a href="{{ url('student/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>Dashboard</p>
                 </a>
               </li>
+            @endif
+
+            {{-- Parent --}}
+            @if(Auth::user()->user_type == 4)
               <li class="nav-item">
-                <a href="{{url('logout')}}"onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-right"></i>
-                  Logout
+                <a href="{{ url('parent/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>Dashboard</p>
                 </a>
-
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                    @csrf
-                </form>
-
               </li>
-              
+            @endif
+
+            {{-- Accountant --}}
+            @if(Auth::user()->user_type == 5)
+              <li class="nav-item">
+                <a href="{{ url('accountant/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>Dashboard</p>
+                </a>
               </li>
+            @endif
 
+            {{-- Logout --}}
+            <li class="nav-item mt-3">
+              <a href="{{ route('logout') }}"
+                class="nav-link text-danger"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="nav-icon bi bi-box-arrow-right"></i>
+                <p>Logout</p>
+              </a>
 
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+              </form>
+            </li>
+
+          </ul>
+        </nav>
+      </div>
+    </aside>

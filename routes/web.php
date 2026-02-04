@@ -8,19 +8,28 @@ use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\TeacherMiddleware;
 use App\Http\Middleware\AccountantMiddleware;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\AdminController;
 
 
 Route::get('/',[AuthController::class,'login']);
 Route::post('/login',[AuthController::class,'AuthLogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('forget-password', [AuthController::class, 'forgetPassword'])->name('forget-password');
+Route::post('forget-password', [AuthController::class, 'PostForgetPassword']);
+Route::get('reset/{token}', [AuthController::class, 'reset']);
+Route::post('reset/{token}', [AuthController::class, 'postReset']);
 
 
 
 
 Route::group(['middleware'=>'admin'],function(){
-    Route::get('/admin/dashboard',[DashboardController::class,'dashboard']);
-    Route::get('admin/admin/list', function () {return view('admin.admin.list');})->name('admin.admin.list');
+        Route::get('/admin/dashboard',[DashboardController::class,'dashboard']);
+        Route::get('admin/admin/list',[AdminController::class,'list']);
+        Route::get('admin/admin/add',[AdminController::class,'add']);
+        Route::post('admin/admin/add',[AdminController::class,'insert']);
+        Route::get('admin/admin/edit/{id}',[AdminController::class,'edit']);
+        Route::post('admin/admin/edit/{id}',[AdminController::class,'update']);
+        Route::get('admin/admin/delete/{id}',[AdminController::class,'delete']);
 
 });
 
