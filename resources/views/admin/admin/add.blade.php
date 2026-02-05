@@ -41,6 +41,7 @@
                         <label  class="form-label">Name</label>
                         <input
                           name="name"
+                          value="{{old('name')}}"
                           required
                           placeholder="Enter the New Admin Name"
                           type="name"
@@ -52,6 +53,7 @@
                         <label class="form-label">Email address</label>
                         <input
                         name="email"
+                        value="{{old('email ')}}"
                         required
                         placeholder="Enter Admin Email"
                         type="email"
@@ -59,6 +61,7 @@
                      
                           aria-describedby="emailHelp"
                         />
+                        <div style="color: red">{{$errors->first('email')}}</div>
                       </div>
                       <div class="mb-3">
                         <label class="form-label">Password</label>

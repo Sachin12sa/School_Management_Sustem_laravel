@@ -178,21 +178,30 @@
 
             {{-- Admin --}}
               @if(Auth::user()->user_type == 1)
-                  <li class="nav-item">
-                    <a href="{{ url('admin/dashboard') }}"
-                      class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
-                      <i class="nav-icon bi bi-speedometer"></i>
-                      <p>Dashboard</p>
-                    </a>
-                  </li>
+                 <li class="nav-item">
+                        <a href="{{ url('admin/dashboard') }}"
+                          class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
 
-                  <li class="nav-item">
-                    <a href="{{ url('admin/admin/list') }}"
-                      class="nav-link {{ Request::segment(3) == 'list' ? 'active' : '' }}">
-                      <i class="nav-icon bi bi-person"></i>
-                      <p>Admin</p>
-                    </a>
-                  </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/admin/list') }}"
+                          class="nav-link {{ request()->is('admin/admin*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-person"></i>
+                            <p>Admin</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ url('admin/class/list') }}"
+                          class="nav-link {{ request()->is('admin/class*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-class"></i>
+                            <p>Class</p>
+                        </a>
+                    </li>
+
                 @endif
 
 

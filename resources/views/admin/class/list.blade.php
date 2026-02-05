@@ -9,13 +9,13 @@
             <div class="row align-items-center mb-3">
                 <div class="col-sm-6">
                     <h3 class="mb-0">
-                        Admin List
-                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
+                        Class List
+                        {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">
-                    <a href="{{ url('admin/admin/add') }}" class="btn btn-primary">
-                        + Add New Admin
+                    <a href="{{ url('admin/class/add') }}" class="btn btn-primary">
+                        + Add New Class
                     </a>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Search Admin</h3>
+                            <h3 class="card-title">Search Class</h3>
                         </div>
 
                         <form method="get" action="">
@@ -43,16 +43,7 @@
                                         />
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <label class="form-label">Email</label>
-                                        <input
-                                            type="text"
-                                            name="email"
-                                            value="{{ request('email') }}"
-                                            class="form-control"
-                                            placeholder="Enter email"
-                                        />
-                                    </div>
+                 
                                      <div class="col-md-3">
                                         <label class="form-label">Date</label>
                                         <input
@@ -70,7 +61,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             Search
                                         </button>
-                                        <a href="{{ url('admin/admin/list') }}" class="btn btn-success ms-1">
+                                        <a href="{{ url('admin/class/list') }}" class="btn btn-success ms-1">
                                             Reset
                                         </a>
                                     </div>
@@ -92,52 +83,75 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Admin List</h3>
+                    <h3 class="card-title">Class List</h3>
                 </div>
 
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Created Date</th>
-                                <th width="180">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($getRecord as $key => $value)
-                                <tr>
-                                    <td>{{ $getRecord->firstItem() + $key }}</td>
-                                    <td>{{ $value->name }}</td>
-                                    <td>{{ $value->email }}</td>
-                                    <td>{{ date('d-m-Y H:i A',strtotime($value->created_at)) }}</td>
-                                    <td>
-                                        <a href="{{ url('admin/admin/edit/' . $value->id) }}" class="btn btn-sm btn-primary">
-                                            Edit
-                                        </a>
-                                        <a href="{{ url('admin/admin/delete/' . $value->id) }}"
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Are you sure you want to delete this admin?')">
-                                            Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center py-3">
-                                        No admins found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Created Date</th>
+                        <th width="180">Action</th>
+                    </tr>
+                </thead>
 
-                <!-- Pagination -->
+                    <tbody>
+                        @forelse($getRecord as $key => $value)
+                            <tr>
+                                {{-- Serial number (pagination-safe) --}}
+                                <td>{{ $getRecord->firstItem() + $key }}</td>
+
+                                <td>{{ $value->name }}</td>
+
+                                {{-- Status badge --}}
+                                <td>
+                                    @if($value->status == 0)
+                                        <span class="badge bg-success">Active</span>
+                                    @else
+                                        <span class="badge bg-danger">Inactive</span>
+                                    @endif
+                                </td>
+
+                                {{-- Created By --}}
+                                <td>{{ $value->created_by_name ?? 'System' }}</td>
+
+                                {{-- Created Date --}}
+                                <td>{{ $value->created_at->format('d-m-Y h:i A') }}</td>
+
+                                {{-- Actions --}}
+                                <td>
+                                    <a href="{{ url('admin/class/edit/' . $value->id) }}"
+                                    class="btn btn-sm btn-primary">
+                                        Edit
+                                    </a>
+
+                                    <a href="{{ url('admin/class/delete/' . $value->id) }}"
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this class?')">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-3">
+                                    No admins found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                </div>
                 <div class="card-footer text-end">
                     {{ $getRecord->appends(request()->query())->links() }}
+                </div>
+                <!-- Pagination -->
+                <div class="card-footer text-end">
                 </div>
             </div>
         </div>

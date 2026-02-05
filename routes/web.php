@@ -9,6 +9,7 @@ use App\Http\Middleware\TeacherMiddleware;
 use App\Http\Middleware\AccountantMiddleware;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassController;
 
 
 Route::get('/',[AuthController::class,'login']);
@@ -23,6 +24,7 @@ Route::post('reset/{token}', [AuthController::class, 'postReset']);
 
 
 Route::group(['middleware'=>'admin'],function(){
+        //AdminController 
         Route::get('/admin/dashboard',[DashboardController::class,'dashboard']);
         Route::get('admin/admin/list',[AdminController::class,'list']);
         Route::get('admin/admin/add',[AdminController::class,'add']);
@@ -30,6 +32,15 @@ Route::group(['middleware'=>'admin'],function(){
         Route::get('admin/admin/edit/{id}',[AdminController::class,'edit']);
         Route::post('admin/admin/edit/{id}',[AdminController::class,'update']);
         Route::get('admin/admin/delete/{id}',[AdminController::class,'delete']);
+        //ClassController
+        Route::get('admin/class/list',[ClassController::class,'list']);
+        Route::get('admin/class/add',[ClassController::class,'add']);
+        Route::post('admin/class/add',[ClassController::class,'insert']);
+        Route::get('admin/class/edit/{id}',[ClassController::class,'edit']);
+        Route::post('admin/class/edit/{id}',[ClassController::class,'update']);
+        Route::get('admin/class/delete/{id}',[ClassController::class,'delete']);
+
+
 
 });
 

@@ -8,7 +8,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Edit Admin</h3>
+                <h3 class="mb-0">Add New Class</h3>
               </div>
             </div>
             <!--end::Row-->
@@ -27,48 +27,38 @@
               <div class="col-md-12">
                 <!--begin::Quick Example-->
                 <div class="card card-primary card-outline mb-4">
- 
+                  <!--begin::Header-->
+                  <div class="card-header">
+                    <div class="card-title">Fill All the Details To Add New Class</div>
+                  </div>
+                  <!--end::Header-->
                   <!--begin::Form-->
                   <form method="post" action="">
                     @csrf
                     <!--begin::Body-->
                     <div class="card-body">
                          <div class="mb-3">
-                        <label  class="form-label">Name</label>
+                        <label  class="form-label"> Class Name</label>
                         <input
                           name="name"
-                          value="{{old('name',$getRecord->name)}}"
-                          placeholder="Name"
+                          required
+                          placeholder="Class name"
                           type="name"
                           class="form-control"
                        
                         />
                       </div>
                       <div class="mb-3">
-                        <label class="form-label">Email address</label>
-                        <input
-                        name="email"
-                        value="{{ old('email', $getRecord->email)}}"
-                        placeholder="Enter Admin Email"
-                        type="email"
-                        class="form-control"
-                     
-                          aria-describedby="emailHelp"
-                        />
-                        <div style="color: red">{{$errors->first('email')}}</div>
+                        <label class="form-label" name="status">Status</label>
+                        <select name="status" class="form-control" id="">
+                          <option value="0">Active</option>
+                          <option value="1">InActive</option>
+                        </select>
+                  
                       </div>
-                      <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="text" name="password" placeholder="Password" class="form-control" />
-                        <p>Do you want to change password? Ifso,Please add new password</p>
                     </div>
-
-                
-         
-                    </div>
-               
                     <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Update</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                     <!--end::Footer-->
                   </form>

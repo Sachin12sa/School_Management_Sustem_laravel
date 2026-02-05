@@ -17,6 +17,10 @@ class AdminController extends Controller
         return view('admin.admin.add',$data);
     }
     public function insert(Request $request){
+        request()->validate([
+            'email'=>'required|email|unique:users'
+
+        ]);
         $user = new User;
         $user->name = trim($request -> name);
         $user->email = trim($request -> email);
@@ -30,7 +34,7 @@ class AdminController extends Controller
         $data['getRecord'] = User::getSingle($id);
         if(!empty($data['getRecord']))
             {
-                $data['header_title']= 'Edit New Admin';
+                $data['header_title']= 'Edit  Admin';
         return view('admin.admin.edit',$data);
             }else{
                 abort(404);
