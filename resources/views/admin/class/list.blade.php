@@ -90,7 +90,7 @@
                     <table class="table table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>S.N</th>
                         <th>Name</th>
                         <th>Status</th>
                         <th>Created By</th>

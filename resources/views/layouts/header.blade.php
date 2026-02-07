@@ -197,11 +197,17 @@
                     <li class="nav-item">
                         <a href="{{ url('admin/class/list') }}"
                           class="nav-link {{ request()->is('admin/class*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-class"></i>
+                            <i class="nav-icon bi bi-people"></i>
                             <p>Class</p>
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a href="{{ url('admin/subject/list') }}"
+                          class="nav-link {{ request()->is('admin/Subject*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Subject</p>
+                        </a>
+                    </li>
                 @endif
 
 
