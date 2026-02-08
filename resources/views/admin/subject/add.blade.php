@@ -38,15 +38,24 @@
                     <!--begin::Body-->
                     <div class="card-body">
                          <div class="mb-3">
-                        <label  class="form-label"> Class Name</label>
+                        <label  class="form-label"> Subject Name</label>
                         <input
                           name="name"
                           required
-                          placeholder="Class name"
+                          placeholder="Subject name"
                           type="name"
                           class="form-control"
                        
                         />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label" required name="status">Subject Type</label>
+                        <select name="type" class="form-control" id="">
+                          <option value="0">Select Type</option>
+                          <option value="0">Theory</option>
+                          <option value="1">Practical</option>
+                        </select>
+                  
                       </div>
                       <div class="mb-3">
                         <label class="form-label" name="status">Status</label>

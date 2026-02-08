@@ -29,7 +29,7 @@
 
                                 <!-- Class Name -->
                                 <div class="mb-3">
-                                    <label class="form-label">Class Name</label>
+                                    <label class="form-label">Subject Name</label>
                                     <input
                                         type="text"
                                         name="name"
@@ -41,6 +41,18 @@
                                     <div class="text-danger">
                                         {{ $errors->first('name') }}
                                     </div>
+                                </div>
+                                <!-- type-->
+                                 <div class="mb-3">
+                                    <label class="form-label">Subject Type</label>
+                                    <select value="{{ old('name', $getRecord->type) }}" name="type" required class="form-control" value>
+                                        <option value="0" {{ $getRecord->type == 0 ? 'selected' : '' }}>
+                                           Theory
+                                        </option>
+                                        <option value="1" {{ $getRecord->type == 1 ? 'selected' : '' }}>
+                                            Practical
+                                        </option>
+                                    </select>
                                 </div>
 
                                 <!-- Status -->
@@ -63,7 +75,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     Update
                                 </button>
-                                <a href="{{ url('admin/class/list') }}" class="btn btn-secondary">
+                                <a href="{{ url('admin/subject/list') }}" class="btn btn-secondary">
                                     Cancel
                                 </a>
                             </div>

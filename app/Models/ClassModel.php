@@ -28,7 +28,7 @@ class ClassModel extends Model
         ->paginate(10);
         return $return;
 }
-static public function getSingle($id){
+    static public function getSingle($id){
         return ClassModel::find($id);
     }
 }

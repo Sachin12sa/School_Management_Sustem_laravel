@@ -14,7 +14,7 @@
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">
-                    <a href="{{ url('admin/class/add') }}" class="btn btn-primary">
+                    <a href="{{ url('admin/subject/add') }}" class="btn btn-primary">
                         + Add New Subject
                     </a>
                 </div>
@@ -91,8 +91,9 @@
                 <thead>
                     <tr>
                         <th>S.N</th>
-                        <th>Name</th>
+                        <th>Subject Name</th>
                         <th>Status</th>
+                        <th> Subject Type</th>
                         <th>Created By</th>
                         <th>Created Date</th>
                         <th width="180">Action</th>
@@ -100,14 +101,39 @@
                 </thead>
 
                     <tbody>
+                    @foreach($getRecord as $key => $value)
+                        <tr>
+                            <td>{{ $getRecord->firstItem() + $key }}</td>
+                            <td>{{ $value->name }}</td>
+                            <td>
+                                {{ $value->status == 0 ? 'Active' : 'Inactive' }}
+                            </td>
+                            <td>{{ $value->type ==0 ? 'Theory':'Practical' }}</td>
+                            <td>{{ $value->created_by_name }}</td>
+                            <td>{{ $value->created_at->format('d-m-Y h:i A') }}</td>
+                            <td>
+                                <a href="{{ url('admin/subject/edit/'.$value->id) }}"
+                                class="btn btn-sm btn-primary">
+                                    Edit
+                                </a>
 
+                                <a href="{{ url('admin/subject/delete/'.$value->id) }}"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure you want to delete this subject?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
+
+
                 </table>
 
                 </div>
-                {{-- <div class="card-footer text-end">
+                <div class="card-footer text-end">
                     {{ $getRecord->appends(request()->query())->links() }}
-                </div> --}}
+                </div> 
                 <!-- Pagination -->
                 <div class="card-footer text-end">
                 </div>
