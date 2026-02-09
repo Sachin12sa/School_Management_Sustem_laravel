@@ -193,6 +193,13 @@
                             <p>Admin</p>
                         </a>
                     </li>
+                      <li class="nav-item">
+                        <a href="{{ url('admin/student/list') }}"
+                          class="nav-link {{ request()->is('admin/student*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-person"></i>
+                            <p>Student</p>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <a href="{{ url('admin/class/list') }}"
@@ -203,9 +210,23 @@
                     </li>
                     <li class="nav-item">
                         <a href="{{ url('admin/subject/list') }}"
-                          class="nav-link {{ request()->is('admin/Subject*') ? 'active' : '' }}">
+                          class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>Subject</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/assign_subject/list') }}"
+                          class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Assign Subject</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/profile/change_password') }}"
+                          class="nav-link {{ request()->is('admin/change_password*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Change Password</p>
                         </a>
                     </li>
                 @endif
@@ -213,42 +234,74 @@
 
             {{-- Teacher --}}
             @if(Auth::user()->user_type == 2)
+               <li class="nav-item">
+                        <a href="{{ url('teacher/dashboard') }}"
+                          class="nav-link {{ request()->is('teacher/dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
               <li class="nav-item">
-                <a href="{{ url('teacher/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
+                        <a href="{{ url('teacher/profile/change_password') }}"
+                          class="nav-link {{ request()->is('admin/change_password*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Change Password</p>
+                        </a>
+                    </li>
             @endif
 
             {{-- Student --}}
             @if(Auth::user()->user_type == 3)
+                 <li class="nav-item">
+                        <a href="{{ url('student/dashboard') }}"
+                          class="nav-link {{ request()->is('student/dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
               <li class="nav-item">
-                <a href="{{ url('student/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
+                        <a href="{{ url('student/profile/change_password') }}"
+                          class="nav-link {{ request()->is('student/change_password*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Change Password</p>
+                        </a>
+                    </li>
             @endif
 
             {{-- Parent --}}
             @if(Auth::user()->user_type == 4)
+                 <li class="nav-item">
+                        <a href="{{ url('parent/dashboard') }}"
+                          class="nav-link {{ request()->is('parent/dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
               <li class="nav-item">
-                <a href="{{ url('parent/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
+                        <a href="{{ url('parent/profile/change_password') }}"
+                          class="nav-link {{ request()->is('parent/change_password*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Change Password</p>
+                        </a>
+                    </li>
             @endif
 
             {{-- Accountant --}}
             @if(Auth::user()->user_type == 5)
+                 <li class="nav-item">
+                        <a href="{{ url('accountant/dashboard') }}"
+                          class="nav-link {{ request()->is('accountant/dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
               <li class="nav-item">
-                <a href="{{ url('accountant/dashboard') }}" class="nav-link {{ Request::segment(2) == 'dashboard' ? 'active' : '' }}">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
+                        <a href="{{ url('accountant/profile/change_password') }}"
+                          class="nav-link {{ request()->is('accountant/change_password*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Change Password</p>
+                        </a>
+                    </li>
             @endif
 
             {{-- Logout --}}

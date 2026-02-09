@@ -70,6 +70,25 @@ class User extends Authenticatable
                             ->paginate(10);
                         return $return;
     }
+    static public function getStudent(){
+        $return= User::select('users.*')
+                            ->where('user_type','=',3)
+                            ->where('is_delete','=',0);
+                            if (request('name')) {
+                                    $return->where('name', 'like', '%' . request('name') . '%');
+                                }
+                            if (request('email')) {
+                                    $return->where('email', 'like', '%' . request('email') . '%');
+                                }
+                                if (request('date')) {
+                                    $return->whereDate('created_at', 'like', '%' . request('date') . '%');
+                                }
+
+                           $return = $return->orderBy('id','desc')
+                            ->paginate(10);
+                        return $return;
+    }
+    
     static public function getSingle($id){
         return User::find($id);
     }

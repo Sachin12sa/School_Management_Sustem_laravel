@@ -13,23 +13,36 @@ class ClassModel extends Model
     }
 
     static public function getRecord(){
-        $return = ClassModel::select('classes.*','users.name as created_by_name')
-        ->join('users','users.id','classes.created_by');
-        if(request('name')){
-            $return->where('classes.name', 'like', '%' . request('name') . '%');
+            $return = ClassModel::select('classes.*', 'users.name as created_by_name')
+                ->join('users', 'users.id', 'classes.created_by');
 
-        }
-        if(request('date')){
-            $return->whereDate('classes.created_at', 'like', '%' . request('date') . '%');
+            if (request('name')) {
+                $return->where('classes.name', 'like', '%' . request('name') . '%');
+            }
 
-        }
-        $return= $return->where('classes.is_delete','=',0)
-        ->orderBy('classes.id','desc')
-        ->paginate(10);
-        return $return;
-}
+            if (request('date')) {
+                $return->whereDate('classes.created_at', request('date'));
+            }
+
+            $return = $return->where('classes.is_delete', 0)
+                ->orderBy('classes.id', 'desc')
+                ->paginate(10);
+
+            return $return;
+    }
     static public function getSingle($id){
         return ClassModel::find($id);
+    }
+    static public function getClass(){
+           $return = ClassModel::select('classes.*')
+                ->join('users', 'users.id', 'classes.created_by')
+                ->where('classes.is_delete', 0)
+                ->where('classes.status', 0)
+                ->orderBy('classes.id', 'asc')
+                ->get();
+
+            return $return;
+        
     }
 }
 

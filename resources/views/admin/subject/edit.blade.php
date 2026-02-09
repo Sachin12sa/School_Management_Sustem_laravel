@@ -22,7 +22,7 @@
 
                     <div class="card card-primary card-outline mb-4">
 
-                        <form method="post" action="{{ url('admin/class/edit/' . $getRecord->id) }}">
+                        <form method="post" action="{{ url('admin/subject/edit/' . $getRecord->id) }}">
                             @csrf
 
                             <div class="card-body">
