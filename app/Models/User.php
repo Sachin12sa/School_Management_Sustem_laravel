@@ -19,10 +19,25 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    'name',
+    'last_name',
+    'email',
+    'password',
+    'user_type',
+    'admission_number',
+    'roll_number',
+    'class_id',
+    'gender',
+    'date_of_birth',
+    'mobile_number',
+    'admission_date',
+    'profile_pic',
+    'blood_group',
+    'height',
+    'weight',
+    'is_delete',
+];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -71,19 +86,23 @@ class User extends Authenticatable
                         return $return;
     }
     static public function getStudent(){
-        $return= User::select('users.*')
-                            ->where('user_type','=',3)
-                            ->where('is_delete','=',0);
-                            if (request('name')) {
-                                    $return->where('name', 'like', '%' . request('name') . '%');
-                                }
-                            if (request('email')) {
-                                    $return->where('email', 'like', '%' . request('email') . '%');
-                                }
-                                if (request('date')) {
-                                    $return->whereDate('created_at', 'like', '%' . request('date') . '%');
-                                }
 
+       $return = User::select('users.*', 'classes.name as class_name')
+                            ->leftJoin('classes', 'classes.id', '=', 'users.class_id')
+                            ->where('users.user_type','=',3)
+                            ->where('users.is_delete','=',0);
+                                if (request('name')) {
+                                        $return->where('users.name', 'like', '%' . request('name') . '%');
+                                    }
+
+                                if (request('email')) {
+                                        $return->where('users.email', 'like', '%' . request('email') . '%');
+                                    }
+                                if (request('admission_number')) {
+                                    $return->where('users.admission_number', 'like', '%' . request('admission_number') . '%');
+                                }
+                             
+                             
                            $return = $return->orderBy('id','desc')
                             ->paginate(10);
                         return $return;
@@ -92,5 +111,13 @@ class User extends Authenticatable
     static public function getSingle($id){
         return User::find($id);
     }
-
+    public function getProfile()
+{
+    if (!empty($this->profile_pic) && file_exists(storage_path('app/public/' . $this->profile_pic))) {
+        return asset('storage/' . $this->profile_pic);
+    } else {
+        return ""; // or return a default avatar
     }
+}
+
+}
