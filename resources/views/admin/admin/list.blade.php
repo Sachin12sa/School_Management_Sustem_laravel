@@ -118,9 +118,10 @@
                                             Edit
                                         </a>
                                         <a href="{{ url('admin/admin/delete/' . $value->id) }}"
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Are you sure you want to delete this admin?')">
-                                            Delete
+                                           class="btn btn-icon btn-sm btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to delete this student?')"
+                                           title="Delete">
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
                                 </tr>

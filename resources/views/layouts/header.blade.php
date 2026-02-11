@@ -193,11 +193,26 @@
                             <p>Admin</p>
                         </a>
                     </li>
+                      </li>
+                         <li class="nav-item">
+                        <a href="{{ url('admin/teacher/list') }}"
+                          class="nav-link {{ request()->is('admin/teacher*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-person"></i>
+                            <p>Teacher</p>
+                        </a>
+                    </li>
                       <li class="nav-item">
                         <a href="{{ url('admin/student/list') }}"
                           class="nav-link {{ request()->is('admin/student*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-person"></i>
                             <p>Student</p>
+                        </a>
+                    </li>
+                         <li class="nav-item">
+                        <a href="{{ url('admin/parent/list') }}"
+                          class="nav-link {{ request()->is('admin/parent*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-person"></i>
+                            <p>Parent</p>
                         </a>
                     </li>
 

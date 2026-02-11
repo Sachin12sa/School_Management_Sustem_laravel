@@ -14,6 +14,8 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ParentController;
 
 Route::get('/',[AuthController::class,'login']);
 Route::post('/login',[AuthController::class,'AuthLogin']);
@@ -42,6 +44,24 @@ Route::group(['middleware'=>'admin'],function(){
         Route::get('admin/student/edit/{id}',[StudentController::class,'edit']);
         Route::post('admin/student/edit/{id}',[StudentController::class,'update']);
         Route::get('admin/student/delete/{id}',[StudentController::class,'delete']); 
+        //parent
+        Route::get('admin/parent/list',[ParentController::class,'list']);
+        Route::get('admin/parent/add',[ParentController::class,'add']);
+        Route::post('admin/parent/add',[ParentController::class,'insert']);
+        Route::get('admin/parent/edit/{id}',[ParentController::class,'edit']);
+        Route::post('admin/parent/edit/{id}',[ParentController::class,'update']);
+        Route::get('admin/parent/delete/{id}',[ParentController::class,'delete']); 
+        Route::get('admin/parent/my-student/{id}',[ParentController::class,'myStudent']);
+        Route::get('admin/parent/assign_student_parent/{parent_id}/{student_id}',[ParentController::class,'assignStudentParent']);
+        Route::get('admin/parent/assign_student_parent_delete/{student_id}',[ParentController::class,'assignStudentParentDelete']);
+        //teacher
+        Route::get('admin/teacher/list',[TeacherController::class,'list']);
+        Route::get('admin/teacher/add',[TeacherController::class,'add']);
+        Route::post('admin/teacher/add',[TeacherController::class,'insert']);
+        Route::get('admin/teacher/edit/{id}',[TeacherController::class,'edit']);
+        Route::post('admin/teacher/edit/{id}',[TeacherController::class,'update']);
+        Route::get('admin/teacher/delete/{id}',[TeacherController::class,'delete']); 
+
         //ClassController
         Route::get('admin/class/list',[ClassController::class,'list']);
         Route::get('admin/class/add',[ClassController::class,'add']);
