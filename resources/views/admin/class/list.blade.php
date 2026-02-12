@@ -10,7 +10,7 @@
                 <div class="col-sm-6">
                     <h3 class="mb-0">
                         Class List
-                        {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
+                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">

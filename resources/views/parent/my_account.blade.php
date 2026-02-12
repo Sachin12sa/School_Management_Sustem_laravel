@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Edit Parent</h3>
+                    <h3 class="mb-0">My Account</h3>
                 </div>
             </div>
         </div>
@@ -17,10 +17,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary card-outline mb-4">
 
-                        <div class="card-header">
-                            <div class="card-title">Fill Details To Add New Parent</div>
-                        </div>
-
+                        @include('message')
                         <form method="post" action="" enctype="multipart/form-data">
                             @csrf
 
@@ -73,10 +70,13 @@
                                     <div style="color:red">{{ $errors->first('blood_group') }}</div></div>
 
                                     {{-- Profile Picture --}}
-                                    <div class="form-group col-md-6">
+                                       <div class="form-group col-md-6">
                                         <label class="form-label">Profile Picture</label>
-                                        <input type="file" value="{{ old('profile_pic',$getRecord->name)}}" name="profile_pic" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('profile_pic') }}</div></div>
+                                        <input type="file" value="{{ old('profile_pic')}}" name="profile_pic" class="form-control" />
+                                    <div style="color:red">{{ $errors->first('profile_pic') }}</div>
+                                    @if(!empty($getRecord -> getProfile()))
+                                    <img src="{{$getRecord->getProfile()}}" style="width:65px;height:75px" alt="">@endif
+                                </div>
                                     {{-- occupation --}}
                                     <div class="form-group col-md-6">
                                         <label class="form-label">Occupation</label>
@@ -100,13 +100,7 @@
                                     <div style="color:red">{{ $errors->first('email') }}</div>
                                 </div>
 
-                                {{-- Password --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Password<span style="color:red">*</span></label>
-                                    <input type="password" name="password" placeholder="Password"  class="form-control" />
-                                    <p>Do you want to change password? Ifso,Please add new password</p>
-                                <div style="color:red">{{ $errors->first('password') }}</div></div>
-                                
+                                                         
 
                                 {{-- Hidden Fields --}}
                                 <input type="hidden" name="user_type" value="3">

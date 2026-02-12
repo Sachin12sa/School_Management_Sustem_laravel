@@ -10,7 +10,7 @@
                 <div class="col-sm-6">
                     <h3 class="mb-0">
                         Assign Subject List
-                        {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
+                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">
@@ -102,8 +102,9 @@
                 <thead>
                     <tr>
                         <th>S.N</th>
-                        <th>Class Name</th>
+                        <th>Assigned Class</th>
                         <th>Subject Name</th>
+                        <th>Subject Type</th>
                         <th>Status</th>
                         <th>Created By</th>
                         <th>Created Date</th>
@@ -117,11 +118,14 @@
                             <td>{{ $getRecord->firstItem() + $key }}</td>
                             <td>{{ $value->class_name }}</td>
                             <td>{{ $value->subject_name }}</td>
-                        <td>
+                            <td>{{ $value->subject_type == 0 ? 'Theory' : 'Practical' }}</td>
+
+                            <td>
                             <span class="badge {{ $value->status == 0 ? 'bg-success' : 'bg-danger' }}">
-                                {{ $value->status == 0 ? 'Active' : 'Inactive' }}
+                                {{ $value->subject_type == 0 ? 'Active' : 'Inactive' }}
                             </span>
                         </td>
+                    
 
                             <td>{{ $value->created_by_name }}</td>
                             <td>{{ $value->created_at->format('d-m-Y h:i A') }}</td>

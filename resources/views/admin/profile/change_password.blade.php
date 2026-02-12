@@ -21,7 +21,6 @@
             <!--begin::Row-->
             <div class="row g-4">
               <!--begin::Col-->
-                @include('message')
               <!--end::Col-->
               <!--begin::Col-->
               <div class="col-md-12">
@@ -29,11 +28,13 @@
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
                   <div class="card-header">
-                    <div class="card-title">Fill All the Details To Add New Class</div>
+                   <div class="card-title">Change Your Password</div>
+
                   </div>
                   <!--end::Header-->
                   <!--begin::Form-->
-                  <form method="post" action="change_password">
+                   @include('message')
+                  <form method="post" action="{{ url('admin/profile/change_password') }}">
                     @csrf
                     <!--begin::Body-->
                     <div class="card-body">

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ClassSubjectModel;
 use Illuminate\Database\Eloquent\Model;
 
 class ClassSubjectModel extends Model
@@ -24,7 +25,9 @@ class ClassSubjectModel extends Model
                 'class_subjects.*',
                 'classes.name as class_name',
                 'subjects.name as subject_name',
-                'users.name as created_by_name'
+                'users.name as created_by_name',
+                'subjects.type as subject_type'
+
             )
             ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
             ->join('classes', 'classes.id', '=', 'class_subjects.class_id')
@@ -43,6 +46,23 @@ class ClassSubjectModel extends Model
             $return=$return->orderBy('class_subjects.id', 'desc')
             ->paginate(10);
             return $return;
+    }
+    // geting subject for the student
+    static public function mySubject($class_id)
+    {
+        return self::select(
+                'class_subjects.*',
+                'subjects.name as subject_name',
+                'subjects.type as subject_type'
+            )
+            ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+            ->join('classes', 'classes.id', '=', 'class_subjects.class_id')
+            ->join('users', 'users.id', '=', 'class_subjects.created_by')
+            ->where('class_subjects.class_id','=',$class_id)
+            ->where('class_subjects.is_delete','=',0)
+            ->where('class_subjects.status','=',0)
+            ->orderBy('class_subjects.id', 'desc')
+            ->get();
     }
      static public function getSingle($id){
         return ClassSubjectModel::find($id);

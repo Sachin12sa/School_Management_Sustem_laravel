@@ -8,7 +8,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Add New Assign Subject</h3>
+                <h3 class="mb-0">Add New  Assign Class Teacher </h3>
               </div>
             </div>
             <!--end::Row-->
@@ -29,7 +29,7 @@
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
                   <div class="card-header">
-                    <div class="card-title">Fill All the Details To Add New Assign Subject</div>
+                    <div class="card-title">Fill All the Details To Add New  Assign Class to Teacher </div>
                   </div>
                   <!--end::Header-->
                   <!--begin::Form-->
@@ -38,7 +38,7 @@
                     <!--begin::Body-->
                     <div class="card-body">
                          <div class="mb-3">
-                        <label  class="form-label"> Assign_subject Name</label>
+                        <label  class="form-label"> Assigned Class Name</label>
                            <select name="class_id" required class="form-control" id="">
                           <option value="">Select Class</option>
                                 @foreach($getClass as $class)
@@ -47,22 +47,21 @@
                         </select>
 
                       </div>
+                      <div class="mb-3">
+                        <label  class="form-label"> Assign Teacher Name</label>
+                           <select name="class_id" required class="form-control" id="">
+                         <label for="">Select Teache\\\
 
-                         <div class="mb-3">
-                        <label  class="form-label"> Subject Name</label>
-                       
-                            @foreach($getSubject as $subject)
-                             <div>
-                                <label style="font-weight:normal">
-                                  <input type="checkbox" value="{{$subject->id}}"  name="subject_id[]" id="" >{{$subject->name}}
+                          </label>
+                                @foreach($getTeacherClass as $teacher)
+                                <label style="font-weight: normal;">
+                                  <input type="checkbox" value="{{$teacher->id}}"  name="teacher_id" id="">{{$teacher->name}}
                                 </label>
-                                    </div>
                                 @endforeach
- 
-                        
-                                
+                        </select>
 
                       </div>
+
                       <div class="form-group">
                         <label for="">Status</label>
                         <select name="status" class="form-control" id="">

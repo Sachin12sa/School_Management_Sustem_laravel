@@ -22,42 +22,60 @@ class StudentController extends Controller
         return view('admin.student.add',$data);
     }
 
-    public function insert(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'gender' => 'required|in:Male,Female,Other',
-            'date_of_birth' => 'required|date',
-            'mobile_number' => 'nullable|string|max:15|min:8',
-            'status' => 'required|in:0,1',
-            'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
+     public function insert(Request $request)
+            {
+             
+                $request->validate([
+                    'name'              => 'required|string|max:100',
+                    'last_name'         => 'required|string|max:100',
+                    'admission_number'  => 'required|string|max:50|unique:users,admission_number',
+                    'roll_number'       => 'nullable|string|max:50',
+                    'class_id'          => 'required|integer',
+                    'gender'            => 'required|in:Male,Female,Other',
+                    'date_of_birth'     => 'required|date',
+                    'admission_date'    => 'required|date',
+                    'email'             => 'required|email|unique:users,email',
+                    'password'          => 'required|min:5',
+                    'status'            => 'required|in:0,1',
+                    'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                    'mobile_number'     => 'nullable|string|max:15|min:8',
+                    'blood_group'       => 'nullable|string|max:10',
+                    'religion'          => 'nullable|string|max:10',
+                    'height'            => 'nullable|string|max:10',
+                    'weight'            => 'nullable|string|max:10',
+                ]);
 
-        $teacher = new User();
-        $teacher->name = trim($request->name);
-        $teacher->last_name = trim($request->last_name);
-        $teacher->email = trim($request->email);
-        $teacher->gender = $request->gender;
-        $teacher->date_of_birth = $request->date_of_birth;
-        $teacher->mobile_number = $request->mobile_number;
-        $teacher->status = $request->status;
-        $teacher->user_type = 2; // Teacher
-        $teacher->password = Hash::make('123456'); // default password
+                $student = new User;
+                $student->name = trim($request->name);
+                $student->last_name = trim($request->last_name);
+                $student->admission_number = trim($request->admission_number);
+                $student->roll_number = trim($request->roll_number);
+                $student->class_id = $request->class_id;
+                $student->gender = $request->gender;
+                $student->date_of_birth = $request->date_of_birth;
+                $student->admission_date = $request->admission_date;
+                $student->blood_group = trim($request->blood_group);
+                $student->mobile_number = trim($request->mobile_number);
+                $student->religion = trim($request->religion);
+                $student->height = trim($request->height);
+                $student->weight = trim($request->weight);
+                $student->status = $request->status;
+                $student->email = trim($request->email);
+                $student->password = Hash::make($request->password);
+                $student->user_type = 3;
 
-        // Profile picture
-        if ($request->hasFile('profile_pic')) {
-            $file = $request->file('profile_pic');
-            $extension = $file->getClientOriginalExtension();
-            $slugName = Str::slug($request->name . ' ' . $request->last_name);
-            $fileName = $slugName . '-' . time() . '.' . $extension;
-            $teacher->profile_pic = $file->storeAs('profile', $fileName, 'public');
-        }
+                if ($request->hasFile('profile_pic')) {
+                    $file = $request->file('profile_pic');
+                    $extension = $file->getClientOriginalExtension();
+                    $slugName = Str::slug($request->name . ' ' . $request->last_name);
+                    $fileName = $slugName . '-' . time() . '.' . $extension;
+                    $student->profile_pic = $file->storeAs('profile', $fileName, 'public');
+                }
 
-        $teacher->save();
+                $student->save();
 
-        return redirect('admin/teacher/list')->with('success', 'Teacher Successfully Added');
-    }
+                return redirect('admin/student/list')->with('success', 'Student Successfully Added');
+            }
 
     public function edit($id){
         $data['getClass'] = ClassModel::getClass();

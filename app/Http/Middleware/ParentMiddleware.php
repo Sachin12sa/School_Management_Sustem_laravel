@@ -12,21 +12,19 @@ class ParentMiddleware
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        // If not logged in
-        if (!Auth::check()) {
-            return redirect('/');
-        }
+   */
+  public function handle(Request $request, Closure $next): Response
+{
+    if (!Auth::check()) {
+        return redirect('/');
+    }
 
-        // If logged in but not admin
-        if (Auth::user()->user_type != 4) {
-            Auth::logout();
-            return redirect('/');
-        }
-
-        // User is admin
+    // Only allow Admin (Type 1)
+    if (Auth::user()->user_type == 4) {
         return $next($request);
     }
+
+    // If they aren't Admin, send them to their own dashboard
+    return redirect()->back()->with('error', 'Access Denied: You do not have Admin permissions.');
+}
 }

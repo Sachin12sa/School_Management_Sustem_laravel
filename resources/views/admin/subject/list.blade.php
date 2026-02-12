@@ -10,7 +10,7 @@
                 <div class="col-sm-6">
                     <h3 class="mb-0">
                         Subject List
-                        {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
+                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">
@@ -103,6 +103,7 @@
                         <th>Subject Name</th>
                         <th>Status</th>
                         <th> Subject Type</th>
+                        <th></th>
                         <th>Created By</th>
                         <th>Created Date</th>
                         <th width="180">Action</th>

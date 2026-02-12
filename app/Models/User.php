@@ -153,6 +153,18 @@ class User extends Authenticatable
                             ->paginate(10);
                         return $return;
     }
+    // function to get teacher for classassign
+    static public function getTeacherClass(){
+
+       $return = User::select('users.*', 'classes.name as class_name','parent.name as parent_name','parent.last_name as parent_last_name')
+                            ->leftJoin('classes', 'classes.id', '=', 'users.class_id')
+                            ->leftJoin('users as parent', 'parent.id', '=', 'users.parent_id')
+                            ->where('users.user_type','=',2)
+                            ->where('users.is_delete','=',0)
+                            ->orderBy('id','desc')
+                            ->get();
+                        return $return;
+    }
     // function for get assign student 
   public static function getSearchStudent()
         {

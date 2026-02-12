@@ -237,6 +237,20 @@
                             <p>Assign Subject</p>
                         </a>
                     </li>
+                       <li class="nav-item">
+                        <a href="{{ url('admin/assign_class_teacher/list') }}"
+                          class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Assign Class Teacher</p>
+                        </a>
+
+                       <li class="nav-item">
+                        <a href="{{ url('admin/account') }}"
+                          class="nav-link {{ request()->is('admin/account*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Account</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="{{ url('admin/profile/change_password') }}"
                           class="nav-link {{ request()->is('admin/change_password*') ? 'active' : '' }}">
@@ -256,13 +270,21 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-              <li class="nav-item">
+                    <li class="nav-item">
+                        <a href="{{ url('teacher/account') }}"
+                          class="nav-link {{ request()->is('teacher/account*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Account</p>
+                        </a>
+                    </li>
+                 <li class="nav-item">
                         <a href="{{ url('teacher/profile/change_password') }}"
-                          class="nav-link {{ request()->is('admin/change_password*') ? 'active' : '' }}">
+                          class="nav-link {{ request()->is('teacher/change_password*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>Change Password</p>
                         </a>
                     </li>
+              
             @endif
 
             {{-- Student --}}
@@ -272,6 +294,20 @@
                           class="nav-link {{ request()->is('student/dashboard') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-speedometer"></i>
                             <p>Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/my_subject') }}"
+                          class="nav-link {{ request()->is('student/my_subject*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Subject</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/account') }}"
+                          class="nav-link {{ request()->is('student/account*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Account</p>
                         </a>
                     </li>
               <li class="nav-item">
@@ -290,6 +326,20 @@
                           class="nav-link {{ request()->is('parent/dashboard') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-speedometer"></i>
                             <p>Dashboard</p>
+                        </a>
+                    </li>
+                     <li class="nav-item">
+                        <a href="{{ url('parent/my_student') }}"
+                          class="nav-link {{ request()->is('parent/my_student*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Student</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('parent/account') }}"
+                          class="nav-link {{ request()->is('parent/account*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Account</p>
                         </a>
                     </li>
               <li class="nav-item">

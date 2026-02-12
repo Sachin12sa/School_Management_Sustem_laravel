@@ -43,6 +43,7 @@ class ParentController extends Controller
                 $student->occupation = trim($request->occupation);
                 $student->mobile_number = trim($request->mobile_number);
                 $student->status = $request->status;
+                $student->blood_group = trim($request->blood_group);
                 $student->email = trim($request->email);
                 $student->password = Hash::make($request->password);
                 $student->user_type = 4;
@@ -75,6 +76,7 @@ class ParentController extends Controller
     public function update($id, Request $request)
        {        
             $request->validate([
+                
                     'name'              => 'required|string|max:100',
                     'last_name'         => 'required|string|max:100',
                     'gender'            => 'required|in:Male,Female,Other',
@@ -87,11 +89,13 @@ class ParentController extends Controller
                 ]);
 
                 $student = User::getSingle($id);
+                
                 $student->name = trim($request->name);
                 $student->last_name = trim($request->last_name);
                 $student->gender = $request->gender;
                 $student->address = $request->address;
                 $student->occupation = trim($request->occupation);
+                $student->blood_group = trim($request->blood_group);
                 $student->mobile_number = trim($request->mobile_number);
                 $student->status = $request->status;
                 $student->email = trim($request->email);
@@ -154,6 +158,14 @@ class ParentController extends Controller
 
 
     }
-    
+    // Parents side
+
+    public function myStudentParent()
+    {
+        $id = Auth::user()->id;
+        $data['getRecord'] = User::getMyStudent($id); // assigned students
+        $data['header_title'] = '  My Student ';
+        return view('parent.my_student', $data);
+    }
 }
 
