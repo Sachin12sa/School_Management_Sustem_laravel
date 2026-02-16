@@ -98,7 +98,7 @@
                      <tr>
                         <td>{{ $getRecord->firstItem() + $key }}</td>
                         <td>{{ $value->class_name }}</td>
-                        <td>{{ $value->subject_name }}</td>
+                        <td>{{ $value->teacher_name }}  {{ $value->teacher_last_name }}</td>
                         <td>
                            <span class="badge {{ $value->status == 0 ? 'bg-success' : 'bg-danger' }}">
                            {{ $value->subject_type == 0 ? 'Active' : 'Inactive' }}

@@ -31,6 +31,7 @@
                   <div class="card-header">
                     <div class="card-title">Fill All the Details To Add New  Assign Class to Teacher </div>
                   </div>
+                  @include('message')
                   <!--end::Header-->
                   <!--begin::Form-->
                   <form method="post" action="">
@@ -49,14 +50,13 @@
                       </div>
                       <div class="mb-3">
                         <label  class="form-label"> Assign Teacher Name</label>
-                           <select name="class_id" required class="form-control" id="">
-                         <label for="">Select Teache\\\
-
-                          </label>
                                 @foreach($getTeacherClass as $teacher)
-                                <label style="font-weight: normal;">
-                                  <input type="checkbox" value="{{$teacher->id}}"  name="teacher_id" id="">{{$teacher->name}}
-                                </label>
+                                <div>
+                                     <label style="font-weight: normal;">
+                                  <input type="checkbox" value="{{$teacher->id}}"  name="teacher_id[]" id="">{{$teacher->name}} {{$teacher->last_name}}
+                                </input>
+                                </div>
+                               
                                 @endforeach
                         </select>
 

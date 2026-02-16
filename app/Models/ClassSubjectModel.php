@@ -47,7 +47,7 @@ class ClassSubjectModel extends Model
             ->paginate(10);
             return $return;
     }
-    // geting subject for the student
+    // getting subject for the student
     static public function mySubject($class_id)
     {
         return self::select(

@@ -8,7 +8,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Edit Assign Subject</h3>
+                <h3 class="mb-0">Edit Assign Teacher</h3>
               </div>
             </div>
             <!--end::Row-->
@@ -29,7 +29,7 @@
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
                   <div class="card-header">
-                    <div class="card-title">Fill All the Details To Edit Assign Subject</div>
+                    <div class="card-title">Fill  the Details To Edit Assign Teacher</div>
                   </div>
                   <!--end::Header-->
                   <!--begin::Form-->
@@ -38,7 +38,7 @@
                     <!--begin::Body-->
                     <div class="card-body">
                          <div class="mb-3">
-                        <label  class="form-label"> Class Name</label>
+                        <label  class="form-label">Class Name</label>
                            <select name="class_id" required class="form-control" id="">
                           <option value="">Select Class</option>
                                 @foreach($getClass as $class)
@@ -47,18 +47,24 @@
                         </select>
 
                       </div>
+
                          <div class="mb-3">
-                        <label  class="form-label"> Subject Name</label>
-                           <select name="subject_id" required class="form-control" id="">
-                          <option value="">Select Subject</option>
-                                @foreach($getSubject as $subject)
-                                <option {{ ($getRecord->subject_id == $subject->id) ? 'selected' : ' '}} value="{{$subject->id}}">{{$subject->name}}</option>
-                                @endforeach
-                        </select>
+                        <label  class="form-label"> Teacher Name</label>
+                       
+                        @foreach ($getTeacherClass as $teacher)
+                            <div>
+                                <label style="font-weight:normal">
+                                    <input type="checkbox"
+                                        name="teacher_id"
+                                        value="{{ $teacher->id }}"
+                                        {{ ($getRecord->teacher_id == $teacher->id) ? 'checked' : '' }}>
+                                    {{ $teacher->name }} {{ $teacher->last_name }}
+                                </label>
+                            </div>
+                        @endforeach
+
 
                       </div>
-
-       
                       <div class="form-group">
                         <label for="">Status</label>
                         <select name="status" class="form-control" id="">

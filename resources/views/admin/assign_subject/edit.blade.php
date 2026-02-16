@@ -8,7 +8,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Edi t Assign Subject</h3>
+                <h3 class="mb-0">Edit Assign Subject</h3>
               </div>
             </div>
             <!--end::Row-->
