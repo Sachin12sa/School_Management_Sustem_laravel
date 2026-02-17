@@ -14,7 +14,7 @@
                     </h3>
                 </div>
 
- 
+
         </div>
     </div>
 
@@ -24,9 +24,13 @@
             @include('message')
 
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"> My Subject List</h3>
-                </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title">My Subject List</h3>
+                <span class="fw-bold">
+                    Class {{ $getRecord->first()->class_name ?? '' }}
+                </span>
+            </div>
+
 
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">

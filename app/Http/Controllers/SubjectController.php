@@ -75,5 +75,5 @@ class SubjectController extends Controller
             return view('parent.my_student_subject',$data);
 
         }
-    
+
 }

@@ -18,25 +18,34 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-    'name',
-    'last_name',
-    'email',
-    'password',
-    'user_type',
-    'admission_number',
-    'roll_number',
-    'class_id',
-    'gender',
-    'date_of_birth',
-    'mobile_number',
-    'admission_date',
-    'profile_pic',
-    'blood_group',
-    'height',
-    'weight',
-    'is_delete',
-];
+            protected $fillable = [
+                'name',
+                'last_name',
+                'email',
+                'password',
+                'user_type',
+                'admission_number',
+                'roll_number',
+                'class_id',
+                'gender',
+                'date_of_birth',
+                'date_of_joining',
+                'admission_date',
+                'mobile_number',
+                'blood_group',
+                'height',
+                'weight',
+                'occupation',
+                'marital_status',
+                'current_address',
+                'permanent_address',
+                'address',
+                'qualification',
+                'work_experience',
+                'profile_pic',
+                'status',
+                'is_delete',
+            ];
 
 
     /**
@@ -44,6 +53,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    
     protected $hidden = [
         'password',
         'remember_token',
@@ -162,8 +172,39 @@ class User extends Authenticatable
                             ->where('users.user_type','=',2)
                             ->where('users.is_delete','=',0)
                             ->orderBy('id','desc')
+                            ->groupBy('users.id')
                             ->get();
                         return $return;
+    }
+    // teacher  side my student get function 
+    static public function getTeacherStudent($teacher_id)
+    {
+            $return = User::select('users.*', 'classes.name as class_name')
+                ->leftJoin('classes', 'classes.id', '=', 'users.class_id')
+                ->join('assign_class_teachers', 'assign_class_teachers.class_id', '=', 'classes.id')
+                ->where('users.user_type', '=', 3)
+                ->where('assign_class_teachers.teacher_id','=', $teacher_id)
+                ->where('users.is_delete', '=', 0)
+                ->where('assign_class_teachers.is_delete','=',0)
+                ->where('assign_class_teachers.status','=',0);
+
+            if (request('name')) {
+                $return->where('users.name', 'like', '%' . request('name') . '%');
+            }
+
+            if (request('email')) {
+                $return->where('users.email', 'like', '%' . request('email') . '%');
+            }
+
+            if (request()->filled('class_name')) {
+                $return->where('classes.name', 'like', '%' . request('class_name') . '%');
+            }
+
+            $return = $return->orderBy('id','desc')
+                ->paginate(10);
+
+            return $return;
+
     }
     // function for get assign student 
   public static function getSearchStudent()

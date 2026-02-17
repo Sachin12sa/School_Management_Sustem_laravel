@@ -2,11 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\ParentMiddleware;
-use App\Http\Middleware\StudentMiddleware;
-use App\Http\Middleware\TeacherMiddleware;
-use App\Http\Middleware\AccountantMiddleware;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClassController;
@@ -17,6 +12,9 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\AssignClassTeacherController;
+use App\Http\Controllers\ClassTimeTableController;
+
+
 Route::get('/',[AuthController::class,'login']);
 Route::post('/login',[AuthController::class,'AuthLogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -94,6 +92,12 @@ Route::group(['middleware'=>'admin'],function(){
         Route::get('admin/assign_class_teacher/delete/{id}',[AssignClassTeacherController::class,'delete']);
         Route::get('admin/assign_class_teacher/edit_single/{id}',[AssignClassTeacherController::class,'edit_single']);
         Route::post('admin/assign_class_teacher/edit_single/{id}',[AssignClassTeacherController::class,'update_single']);
+        // class_timetable
+        Route::get('admin/class_timetable/list',[ClassTimeTableController::class,'list']);
+        Route::post('admin/class_timetable/get_subject', [ClassTimeTableController::class, 'get_subject']);      
+        Route::post('admin/class_timetable/add', [ClassTimeTableController::class, 'insert_update']);        
+
+                
         // My Account
         Route::get('admin/account',[UserController::class,'MyAccount']);
         Route::post('admin/account',[UserController::class,'update']);
@@ -106,6 +110,12 @@ Route::group(['middleware'=>'admin'],function(){
 // Teacher Section
 Route::group(['middleware'=>'teacher'],function(){
         Route::get('/teacher/dashboard',[DashboardController::class,'dashboard']);
+        // my_class_subject
+        Route::get('teacher/my_class_subject',[AssignClassTeacherController::class,'MyClassSubject']);
+        // my_student
+        Route::get('teacher/my_student',[StudentController::class,'MyStudent']);
+
+
         //change_password
         Route::get('teacher/profile/change_password',[UserController::class,'change_password']);
         Route::post('teacher/profile/change_password',[UserController::class,'update_change_password']);   

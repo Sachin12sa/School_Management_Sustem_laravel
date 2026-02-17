@@ -8,7 +8,7 @@
             <div class="col-sm-6">
                <h3 class="mb-0">
                   Assign Class Teacher 
-                  {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
+                  <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
                </h3>
             </div>
             <div class="col-sm-6 text-end">
@@ -37,25 +37,28 @@
                                  placeholder="Enter name"
                                  />
                            </div>
-                           <div class="col-md-3">
-                              <label class="form-label"> Subject Name</label>
-                              <input
-                                 type="text"
-                                 name="Subject_name"
-                                 value="{{ request('name') }}"
-                                 class="form-control"
-                                 placeholder="Enter name"
-                                 />
-                           </div>
-                           <div class="col-md-3">
-                              <label class="form-label">Date</label>
-                              <input
-                                 type="date"
-                                 name="date"
-                                 value="{{ request('date') }}"
-                                 class="form-control"
-                                 />
-                           </div>
+                   <div class="col-md-3">
+                     <label class="form-label">Teacher First Name</label>
+                     <input
+                        type="text"
+                        name="teacher_name"
+                        value="{{ request('teacher_name') }}"
+                        class="form-control"
+                        placeholder="Enter first name"
+                     />
+                  </div>
+
+                  <div class="col-md-3">
+                     <label class="form-label">Teacher Last Name</label>
+                     <input
+                        type="text"
+                        name="teacher_last_name"
+                        value="{{ request('teacher_last_name') }}"
+                        class="form-control"
+                        placeholder="Enter last name"
+                     />
+                  </div>
+
                            <div class="col-md-3">
                               <button type="submit" class="btn btn-primary">
                               Search

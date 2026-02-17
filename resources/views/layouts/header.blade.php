@@ -215,35 +215,48 @@
                             <p>Parent</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="{{ url('admin/class/list') }}"
-                          class="nav-link {{ request()->is('admin/class*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-people"></i>
-                            <p>Class</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/subject/list') }}"
-                          class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-book"></i>
-                            <p>Subject</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/assign_subject/list') }}"
-                          class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-book"></i>
-                            <p>Assign Subject</p>
-                        </a>
-                    </li>
-                       <li class="nav-item">
-                        <a href="{{ url('admin/assign_class_teacher/list') }}"
-                          class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-book"></i>
-                            <p>Assign Class Teacher</p>
-                        </a>
-
+{{-- Acedemic --}}
+                            <li class="nav-item {{ request()->is('admin/class*', 'admin/subject*', 'admin/assign_subject*', 'admin/assign_class_teacher*') ? 'menu-open' : '' }}">
+                              <a href="#" class="nav-link {{ request()->is('admin/class*', 'admin/subject*', 'admin/assign_subject*', 'admin/assign_class_teacher*') ? 'active' : '' }}">
+                                  <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                  <p>
+                                      Academic
+                                      <i class="nav-arrow bi bi-chevron-right"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ url('admin/class/list') }}" class="nav-link {{ request()->is('admin/class*') ? 'active' : '' }}">
+                                          <i class="nav-icon bi bi-circle"></i>
+                                          <p>Class</p>
+                                      </a>
+                                  </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/subject/list') }}" class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Subject</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/assign_subject/list') }}" class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Assign Subject</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/assign_class_teacher/list') }}" class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Assign Class Teacher</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/class_timetable/list') }}" class="nav-link {{ request()->is('admin/class_timetable*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Class Timetable</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                        <li class="nav-item">
                         <a href="{{ url('admin/account') }}"
                           class="nav-link {{ request()->is('admin/account*') ? 'active' : '' }}">
@@ -270,6 +283,20 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
+                     <li class="nav-item">
+                        <a href="{{ url('teacher/my_student') }}"
+                          class="nav-link {{ request()->is('teacher/my_student*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Student</p>
+                        </a>
+                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('teacher/my_class_subject') }}"
+                          class="nav-link {{ request()->is('teacher/my_class_subject*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Class & Subject</p>
+                        </a>
+                    </li>                    
                     <li class="nav-item">
                         <a href="{{ url('teacher/account') }}"
                           class="nav-link {{ request()->is('teacher/account*') ? 'active' : '' }}">

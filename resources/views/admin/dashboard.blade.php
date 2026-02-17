@@ -9,7 +9,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-12">
-                <h3 class="mb-0">Admin's Dashboard</h3>
+                <h3 class="mb-0">Teacher's Dashboard</h3>
               </div>
     
             </div>

@@ -156,6 +156,13 @@ class StudentController extends Controller
         $user->save();
         return redirect('admin/student/list')->with('success','Admin Successfully updated');
     }
+        // teacher side work 
+    public function myStudent()
+    {
+        $data['getRecord'] = User::getTeacherStudent(Auth::user()->id);
+        $data['header_title']= 'Student List';
+        return view('teacher/my_student',$data);
+    }
 
 }
 

@@ -132,4 +132,12 @@ class AssignClassTeacherController extends Controller
     return redirect('admin/assign_class_teacher/list')
         ->with('success', 'Teacher updated successfully');
     }
+
+    // teacher's section my class and subject 
+    public function MyClassSubject()
+    {
+      $data['header_title']= 'Class and Subject List';
+      $data['getRecord'] = AssignClassTeacherModel::getMyClassSubject(Auth::user()->id);
+      return view('teacher.my_class_subject',$data);  
+    }
 }

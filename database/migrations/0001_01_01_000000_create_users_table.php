@@ -12,14 +12,48 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+                $table->id();
+                $table->string('name');
+                $table->string('last_name')->nullable();
+                $table->string('email')->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
+                $table->unsignedBigInteger('parent_id')->nullable()->after('class_id');
+
+                
+                // Identity & Access
+                $table->tinyInteger('user_type')->default(3)->comment('1:Admin, 2:Teacher, 3:Student, 4:Parent');
+                $table->string('admission_number')->nullable();
+                $table->string('roll_number')->nullable();
+                $table->integer('class_id')->nullable();
+                
+                // Personal Details
+                $table->string('gender')->nullable();
+                $table->date('date_of_birth')->nullable();
+                $table->date('date_of_joining')->nullable(); // For Teachers
+                $table->date('admission_date')->nullable();   // For Students
+                $table->string('mobile_number')->nullable();
+                $table->string('blood_group')->nullable();
+                $table->string('height')->nullable();
+                $table->string('weight')->nullable();
+                
+                // Status & Professional (Teachers/Parents)
+                $table->string('occupation')->nullable();     // For Parents
+                $table->tinyInteger('marital_status')->nullable()->comment('0:Single, 1:Married');
+                $table->text('current_address')->nullable();
+                $table->text('permanent_address')->nullable();
+                $table->text('address')->nullable();          // For Parents
+                $table->string('qualification')->nullable();
+                $table->text('work_experience')->nullable();
+                
+                // System Fields
+                $table->string('profile_pic')->nullable();
+                $table->tinyInteger('status')->default(0)->comment('0:Active, 1:Inactive');
+                $table->tinyInteger('is_delete')->default(0)->comment('0:No, 1:Yes');
+                
+                $table->rememberToken();
+                $table->timestamps();
+            });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -45,5 +79,8 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn('parent_id');
+    });
     }
 };

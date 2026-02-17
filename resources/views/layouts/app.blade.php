@@ -114,8 +114,7 @@
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="{{asset('dist/js.adminlte.js')}}"></script>
-    <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+<script src="{{ asset('dist/js/adminlte.min.js') }}"></script>    <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
       const Default = {
@@ -339,9 +338,12 @@
       const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
       sparkline3.render();
     </script>
-            @yield('script')
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!--end::Script-->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+
+{{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
+      @yield('script')
   </body>
   <!--end::Body-->
 </html>
