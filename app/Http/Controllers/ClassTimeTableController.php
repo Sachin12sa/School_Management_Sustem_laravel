@@ -131,7 +131,9 @@ public function insert_update(Request $request)
                 foreach ($getWeek as $week) {
 
                     $dataW = [];
+                   
                     $dataW['week_name'] = $week->name;
+                    
 
                     $classSubject = ClassSubjectTimetableModel::getRecordClassSubject(
                         $subject->class_id,

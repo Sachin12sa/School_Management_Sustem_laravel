@@ -8,6 +8,7 @@ use App\Models\ClassModel;
 use App\Models\ClassSubjectModel;
 use App\Models\ExamModel;
 use App\Models\ExamScheduleModel;
+use App\Models\Subject;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -72,16 +73,22 @@ class ExaminationController extends Controller
 
     if (!empty($request->get('exam_id')) && !empty($request->get('class_id'))) {
         $getSubject = ClassSubjectModel::mySubject($request->get('class_id'));
-
+        
         foreach ($getSubject as $value) {
             $dataS = [];
-            $dataS['subject_id'] = $value->subject_id;
+            if (!empty($ExamSchedule)) {
+                $dataS['id'] = $ExamSchedule->id;  // ✅ Correct ID for delete
+            } else {
+                $dataS['id'] = null;
+            }
+                        $dataS['subject_id'] = $value->subject_id;
             $dataS['class_id'] = $value->class_id;
             $dataS['subject_name'] = $value->subject_name;
             $dataS['subject_type'] = $value->subject_type;
             $ExamSchedule = ExamScheduleModel::getRecordingSingle($request->get('exam_id'),$request->get('class_id'),$value->subject_id);
             if(!empty($ExamSchedule))
                 {
+                    $dataS['id'] = $ExamSchedule->id; 
                     $dataS['exam_date'] = $ExamSchedule->exam_date;
                     $dataS['start_time'] = $ExamSchedule->start_time;
                     $dataS['end_time'] = $ExamSchedule->end_time;
@@ -90,6 +97,7 @@ class ExaminationController extends Controller
                     $dataS['passing_mark'] = $ExamSchedule->passing_mark;
                 }
                 else{
+                     $dataS['id'] = null;
                     $dataS['exam_date'] = '';
                     $dataS['start_time'] = '';
                     $dataS['end_time'] = '';
@@ -99,8 +107,9 @@ class ExaminationController extends Controller
                 }
             $result[] = $dataS;
         }
+      
     }
-
+    
     $data['getRecord'] = $result;
 
         $data['header_title']= 'Exam Schedule List';
@@ -277,7 +286,18 @@ class ExaminationController extends Controller
         $data['header_title']= 'My Student Exam Timetable';
         return view('parent.my_exam_timetable',$data);
     }
+
+    // delete the subject examDateDelete
+public function examDateDelete($id)
+{
+    ExamScheduleModel::where('id', $id)->delete();
+
+    return redirect()->back()
+        ->with('success', 'Exam Schedule Deleted Successfully');
 }
+
+}
+
 
 
 

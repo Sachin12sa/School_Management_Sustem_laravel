@@ -20,6 +20,7 @@ class ClassSubjectTimetableModel extends Model
         return self::where('class_id', '=', $class_id)
                     ->where('subject_id','=', $subject_id)
                     ->where('week_id', '=', $week_id)
+                    // ->where('fullcalender_day','=',$)
                     ->first();
     }
     public static function getAllRecordClassSubject($class_id, $subject_id)

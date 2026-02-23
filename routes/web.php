@@ -1,19 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClassController;
-use App\Http\Controllers\SubjectController;
-use App\Http\Controllers\ClassSubjectController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\ParentController;
 use App\Http\Controllers\AssignClassTeacherController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalenderController;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\ClassTimeTableController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExaminationController;
+use App\Http\Controllers\ParentController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/',[AuthController::class,'login']);
 Route::post('/login',[AuthController::class,'AuthLogin']);
@@ -108,6 +109,7 @@ Route::group(['middleware'=>'admin'],function(){
         // exam schedule admin/examination/exam_schedule
         Route::get('admin/examination/exam_schedule',[ExaminationController::class,'exam_schedule']);
         Route::post('admin/examination/exam_schedule_insert',[ExaminationController::class,'exam_schedule_insert']);
+        Route::get('admin/examination/exam_schedule/delete/{id}',[ExaminationController::class,'examDateDelete']);
                 
         // My Account
         Route::get('admin/account',[UserController::class,'MyAccount']);
@@ -129,6 +131,8 @@ Route::group(['middleware'=>'teacher'],function(){
         Route::get('teacher/my_class_subject/class_timetable/{class_id}/{subject_id}',[ClassTimeTableController::class,'myTimetableTeacher']);
         // my_exam_timetable
         Route::get('teacher/my_exam_timetable',[ExaminationController::class,'myExamTimetableTeacher']);
+                // My Calender
+        Route::get('teacher/my_calender',[CalenderController::class,'MyTeacherCalendar']);
         //change_password
         Route::get('teacher/profile/change_password',[UserController::class,'change_password']);
         Route::post('teacher/profile/change_password',[UserController::class,'update_change_password']);   
@@ -149,7 +153,10 @@ Route::group(['middleware'=>'student'],function(){
         Route::get('student/my_exam_timetable',[ExaminationController::class,'myExamTimetable']);
         //change_password
         Route::get('student/profile/change_password',[UserController::class,'change_password']);
-        Route::post('student/profile/change_password',[UserController::class,'update_change_password']);   
+        Route::post('student/profile/change_password',[UserController::class,'update_change_password']);  
+        // My Calender
+        Route::get('student/my_calender',[CalenderController::class,'MyCalender']);
+        // Route::post('student/my_calender',[CalenderController::class,'update']);
         // My Account
         Route::get('student/account',[UserController::class,'MyAccount']);
         Route::post('student/account',[UserController::class,'update']);
@@ -166,6 +173,8 @@ Route::group(['middleware'=>'parent'],function(){
         Route::get('parent/my_student/subject/class_timetable/{class_id}/{subject_id}/{student_id}',[ClassTimeTableController::class,'myTimetableParent']);
         // student exam timetable 
         Route::get('parent/my_student/exam_timetable/{student_id}',[ExaminationController::class,'ParentMyExamTimetable']);
+        // stuedent calendar
+        Route::get('parent/my_student/calendar/{student_id}',[CalenderController::class,'MyParentCalendar']);
         //change_password
         Route::get('parent/profile/change_password',[UserController::class,'change_password']);
         Route::post('parent/profile/change_password',[UserController::class,'update_change_password']);

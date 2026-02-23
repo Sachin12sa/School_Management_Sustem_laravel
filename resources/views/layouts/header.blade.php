@@ -331,6 +331,13 @@
                             <p>My Exam TimeTable</p>
                         </a>
                     </li> 
+                      <li class="nav-item">
+                        <a href="{{ url('teacher/my_calender') }}"
+                          class="nav-link {{ request()->is('teacher/my_calender*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Calender</p>
+                        </a>
+                    </li>
                                  
                     <li class="nav-item">
                         <a href="{{ url('teacher/account') }}"
@@ -378,6 +385,13 @@
                           class="nav-link {{ request()->is('student/my_exam_timetable*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>My Exam TimeTable</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/my_calender') }}"
+                          class="nav-link {{ request()->is('student/my_calender*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Calender</p>
                         </a>
                     </li>
                     <li class="nav-item">

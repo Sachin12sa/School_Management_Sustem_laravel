@@ -123,4 +123,28 @@ class AssignClassTeacherModel extends Model
             return null;
         }
 
+        // teacher my calendar 
+static public function getCalendarTeacher($teacher_id)
+{
+    return self::select(
+            'classes.name as class_name',
+            'subjects.name as subject_name',
+            'class_subject_timetables.start_time',
+            'class_subject_timetables.end_time',
+            'weeks.fullcalender_day'
+        )
+        ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
+        ->join('class_subjects', 'class_subjects.class_id', '=', 'assign_class_teachers.class_id')
+        ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+        ->join('class_subject_timetables', function($join) {
+            $join->on('class_subject_timetables.class_id', '=', 'class_subjects.class_id')
+                 ->on('class_subject_timetables.subject_id', '=', 'class_subjects.subject_id');
+        })
+        ->join('weeks', 'weeks.id', '=', 'class_subject_timetables.week_id')
+        ->where('assign_class_teachers.teacher_id', $teacher_id)
+        ->where('assign_class_teachers.is_delete', 0)
+        ->where('assign_class_teachers.status', 0)
+        ->get();
+}
+
 }

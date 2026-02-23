@@ -56,7 +56,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             Search
                                         </button>
-                                        <a href="{{ url('admin.examination.exam_schedule') }}" class="btn btn-success ms-1">
+                                        <a href="{{ url('admin/examination/exam_schedule') }}" class="btn btn-success ms-1">
                                             Reset
                                         </a>
                                     </div>
@@ -99,6 +99,7 @@
                                <th>Room number</th>
                                <th>Full mark</th>
                                <th>Passing Mark</th>
+                               <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,6 +121,14 @@
                                     <td><input type="text" class="form-control" value="{{ $value['room_number'] }}"  name="schedule[{{$i}}][room_number]"></td>
                                     <td><input type="text" class="form-control" value="{{ $value['full_mark'] }}"  name="schedule[{{$i}}][full_mark]"></td>
                                     <td><input type="text" class="form-control" value="{{ $value['passing_mark'] }}"  name="schedule[{{$i}}][passing_mark]"></td>
+                                    <td>
+                                        <a href="{{ url('admin/examination/exam_schedule/delete/'. $value['id']) }}"
+                                           class="btn btn-icon btn-sm btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to delete this student?')"
+                                           title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                                 @php $i++; @endphp
                                 @empty
