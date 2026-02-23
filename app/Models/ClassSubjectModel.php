@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\ClassSubjectModel;
+use App\Models\ClassSubjectTimetableModel;
+use App\Models\WeekModel;
 use Illuminate\Database\Eloquent\Model;
 
 class ClassSubjectModel extends Model
@@ -70,4 +72,21 @@ class ClassSubjectModel extends Model
     static public function deleteSubject($class_id){
         return self::where('class_id','=',$class_id)->delete();
     }
+        static public function getMyTimeTable($class_id, $subject_id)
+        {
+
+            $todayName = date('l');
+            $getWeek = WeekModel::getWeekUsingName($todayName);
+
+            if (!empty($getWeek)) {
+
+                return ClassSubjectTimetableModel::getRecordClassSubject(
+                    $class_id,
+                    $subject_id,
+                    $getWeek->id 
+                );
+            }
+
+            return null;
+        }
 }

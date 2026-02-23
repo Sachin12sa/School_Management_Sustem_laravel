@@ -86,9 +86,13 @@
                                     </td>
                                     <td>
                                          <a href="{{ url('parent/my_student/subject/'.$value->id) }}"
-                                class="btn btn-sm btn-primary">
-                                    View Subject
-                                </a>
+                                            class="btn btn-sm btn-success">
+                                                View Subject
+                                            </a>
+                                             <a href="{{ url('parent/my_student/exam_timetable/'.$value->id) }}"
+                                            class="btn btn-sm btn-primary">
+                                                View Timetable
+                                            </a>
                                     </td>
                                 </tr>
                             @empty

@@ -81,14 +81,20 @@
                                     {{-- Date of Birth --}}
                                     <div class="form-group col-md-6">
                                         <label class="form-label">Date of Birth<span style="color:red">*</span></label>
-                                        <input type="date" value="{{ old('date_of_birth' ,$getRecord->date_of_birth )}}"  name="date_of_birth" class="form-control" />
+                                        <input type="date" id="date" value="{{ old('date_of_birth' ,$getRecord->date_of_birth )}}"  name="date_of_birth" class="form-control" />
+                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
                                     <div style="color:red">{{ $errors->first('name') }}</div></div>
                                       
 
                                     {{-- Admission Date --}}
                                     <div class="form-group col-md-6">
                                         <label class="form-label">Admission Date<span style="color:red">*</span></label>
-                                        <input type="date" name="admission_date" value="{{ old('admission_date',$getRecord->admission_date) }}"  class="form-control" />
+                                        <input type="date" id="date" name="admission_date" value="{{ old('admission_date',$getRecord->admission_date) }}"  class="form-control" />
+                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
                                     <div style="color:red">{{ $errors->first('admission_date') }}</div></div>
 
                                     {{-- Mobile Number --}}

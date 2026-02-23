@@ -35,7 +35,7 @@ class ClassModel extends Model
         return ClassModel::find($id);
     }
     static public function getClass(){
-           $return = ClassModel::select('classes.*')
+           $return = ClassModel::select('classes.*','classes.name as class_name')
                 ->join('users', 'users.id', 'classes.created_by')
                 ->where('classes.is_delete', 0)
                 ->where('classes.status', 0)

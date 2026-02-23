@@ -55,14 +55,21 @@
                                     {{-- Date of Birth --}}
                                     <div class="form-group col-md-6 mb-3">
                                         <label class="form-label">Date of Birth <span style="color:red">*</span></label>
-                                        <input type="date" value="{{ old('date_of_birth') }}" required name="date_of_birth" class="form-control" />
+                                        <input type="date". id="date" value="{{ old('date_of_birth') }}" required name="date_of_birth" class="form-control" />
+                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        
                                         <div style="color:red">{{ $errors->first('date_of_birth') }}</div>
                                     </div>
 
                                     {{-- Date of Joining --}}
                                     <div class="form-group col-md-6 mb-3">
                                         <label class="form-label">Date of Joining <span style="color:red">*</span></label>
-                                        <input type="date" name="date_of_joining" value="{{ old('date_of_joining') }}" required class="form-control" />
+                                        <input type="date" id="date" name="date_of_joining" value="{{ old('date_of_joining') }}" required class="form-control" />
+                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
                                         <div style="color:red">{{ $errors->first('date_of_joining') }}</div>
                                     </div>
 

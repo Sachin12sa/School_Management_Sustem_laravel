@@ -37,7 +37,9 @@
                         <th>Assigned class</th>
                         <th>Subject Name</th>
                         <th>Subject Type</th>
+                        <th>My Class TimeTable</th>
                         <th>Created Date</th>
+                        <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -48,7 +50,33 @@
                                 <td>{{ $value->class_name }}</td>
                                 <td>{{ $value ->subject_name}} </td>
                                 <td>{{ $value ->subject_type}} </td>
+                                <td>
+                                 @php
+                                    $ClassSubject = $value->getMyTimeTable($value->class_id,$value->subject_id);
+                                 @endphp
+                                 <div style="background-color: lightgreen;" >
+                                    @if($ClassSubject?->start_time)
+                                       {{ date('h:i A', strtotime($ClassSubject->start_time)) }}
+                                       to
+                                       {{ date('h:i A', strtotime($ClassSubject->end_time)) }}
+                                       <br>
+                                       Room Number : {{$ClassSubject->room_number}}
+                                 </div>
+                                    
+                                    @else
+                                      <div style="background-color: red;">
+                                       No Class Today
+                                       </div> 
+                                    @endif
+
+                                 
+                                </td>
                                 <td>{{ $value->created_at->format('d-m-Y h:i A') }}</td>
+                                <td>
+                                 <a href="{{url('teacher/my_class_subject/class_timetable/'.$value->class_id.'/'.$value->subject_id)}}" class="btn btn-primary">
+                                    My Class TimeTable
+                                 </a>
+                                </td>
                             </tr>
                         @endforeach
                     @else

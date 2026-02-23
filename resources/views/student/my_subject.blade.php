@@ -10,7 +10,6 @@
                 <div class="col-sm-6">
                     <h3 class="mb-0">
                         My Subject List
-                        {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
                     </h3>
                 </div>
 
@@ -26,9 +25,6 @@
             <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title">My Subject List</h3>
-                <span class="fw-bold">
-                    Class {{ $getRecord->first()->class_name ?? '' }}
-                </span>
             </div>
 
 
@@ -48,9 +44,8 @@
                         <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $value->subject_name }}</td>
-             
-
-                            <td>{{ $value->subject_type == 0 ? 'Theory' : 'Practical' }}</td>
+                        
+                <td>{{ $value->subject_type == 0 ? 'Theory' : 'Practical' }}</td>
                 
                         </tr>
                         

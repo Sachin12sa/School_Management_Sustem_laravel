@@ -29,6 +29,8 @@
                         <th>S.N</th>
                         <th>Subject Name</th>
                         <th> Subject Type</th>
+                        <th>My Class TimeTable</th>
+                        <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -37,6 +39,33 @@
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $value->subject_name }}</td>
                         <td>{{ $value->subject_type == 0 ? 'Theory' : 'Practical' }}</td>
+                                      <td>
+                                 @php
+                                    $ClassSubject = $value->getMyTimeTable($value->class_id,$value->subject_id);
+                                 @endphp
+                                 <div style="background-color: lightgreen;" >
+                                    @if($ClassSubject?->start_time)
+                                       {{ date('h:i A', strtotime($ClassSubject->start_time)) }}
+                                       to
+                                       {{ date('h:i A', strtotime($ClassSubject->end_time)) }}
+                                       <br>
+                                       Room Number : {{$ClassSubject->room_number}}
+                                 </div>
+                                    
+                                    @else
+                                      <div style="background-color: red;">
+                                       No Class Today
+                                       </div> 
+                                    @endif
+
+                                 
+                                </td>
+                        <td>
+                           <a href="{{ url('parent/my_student/subject/class_timetable/'.$value->class_id.'/'.$value->subject_id.'/'.$getUser->id) }}" class="btn btn-primary">
+                              Class TimeTable
+                           </a>
+
+                        </td>
                      </tr>
                      @endforeach
                   </tbody>

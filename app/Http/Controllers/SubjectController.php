@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\ClassModel;
+use App\Models\ClassSubjectModel;
 use App\Models\Subject;
 use App\Models\User;
-use App\Models\ClassSubjectModel;
 use Auth;
+use Illuminate\Http\Request;
+
 class SubjectController extends Controller
 {
     public function list(){
@@ -61,6 +64,7 @@ class SubjectController extends Controller
     {
            
         $data['getRecord'] = ClassSubjectModel::mySubject(Auth::user()->class_id);
+        $data['getClass'] = ClassModel::getClass();
         $data['header_title']= 'My Subject List';
         return view('student.my_subject',$data);
 

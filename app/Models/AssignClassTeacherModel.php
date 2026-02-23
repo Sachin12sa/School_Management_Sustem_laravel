@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ClassSubjectTimetableModel;
+use App\Models\WeekModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -70,7 +72,9 @@ class AssignClassTeacherModel extends Model
                         'assign_class_teachers.*',
                         'classes.name as class_name',
                         'subjects.name as subject_name',
-                        'subjects.type as subject_type'
+                        'subjects.type as subject_type',
+                        'classes.id as class_id',
+                        'subjects.id as subject_id'
                     )
                     ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
                     ->join('class_subjects', 'class_subjects.class_id', '=', 'classes.id')
@@ -86,4 +90,37 @@ class AssignClassTeacherModel extends Model
                     ->paginate(10);
 
     }
+       static public function getMyClassSubjectGroup($teacher_id)
+    {
+            return self::select(
+                        'assign_class_teachers.*',
+                        'classes.name as class_name',
+                        'classes.id as class_id',
+                    )
+                    ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
+                    ->where('assign_class_teachers.is_delete', 0)
+                    ->where('assign_class_teachers.status', 0)
+                    ->where('assign_class_teachers.teacher_id', $teacher_id)
+                    ->groupBy('assign_class_teachers.class_id')
+                    ->get();
+
+    }
+    static public function getMyTimeTable($class_id, $subject_id)
+        {
+
+            $todayName = date('l');
+            $getWeek = WeekModel::getWeekUsingName($todayName);
+
+            if (!empty($getWeek)) {
+
+                return ClassSubjectTimetableModel::getRecordClassSubject(
+                    $class_id,
+                    $subject_id,
+                    $getWeek->id 
+                );
+            }
+
+            return null;
+        }
+
 }

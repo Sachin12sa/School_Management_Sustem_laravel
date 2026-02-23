@@ -54,6 +54,7 @@
                                         <input type="date" value="{{ old('date_of_birth', $getRecord->date_of_birth) }}" required name="date_of_birth" class="form-control" />
                                         <div style="color:red">{{ $errors->first('date_of_birth') }}</div>
                                     </div>
+                                   
 
                                     {{-- Mobile Number --}}
                                     <div class="form-group col-md-6 mb-3">

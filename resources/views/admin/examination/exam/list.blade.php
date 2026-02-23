@@ -9,13 +9,13 @@
             <div class="row align-items-center mb-3">
                 <div class="col-sm-6">
                     <h3 class="mb-0">
-                        Admin List
-                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
+                        Exam List
+                        <small class="text-muted">Total Exams: {{ $totalExam }}</small>
                     </h3>
                 </div>
                 <div class="col-sm-6 text-end">
-                    <a href="{{ url('admin/admin/add') }}" class="btn btn-primary">
-                        + Add New Admin
+                    <a href="{{ url('admin/examination/exam/add') }}" class="btn btn-primary">
+                        + Add New Exam
                     </a>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Search Admin</h3>
+                            <h3 class="card-title">Search Exam</h3>
                         </div>
 
                         <form method="get" action="">
@@ -33,7 +33,7 @@
                                 <div class="row align-items-end">
 
                                     <div class="col-md-3">
-                                        <label class="form-label">Name</label>
+                                        <label class="form-label">Exam Name</label>
                                         <input
                                             type="text"
                                             name="name"
@@ -44,16 +44,16 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label class="form-label">Email</label>
+                                        <label class="form-label">Note</label>
                                         <input
                                             type="text"
-                                            name="email"
-                                            value="{{ request('email') }}"
+                                            name="note"
+                                            value="{{ request('note') }}"
                                             class="form-control"
-                                            placeholder="Enter email"
+                                            placeholder="Enter note"
                                         />
                                     </div>
-                                      <div class="col-md-3">
+                                     <div class="col-md-3">
                                    <div class="input-group">
                                     <input type="date" id="exam-date" class="form-control" 
                                             value="{{ request('date') ? date('Y-m-d', strtotime(request('date'))) : '' }}">
@@ -61,6 +61,8 @@
                                         <i class="fas fa-calendar-alt"></i>
                                     </span>
                                     </div>
+
+
                                     </div>
                                     
                                     
@@ -69,7 +71,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             Search
                                         </button>
-                                        <a href="{{ url('admin/admin/list') }}" class="btn btn-success ms-1">
+                                        <a href="{{ url('admin/examination/exam/list') }}" class="btn btn-success ms-1">
                                             Reset
                                         </a>
                                     </div>
@@ -91,7 +93,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Admin List</h3>
+                    <h3 class="card-title">Exam List</h3>
                 </div>
 
                 <div class="card-body p-0">
@@ -99,8 +101,9 @@
                         <thead>
                             <tr>
                                 <th>S.N</th>
-                                <th>Name</th>
-                                <th>Email</th>
+                                <th>Exam Name</th>
+                                <th>Note</th>
+                                <th>Created By</th>
                                 <th>Created Date</th>
                                 <th width="180">Action</th>
                             </tr>
@@ -110,13 +113,15 @@
                                 <tr>
                                     <td>{{ $getRecord->firstItem() + $key }}</td>
                                     <td>{{ $value->name }}</td>
-                                    <td>{{ $value->email }}</td>
+                                    <td>{{ $value->note }}</td>
+                                    <td>{{ $value->created_name }} {{$value->created_last_name}}</td>
+
                                     <td>{{ date('d-m-Y H:i A',strtotime($value->created_at)) }}</td>
                                     <td>
-                                        <a href="{{ url('admin/admin/edit/' . $value->id) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ url('admin/examination/exam/edit/'. $value->id) }}" class="btn btn-sm btn-primary">
                                             Edit
                                         </a>
-                                        <a href="{{ url('admin/admin/delete/' . $value->id) }}"
+                                        <a href="{{ url('admin/examination/exam/delete/'. $value->id) }}"
                                            class="btn btn-icon btn-sm btn-outline-danger"
                                            onclick="return confirm('Are you sure you want to delete this student?')"
                                            title="Delete">

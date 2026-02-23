@@ -46,13 +46,13 @@
                  
                                      <div class="col-md-3">
                                         <label class="form-label">Date</label>
-                                        <input
-                                            type="date"
-                                            name="date"
-                                            value="{{ request('date') }}"
-                                            class="form-control"
-                                            
-                                        />
+                                        <div class="input-group">
+                                        <input type="date" id="date" class="form-control" 
+                                                value="{{ request('date') ? date('Y-m-d', strtotime(request('date'))) : '' }}">
+                                        <span class="input-group-text" onclick="document.getElementById('date').showPicker()">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        </div>
                                     </div>
                                     
                                     

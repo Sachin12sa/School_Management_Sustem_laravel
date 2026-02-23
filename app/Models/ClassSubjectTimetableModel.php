@@ -22,4 +22,11 @@ class ClassSubjectTimetableModel extends Model
                     ->where('week_id', '=', $week_id)
                     ->first();
     }
+    public static function getAllRecordClassSubject($class_id, $subject_id)
+    {      
+        return self::where('class_id', $class_id)
+                    ->where('subject_id', $subject_id)
+                    ->get();
+    }
+
 }
