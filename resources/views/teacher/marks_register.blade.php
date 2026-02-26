@@ -127,6 +127,7 @@
                                                     }
 
                                                     $totalStudentMark += $totalMark;
+                                                    $getGrade = App\Models\MarksGradeModel::getGrade($totalMark);
                                                 @endphp
                                                     <td>
                                                      <input type="hidden" name="mark[{{ $idKey }}][student_id]" value="{{ $student->id }}">
@@ -186,6 +187,9 @@
                                                             <div class="mb-2">
                                                             <b>Total Mark = </b> {{$totalMark}} <br>
                                                             <b>Passing Mark = </b> {{$subject->passing_mark}} <br>
+                                                            @if(!empty($getGrade))
+                                                            <strong>Grade: {{ $getGrade }}</strong><br>
+                                                        @endif
                                                             @if($totalMark >=  $subject->passing_mark )
                                                             <b>Result: </b>
                                                                 <span style="color:green; font-weight:bold;"> Pass</span>
@@ -205,10 +209,15 @@
                                                         <strong>Total Student Marks: {{ $totalStudentMark }}</strong><br>
                                                         <strong>Total Full Marks: {{ $totalFullMark }}</strong><br>
                                                         <strong>Total Passing Marks: {{ $totalPassingMark }}</strong><br>
+                                                        
                                                         @php
                                                            $percentage = $totalStudentMark * 100 /  $totalFullMark ;
+                                                            $getGrade = App\Models\MarksGradeModel::getGrade($percentage);
                                                     
                                                         @endphp
+                                                        @if(!empty($getGrade))
+                                                            <strong>Grade: {{ $getGrade }}</strong><br>
+                                                        @endif
                                                         <strong>Percentage: {{round($percentage) }} %</strong><br>
 
                                                         @if($totalStudentMark >= $totalFullMark * 0.4)

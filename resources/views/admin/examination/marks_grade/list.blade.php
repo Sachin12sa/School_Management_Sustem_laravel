@@ -60,19 +60,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @forelse($getRecord as $key => $value)
+                            @forelse($getRecord as $key => $value)
                                 <tr>
-                                    <td>{{ $getRecord->firstItem() + $key }}</td>
+                                    <td>{{ $value->id }}</td>
                                     <td>{{ $value->name }}</td>
-                                    <td>{{ $value->note }}</td>
+                                    <td>{{ $value->percent_from }}</td>
+                                    <td>{{ $value->percent_to }}</td>  
+                                    
                                     <td>{{ $value->created_name }} {{$value->created_last_name}}</td>
 
                                     <td>{{ date('d-m-Y H:i A',strtotime($value->created_at)) }}</td>
                                     <td>
-                                        <a href="{{ url('admin/examination/exam/edit/'. $value->id) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ url('admin/examination/marks_grade/edit/'. $value->id) }}" class="btn btn-sm btn-primary">
                                             Edit
                                         </a>
-                                        <a href="{{ url('admin/examination/exam/delete/'. $value->id) }}"
+                                        <a href="{{ url('admin/examination/marks_grade/delete/'. $value->id) }}"
                                            class="btn btn-icon btn-sm btn-outline-danger"
                                            onclick="return confirm('Are you sure you want to delete this student?')"
                                            title="Delete">
@@ -86,7 +88,7 @@
                                         No admins found.
                                     </td>
                                 </tr>
-                            @endforelse --}}
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

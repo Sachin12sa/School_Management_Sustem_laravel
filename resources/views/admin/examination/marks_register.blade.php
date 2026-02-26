@@ -128,6 +128,7 @@
                                                     }
 
                                                     $totalStudentMark += $totalMark;
+                                                    $getGrade = App\Models\MarksGradeModel::getGrade($totalMark);
                                                 @endphp
 
                                                     <td>
@@ -189,7 +190,11 @@
                                                             <div class="mb-2">
                                                             <b>Total Mark = </b> {{$totalMark}} <br>
                                                             <b>Passing Mark = </b> {{$subject->passing_mark}} <br>
+                                                             @if(!empty($getGrade))
+                                                            <strong>Grade: {{ $getGrade }}</strong><br>
+                                                        @endif
                                                             @if($totalMark >=  $subject->passing_mark )
+
                                                             <b>Result: </b>
                                                                 <span style="color:green; font-weight:bold;"> Pass</span>
                                                             @else
@@ -210,10 +215,14 @@
                                                         <strong>Total Passing Marks: {{ $totalPassingMark }}</strong><br>
                                                         @php
                                                            $percentage = $totalStudentMark * 100 /  $totalFullMark ;
+                                                           $getGrade = App\Models\MarksGradeModel::getGrade($percentage);
+                                                       
                                                     
                                                         @endphp
                                                         <strong>Percentage: {{round($percentage) }} %</strong><br>
-
+                                                        @if(!empty($getGrade))
+                                                            <strong>Grade: {{ $getGrade }}</strong><br>
+                                                        @endif
                                                         @if($totalStudentMark >= $totalFullMark * 0.4)
                                                             <b>Result: </b>
                                                             <span class="text-success">Pass</span>

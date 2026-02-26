@@ -28,6 +28,7 @@
                                 <th class="text-center">Total Score</th>
                                 <th class="text-center">Full Mark</th>
                                 <th class="text-center">Pass Mark</th>
+                                <th class="text-center">Grade</th>
                                 <th class="text-center">Status</th>
                             </tr>
                         </thead>
@@ -42,6 +43,10 @@
                                     <td class="text-center fw-bold">{{ $exam['total_score'] }}</td>
                                     <td class="text-center">{{ $exam['full_mark'] }}</td>
                                     <td class="text-center text-muted">{{ $exam['passing_mark'] }}</td>
+                                    @php
+                                        $getGrade = App\Models\MarksGradeModel::getGrade($exam['total_score']);
+                                    @endphp
+                                    <td class="text-center">{{ $getGrade }}</td>
                                     <td class="text-center">
                                         @if($exam['total_score'] >= $exam['passing_mark'])
                                             <span class="badge bg-success">Pass</span>
@@ -64,6 +69,14 @@
                         <div class="col-md-3">
                             <small class="text-muted d-block">Percentage</small>
                             <span class="h5">{{ number_format($value['percentage'], 2) }}%</span>
+                        </div>
+                        @php
+                            $percentage = number_format($value['percentage'], 2);
+                             $getGrade = App\Models\MarksGradeModel::getGrade($percentage);
+                        @endphp
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Grade</small>
+                            <span class="h5">{{$getGrade}}</span>
                         </div>
                         <div class="col-md-3">
                             <small class="text-muted d-block">Final Status</small>
