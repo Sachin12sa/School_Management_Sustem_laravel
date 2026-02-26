@@ -271,7 +271,18 @@ class User extends Authenticatable
                 } else {
                     return ""; // or return a default avatar
                 }
-            }
+     }
+
+    //  for admin to get student according to class for marks register 
+        static public function getStudentClass($class_id)
+        {
+            return self::select('users.id','users.name','users.last_name')
+                ->where('users.user_type', 3)
+                ->where('users.class_id', $class_id)
+                ->where('users.is_delete', 0)
+                ->orderBy('id','desc')
+                ->get();
+        }
 
 
 }

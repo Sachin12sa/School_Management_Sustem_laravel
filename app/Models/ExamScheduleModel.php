@@ -10,6 +10,7 @@ class ExamScheduleModel extends Model
     protected $fillable = [
         'exam_id',
         'class_id',
+        'exam_schedule_id',
         'subject_id',
         'exam_date',
         'start_time',
@@ -19,6 +20,13 @@ class ExamScheduleModel extends Model
         'passing_mark',
         'created_by',
     ];
+      static public function getSingle($id){
+        return self::find($id);
+    }
+      static public function getSingleExamScheduleId($exam_schedule_id){
+        return self::find($exam_schedule_id);
+    }
+    
     
     static public function getRecordingSingle($exam_id,$class_id,$subject_id)
 
@@ -40,6 +48,20 @@ class ExamScheduleModel extends Model
         ->orderBy('exam_schedules.id','desc')
         ->get();
     }
+      // teacher for marks register
+    static public function getExamTeacher($teacher_id)
+
+    {
+        return self::select('exam_schedules.*','exams.name as exam_name')
+        ->join('exams','exams.id','=','exam_schedules.exam_id')
+        ->join('assign_class_teachers', 'assign_class_teachers.class_id', '=', 'exam_schedules.class_id')
+        ->where('assign_class_teachers.teacher_id','=',$teacher_id)
+        ->groupBy('exam_schedules.exam_id')
+        ->orderBy('exam_schedules.id','desc')
+        ->get();
+    }
+  
+
     // student 
     static public function getExamTimetable($exam_id,$class_id)
     {
@@ -62,4 +84,14 @@ class ExamScheduleModel extends Model
 
         ->get();
     }
+    // marks to get subject getSubject
+    static public function getSubject($exam_id,$class_id)
+    {
+        return self::select('exam_schedules.*','subjects.name as subject_name','subjects.type as subject_type')
+        ->join('subjects','subjects.id','=','exam_schedules.subject_id')
+        ->where('exam_schedules.exam_id','=',$exam_id)
+        ->where('exam_schedules.class_id','=',$class_id)
+        ->get();
+    }
+
 }

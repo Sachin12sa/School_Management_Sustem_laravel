@@ -110,6 +110,16 @@ Route::group(['middleware'=>'admin'],function(){
         Route::get('admin/examination/exam_schedule',[ExaminationController::class,'exam_schedule']);
         Route::post('admin/examination/exam_schedule_insert',[ExaminationController::class,'exam_schedule_insert']);
         Route::get('admin/examination/exam_schedule/delete/{id}',[ExaminationController::class,'examDateDelete']);
+        // marks_register
+        Route::get('admin/examination/marks_register',[ExaminationController::class,'marksRegister']);
+        Route::post('admin/examination/submit_marks_register',[ExaminationController::class,'submitMarksRegister']);
+        // Mark Grade
+        Route::get('admin/examination/marks_grade/list',[ExaminationController::class,'marks_grade_list']);
+        Route::get('admin/examination/marks_grade/add',[ExaminationController::class,'marks_grade_add']);
+        Route::post('admin/examination/marks_grade/add',[ExaminationController::class,'marks_grade_insert']);
+        Route::get('admin/examination/marks_grade/edit/{id}',[ExaminationController::class,'marks_grade_edit']);
+        Route::post('admin/examination/marks_grade/edit/{id}',[ExaminationController::class,'marks_grade_update']);
+        Route::get('admin/examination/marks_grade/delete/{id}',[ExaminationController::class,'marks_grade_delete']);
                 
         // My Account
         Route::get('admin/account',[UserController::class,'MyAccount']);
@@ -133,6 +143,9 @@ Route::group(['middleware'=>'teacher'],function(){
         Route::get('teacher/my_exam_timetable',[ExaminationController::class,'myExamTimetableTeacher']);
                 // My Calender
         Route::get('teacher/my_calender',[CalenderController::class,'MyTeacherCalendar']);
+        // marks_register
+        Route::get('teacher/marks_register',[ExaminationController::class,'marksRegisterTeacher']);
+        Route::post('teacher/submit_marks_register',[ExaminationController::class,'submitMarksRegisterTeacher']);
         //change_password
         Route::get('teacher/profile/change_password',[UserController::class,'change_password']);
         Route::post('teacher/profile/change_password',[UserController::class,'update_change_password']);   
@@ -156,6 +169,8 @@ Route::group(['middleware'=>'student'],function(){
         Route::post('student/profile/change_password',[UserController::class,'update_change_password']);  
         // My Calender
         Route::get('student/my_calender',[CalenderController::class,'MyCalender']);
+        // Exam Result my_exam_result
+        Route::get('student/my_exam_result',[ExaminationController::class,'MyExamResult']);
         // Route::post('student/my_calender',[CalenderController::class,'update']);
         // My Account
         Route::get('student/account',[UserController::class,'MyAccount']);
@@ -175,6 +190,8 @@ Route::group(['middleware'=>'parent'],function(){
         Route::get('parent/my_student/exam_timetable/{student_id}',[ExaminationController::class,'ParentMyExamTimetable']);
         // stuedent calendar
         Route::get('parent/my_student/calendar/{student_id}',[CalenderController::class,'MyParentCalendar']);
+        // Exam Result
+        Route::get('parent/my_student/my_exam_result/{student_id}',[ExaminationController::class,'ParentExamResult']);
         //change_password
         Route::get('parent/profile/change_password',[UserController::class,'change_password']);
         Route::post('parent/profile/change_password',[UserController::class,'update_change_password']);

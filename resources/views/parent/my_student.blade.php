@@ -93,10 +93,15 @@
                                             class="btn btn-sm btn-primary">
                                                 View Timetable
                                             </a>
+                                            <a href="{{ url('parent/my_student/my_exam_result/'.$value->id) }}"
+                                            class="btn btn-sm btn-primary">
+                                                 Result
+                                            </a>
                                             <a href="{{ url('parent/my_student/calendar/'.$value->id) }}"
                                             class="btn btn-sm btn-warning">
                                                  Calendar
                                             </a>
+                                            
                                     </td>
                                 </tr>
                             @empty

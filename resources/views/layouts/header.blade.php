@@ -216,8 +216,20 @@
                         </a>
                     </li>
 {{-- Acedemic --}}
-                            <li class="nav-item {{ request()->is('admin/class*', 'admin/subject*', 'admin/assign_subject*', 'admin/assign_class_teacher*','admin/class_timetable*') ? 'menu-open' : '' }}">
-                              <a href="#" class="nav-link {{ request()->is('admin/class*', 'admin/subject*', 'admin/assign_subject*', 'admin/assign_class_teacher*','admin/class_timetable*') ? 'active' : '' }}">
+                           <li class="nav-item {{ request()->is([
+                                  'admin/class*', 
+                                  'admin/subject*', 
+                                  'admin/assign_subject*', 
+                                  'admin/assign_class_teacher*',
+                                  'admin/class_timetable*'
+                              ]) ? 'menu-open' : '' }}">
+                              <a href="#" class="nav-link {{ request()->is([
+                                      'admin/class*', 
+                                      'admin/subject*', 
+                                      'admin/assign_subject*', 
+                                      'admin/assign_class_teacher*',
+                                      'admin/class_timetable*'
+                                  ]) ? 'active' : '' }}">
                                   <i class="nav-icon bi bi-mortarboard-fill"></i>
                                   <p>
                                       Academic
@@ -231,55 +243,75 @@
                                           <p>Class</p>
                                       </a>
                                   </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/subject/list') }}" class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Subject</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/assign_subject/list') }}" class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Assign Subject</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/assign_class_teacher/list') }}" class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Assign Class Teacher</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/class_timetable/list') }}" class="nav-link {{ request()->is('admin/class_timetable*') ? 'active' : '' }}">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Class Timetable</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                                  <li class="nav-item">
+                                      <a href="{{ url('admin/subject/list') }}" class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
+                                          <i class="nav-icon bi bi-circle"></i>
+                                          <p>Subject</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ url('admin/assign_subject/list') }}" class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
+                                          <i class="nav-icon bi bi-circle"></i>
+                                          <p>Assign Subject</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ url('admin/assign_class_teacher/list') }}" class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
+                                          <i class="nav-icon bi bi-circle"></i>
+                                          <p>Assign Class Teacher</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ url('admin/class_timetable/list') }}" class="nav-link {{ request()->is('admin/class_timetable*') ? 'active' : '' }}">
+                                          <i class="nav-icon bi bi-circle"></i>
+                                          <p>Class Timetable</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
                         {{-- exam  --}}
-                        <li class="nav-item {{ request()->is('admin/examination/exam/list*') ? 'menu-open' : '' }}">
-                              <a href="#" class="nav-link {{ request()->is('admin/examination/exam/list*' ) ? 'active' : '' }}">
-                                  <i class="nav-icon bi bi-mortarboard-fill"></i>
-                                  <p>
-                                      Examinations
-                                      <i class="nav-arrow bi bi-chevron-right"></i>
-                                  </p>
-                              </a>
-                              <ul class="nav nav-treeview">
-                                  <li class="nav-item">
-                                      <a href="{{ url('admin/examination/exam/list') }}" class="nav-link {{ request()->is('admin/examination/exam/list*') ? 'active' : '' }}">
-                                          <i class="nav-icon bi bi-circle"></i>
-                                          <p>Exam List</p>
-                                      </a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a href="{{ url('admin/examination/exam_schedule') }}" class="nav-link {{ request()->is('admin/examination/exam_schedule*') ? 'active' : '' }}">
-                                          <i class="nav-icon bi bi-circle"></i>
-                                          <p>Exam Schedule</p>
-                                      </a>
-                                  </li>
-                                
+                       @php
+                        $examActive = request()->is([
+                            'admin/examination/exam/list*',
+                            'admin/examination/exam_schedule*',
+                            'admin/examination/marks_register*',
+                            'admin/examination/marks_grade/list*'
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $examActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $examActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Examinations
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/examination/exam/list') }}" class="nav-link {{ request()->is('admin/examination/exam/list*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Exam List</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/examination/exam_schedule') }}" class="nav-link {{ request()->is('admin/examination/exam_schedule*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Exam Schedule</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/examination/marks_register') }}" class="nav-link {{ request()->is('admin/examination/marks_register*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Marks Register</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/examination/marks_grade/list') }}" class="nav-link {{ request()->is('admin/examination/marks_grade/list*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Marks Grade</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
@@ -338,6 +370,13 @@
                             <p>My Calender</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('teacher/marks_register') }}"
+                          class="nav-link {{ request()->is('teacher/marks_register*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Marks Register </p>
+                        </a>
+                    </li>
                                  
                     <li class="nav-item">
                         <a href="{{ url('teacher/account') }}"
@@ -392,6 +431,13 @@
                           class="nav-link {{ request()->is('student/my_calender*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>My Calender</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/my_exam_result') }}"
+                          class="nav-link {{ request()->is('student/my_exam_result*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>Exams Result </p>
                         </a>
                     </li>
                     <li class="nav-item">

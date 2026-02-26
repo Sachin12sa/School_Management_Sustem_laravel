@@ -103,7 +103,7 @@
                         <th>Subject Name</th>
                         <th>Status</th>
                         <th> Subject Type</th>
-                        <th></th>
+                   
                         <th>Created By</th>
                         <th>Created Date</th>
                         <th width="180">Action</th>

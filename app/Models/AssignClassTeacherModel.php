@@ -90,6 +90,7 @@ class AssignClassTeacherModel extends Model
                     ->paginate(10);
 
     }
+    // get teacher subject 
        static public function getMyClassSubjectGroup($teacher_id)
     {
             return self::select(
@@ -101,7 +102,7 @@ class AssignClassTeacherModel extends Model
                     ->where('assign_class_teachers.is_delete', 0)
                     ->where('assign_class_teachers.status', 0)
                     ->where('assign_class_teachers.teacher_id', $teacher_id)
-                    ->groupBy('assign_class_teachers.class_id')
+                    ->distinct('assign_class_teachers.class_id')
                     ->get();
 
     }
