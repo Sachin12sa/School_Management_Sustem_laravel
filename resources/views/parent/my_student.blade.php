@@ -98,8 +98,12 @@
                                                  Result
                                             </a>
                                             <a href="{{ url('parent/my_student/calendar/'.$value->id) }}"
-                                            class="btn btn-sm btn-warning">
+                                            class="btn btn-sm btn-primary">
                                                  Calendar
+                                            </a>
+                                            <a href="{{ url('parent/my_student/my_attendance/'.$value->id) }}"
+                                            class="btn btn-sm btn-warning">
+                                                 Attendance
                                             </a>
                                             
                                     </td>

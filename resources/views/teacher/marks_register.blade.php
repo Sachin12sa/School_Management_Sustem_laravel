@@ -38,7 +38,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label">Assign Subject Name</label>
+                                        <label class="form-label">Your's classes</label>
                                         <select name="class_id" required class="form-control">
                                             <option value="">Select Class</option>
                                             @foreach($getClass as $class)
@@ -230,7 +230,9 @@
                                                     </div>
                                                 </td>
                                             </tr>
+                                           
                                         @endforeach
+                                        
                                     @endif
                                 </tbody>
                             </table>

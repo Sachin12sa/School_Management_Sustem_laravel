@@ -314,6 +314,39 @@
                                 </li>
                             </ul>
                         </li>
+                        {{-- Attendance --}}
+                         @php
+                        $attendanceActive = request()->is([
+                            'admin/attendance/student_attendance*',
+                            'admin/attendance/attendance_report*'
+                           
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $attendanceActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $attendanceActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Attendance
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/attendance/student_attendance') }}" class="nav-link {{ request()->is('admin/attendance/student_attendance*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Student Attendance</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/attendance/attendance_report') }}" class="nav-link {{ request()->is('admin/ttendance/attendance_report*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Attendance Report</p>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
 
                        <li class="nav-item">
                         <a href="{{ url('admin/account') }}"
@@ -377,6 +410,39 @@
                             <p>Marks Register </p>
                         </a>
                     </li>
+                    {{-- Attendance --}}
+                         @php
+                        $attendanceActive = request()->is([
+                            'teacher/attendance/student_attendance*',
+                            'teacher/attendance/attendance_report*'
+                           
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $attendanceActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $attendanceActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Attendance
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('teacher/attendance/student_attendance') }}" class="nav-link {{ request()->is('teacher/attendance/student_attendance*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Student Attendance</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('teacher/attendance/attendance_report') }}" class="nav-link {{ request()->is('teacher/attendance/attendance_report*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Attendance Report</p>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
                                  
                     <li class="nav-item">
                         <a href="{{ url('teacher/account') }}"
@@ -437,7 +503,14 @@
                         <a href="{{ url('student/my_exam_result') }}"
                           class="nav-link {{ request()->is('student/my_exam_result*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
-                            <p>Exams Result </p>
+                            <p>My Exams Result </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/my_attendance') }}"
+                          class="nav-link {{ request()->is('student/my_attendance*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Attendance </p>
                         </a>
                     </li>
                     <li class="nav-item">
