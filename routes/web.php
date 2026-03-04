@@ -8,6 +8,7 @@ use App\Http\Controllers\CalenderController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\ClassTimeTableController;
+use App\Http\Controllers\CommunicateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExaminationController;
 use App\Http\Controllers\ParentController;
@@ -128,11 +129,19 @@ Route::group(['middleware'=>'admin'],function(){
         Route::post('admin/attendance/student_attendance_save',[AttendanceController::class, 'studentAttendanceSave']);       
 // Attendance Report 
         Route::get('admin/attendance/attendance_report',[AttendanceController::class,'attendanceReport']);
+// communicate notice_board  
+        Route::get('admin/communicate/notice_board',[CommunicateController::class,'noticeBoard']);
+        Route::get('admin/communicate/notice_board/add',[CommunicateController::class,'addNoticeBoard']);
+        Route::post('admin/communicate/notice_board/add',[CommunicateController::class,'insertNoticeBoard']);
+        Route::get('admin/communicate/notice_board/edit/{id}',[CommunicateController::class,'editNoticeBoard']);
+        Route::post('admin/communicate/notice_board/edit/{id}',[CommunicateController::class,'updateNoticeBoard']);
+        Route::get('admin/communicate/notice_board/delete/{id}',[CommunicateController::class,'deleteNoticeBoard']);
+
                 
 // My Account
         Route::get('admin/account',[UserController::class,'MyAccount']);
         Route::post('admin/account',[UserController::class,'update']);
-        //change_password
+//change_password
         Route::get('admin/profile/change_password',[UserController::class,'change_password']);
         Route::post('admin/profile/change_password',[UserController::class,'update_change_password']);  
        
@@ -158,7 +167,9 @@ Route::group(['middleware'=>'teacher'],function(){
         Route::get('teacher/attendance/student_attendance',[AttendanceController::class,'studentAttendanceTeacher']);
         Route::post('teacher/attendance/student_attendance_save',[AttendanceController::class, 'studentAttendanceSaveTeacher']);  
 // Attendance Report 
-        Route::get('teacher/attendance/attendance_report',[AttendanceController::class,'attendanceReportTeacher']);        
+        Route::get('teacher/attendance/attendance_report',[AttendanceController::class,'attendanceReportTeacher']);    
+// My Notice Board
+        Route::get('teacher/my_notice_board',[CommunicateController::class,'myNoticeBoardTeacher']);    
  //change_password
         Route::get('teacher/profile/change_password',[UserController::class,'change_password']);
         Route::post('teacher/profile/change_password',[UserController::class,'update_change_password']);   
@@ -184,10 +195,11 @@ Route::group(['middleware'=>'student'],function(){
         Route::get('student/my_calender',[CalenderController::class,'MyCalender']);
 // Exam Result my_exam_result
         Route::get('student/my_exam_result',[ExaminationController::class,'MyExamResult']);
-        // my_attendance
+// my_attendance
         Route::get('student/my_attendance',[AttendanceController::class,'studentMyAttendance']);
         Route::get('student/my_attendance_report',[AttendanceController::class,'attendanceReportStudent']); 
-
+// My Notice Board
+        Route::get('student/my_notice_board',[CommunicateController::class,'myNoticeBoardStudent']);
 
 // My Account
         Route::get('student/account',[UserController::class,'MyAccount']);
@@ -211,6 +223,8 @@ Route::group(['middleware'=>'parent'],function(){
         Route::get('parent/my_student/my_exam_result/{student_id}',[ExaminationController::class,'ParentExamResult']);
  // my_attendance
         Route::get('parent/my_student/my_attendance/{student_id}',[AttendanceController::class,'parentMyAttendance']);
+  // My Notice Board
+        Route::get('parent/my_notice_board',[CommunicateController::class,'myNoticeBoardParent']);        
 //change_password
         Route::get('parent/profile/change_password',[UserController::class,'change_password']);
         Route::post('parent/profile/change_password',[UserController::class,'update_change_password']);

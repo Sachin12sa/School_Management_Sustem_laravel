@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_attendances', function (Blueprint $table) {
+        Schema::create('notice_board', function (Blueprint $table) {
             $table->id();
-            $table->integer('class_id')->nullable();
-             $table->date('attendance_date')->nullable();
-            $table->integer('student_id')->nullable();
-            $table->integer('attendance_type')->nullable()->comment('1:present, 2:absent, 3:late, 4:half day');
+            $table->string('title')->nullable();
+            $table->date('notice_date')->nullable();
+            $table->date('publish_date')->nullable();
+            $table->string('message',2000)->nullable();
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student_attendances');
+        Schema::dropIfExists('notice_board');
     }
 };

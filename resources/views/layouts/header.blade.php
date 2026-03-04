@@ -339,7 +339,41 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/attendance/attendance_report') }}" class="nav-link {{ request()->is('admin/ttendance/attendance_report*') ? 'active' : '' }}">
+                                    <a href="{{ url('admin/attendance/attendance_report') }}" class="nav-link {{ request()->is('admin/attendance/attendance_report*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Attendance Report</p>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+                        {{-- communicate --}}
+                         @php
+                        $attendanceActive = request()->is([
+                            'admin/communicate/student_attendance*',
+                            'admin/communicate/attendance_report*'
+                           
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $attendanceActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $attendanceActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Communicate
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/communicate/notice_board') }}" class="nav-link {{ request()->is('admin/communicate/notice_board*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Notice Board</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/communicate/attendance_report') }}" class="nav-link {{ request()->is('admin/communicate/attendance_report*') ? 'active' : '' }}">
                                         <i class="nav-icon bi bi-circle"></i>
                                         <p>Attendance Report</p>
                                     </a>
@@ -443,6 +477,14 @@
                                 
                             </ul>
                         </li>
+                        <li class="nav-item">
+                        <a href="{{ url('teacher/my_notice_board') }}"
+                          class="nav-link {{ request()->is('teacher/my_notice_board*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Notice Board </p>
+                        </a>
+                    </li>
+                        
                                  
                     <li class="nav-item">
                         <a href="{{ url('teacher/account') }}"
@@ -514,6 +556,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ url('student/my_notice_board') }}"
+                          class="nav-link {{ request()->is('student/my_notice_board*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Notice Board </p>
+                        </a>
+                    </li>
+                  
+                    <li class="nav-item">
                         <a href="{{ url('student/account') }}"
                           class="nav-link {{ request()->is('student/account*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
@@ -543,6 +593,13 @@
                           class="nav-link {{ request()->is('parent/my_student*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>My Student</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('parent/my_notice_board') }}"
+                          class="nav-link {{ request()->is('parent/my_notice_board*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Notice Board </p>
                         </a>
                     </li>
                     <li class="nav-item">

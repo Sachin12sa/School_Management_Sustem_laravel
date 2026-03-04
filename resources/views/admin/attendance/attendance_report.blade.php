@@ -49,7 +49,7 @@
                                             >
                                         </select>
                                     </div>
-                                   <div class="mb-3 col-md-2 position-relative">
+                                   <div class="mb-3 col-md-6 position-relative">
                                         <label for="attendance_date" class="form-label">Start Attendance Date</label>
                                         <div class="input-group">
                                             <input 
