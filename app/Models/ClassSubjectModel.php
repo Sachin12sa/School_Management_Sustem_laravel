@@ -66,6 +66,7 @@ class ClassSubjectModel extends Model
             ->orderBy('class_subjects.id', 'desc')
             ->get();
     }
+    
      static public function getSingle($id){
         return ClassSubjectModel::find($id);
     }

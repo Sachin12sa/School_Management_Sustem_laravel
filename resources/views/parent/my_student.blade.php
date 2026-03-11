@@ -105,6 +105,14 @@
                                             class="btn btn-sm btn-warning">
                                                  Attendance
                                             </a>
+                                            <a href="{{ url('parent/my_student/homework/'.$value->id) }}"
+                                            class="btn btn-sm btn-warning">
+                                                 Home Work
+                                            </a>
+                                            <a href="{{ url('parent/my_student/submitted_homework/'.$value->id) }}"
+                                            class="btn btn-sm btn-warning">
+                                                 Home Work Submitted
+                                            </a>
                                             
                                     </td>
                                 </tr>

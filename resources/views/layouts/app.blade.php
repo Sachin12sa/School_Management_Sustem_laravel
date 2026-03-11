@@ -71,7 +71,8 @@
       integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
       crossorigin="anonymous"
     />
-
+    {{-- selext2 --}}
+   
     <!-- jsvectormap -->
     <link
       rel="stylesheet"

@@ -290,5 +290,29 @@ class User extends Authenticatable
             return  StudentAttendanceModel::CheckAlreadyAttendance($student_id,$class_id,$attendance_date);
         }
 
+        // Search 
+    static public function SearchUser($search)
+        {
+            $return = self::select('users.*');
+
+            $return = $return->where(function($query) use ($search) {
+                $query->where('users.name', 'like', '%' . $search . '%')
+                    ->orWhere('users.last_name', 'like', '%' . $search . '%');
+            })
+            ->limit(10)
+            ->get();
+
+            return $return;
+        }
+        // to get user for emails to send 
+    static public function getUser($user_type)
+        {
+            return self::select('users.*')
+                        ->where('users.user_type','=',$user_type)
+                        ->where('users.is_delete', 0)
+                        ->get();
+
+
+        }
 
 }

@@ -373,9 +373,42 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/communicate/attendance_report') }}" class="nav-link {{ request()->is('admin/communicate/attendance_report*') ? 'active' : '' }}">
+                                    <a href="{{ url('admin/communicate/send_email') }}" class="nav-link {{ request()->is('admin/communicate/send_email*') ? 'active' : '' }}">
                                         <i class="nav-icon bi bi-circle"></i>
-                                        <p>Attendance Report</p>
+                                        <p>Send Email</p>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                        {{-- Home Work --}}
+                         @php
+                        $attendanceActive = request()->is([
+                            'admin/homework/homework*',
+                            'admin/homework/homework_report*'
+                           
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $attendanceActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $attendanceActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Home Work
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/homework/homework') }}" class="nav-link {{ request()->is('admin/homework/homework*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Homework</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/homework/homework_report') }}" class="nav-link {{ request()->is('admin/homework/homework_report*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Homework Report</p>
                                     </a>
                                 </li>
                                 
@@ -484,6 +517,39 @@
                             <p>My Notice Board </p>
                         </a>
                     </li>
+                    {{-- Home Work --}}
+                         @php
+                        $attendanceActive = request()->is([
+                            'teacher/homework/homework*',
+                            'teacher/homework/homework_report*'
+                           
+                        ]);
+                        @endphp
+
+                        <li class="nav-item {{ $attendanceActive ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $attendanceActive ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-mortarboard-fill"></i>
+                                <p>
+                                    Home Work
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('teacher/homework/homework') }}" class="nav-link {{ request()->is('teacher/homework/homework*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Homework</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('teacher/homework/homework_report') }}" class="nav-link {{ request()->is('teacher/homework/homework_report*') ? 'active' : '' }}">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>Homework Report</p>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
                         
                                  
                     <li class="nav-item">
@@ -560,6 +626,20 @@
                           class="nav-link {{ request()->is('student/my_notice_board*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-book"></i>
                             <p>My Notice Board </p>
+                        </a>
+                    </li>
+                      <li class="nav-item">
+                        <a href="{{ url('student/my_homework') }}"
+                          class="nav-link {{ request()->is('student/my_homework*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Home Work </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('student/my_submitted_homework') }}"
+                          class="nav-link {{ request()->is('student/my_submitted_homework*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-book"></i>
+                            <p>My Submitted HomeWork </p>
                         </a>
                     </li>
                   
