@@ -3,177 +3,147 @@
 @section('content')
 <main class="app-main">
 
-    <!-- Header -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row align-items-center mb-3">
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">
-                        My Student List
-                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
-                    </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">My Students</h4>
+                            <span class="text-muted small">{{ $getRecord->total() }} {{ Str::plural('student', $getRecord->total()) }} total</span>
+                        </div>
+                    </div>
                 </div>
-
             </div>
 
-            <!-- Search Card -->
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">Search Student</h3>
-                        </div>
-
-                        <form method="get" action="">
-                            <div class="card-body">
-                                <div class="row align-items-end">
-
-                                    <div class="col-md-3">
-                                        <label class="form-label">Name</label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value="{{ request('name') }}"
-                                            class="form-control"
-                                            placeholder="Enter name"
-                                        />
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label">Email</label>
-                                        <input
-                                            type="text"
-                                            name="email"
-                                            value="{{ request('email') }}"
-                                            class="form-control"
-                                            placeholder="Enter email"
-                                        />
-                                    </div>
-                                   
-                                    <div class="col-md-3">
-                                        <label class="form-label">Class Name</label>
-                                        <input
-                                            type="text"
-                                            name="class_name"
-                                            value="{{ request('class_name') }}"
-                                            class="form-control"
-                                            placeholder="Enter class number"
-                                        />
-                                    </div>
-                                    
-
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary">
-                                            Search
-                                        </button>
-                                        <a href="{{ url('teacher/my_student') }}" class="btn btn-success ms-1">
-                                            Reset
-                                        </a>
-                                    </div>
-
-                                </div>
+            {{-- Search --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-funnel-fill text-success"></i>
+                    <h6 class="mb-0 fw-semibold">Search Students</h6>
+                </div>
+                <div class="card-body bg-light bg-opacity-50">
+                    <form method="GET" action="">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">Name</label>
+                                <input type="text" name="name" value="{{ request('name') }}"
+                                       class="form-control" placeholder="Student name…">
                             </div>
-                        </form>
-
-                    </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">Email</label>
+                                <input type="text" name="email" value="{{ request('email') }}"
+                                       class="form-control" placeholder="Email address…">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">Class</label>
+                                <input type="text" name="class_name" value="{{ request('class_name') }}"
+                                       class="form-control" placeholder="Class name…">
+                            </div>
+                            <div class="col-md-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-success flex-fill fw-semibold">
+                                    <i class="bi bi-search me-1"></i>Search
+                                </button>
+                                <a href="{{ url('teacher/my_student') }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="app-content">
-    <div class="container-fluid">
-        @include('message')
+        <div class="container-fluid">
+            @include('message')
 
-
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle mb-0">
-                        <thead class="table-light text-secondary small text-uppercase">
-                            <tr>
-                                <th>S.N</th>
-                                <th style="min-width: 250px;">Student Name</th>
-                                <th>Admission No</th>
-                                 <th>Admission Date</th>
-                                <th>Class</th>
-                                <th>Gender</th>
-                                <th>Parent/Contact</th>
-                                <th>Status</th>
-                                <th>Created Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($getRecord as $key => $value)
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary text-uppercase" style="font-size:.72rem;letter-spacing:.04em;">
                                 <tr>
-                                    <td>{{ $getRecord->firstItem() + $key }}</td>
-                                  
-                                    
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-2">
+                                    <th class="ps-4">#</th>
+                                    <th style="min-width:220px;">Student</th>
+                                    <th>Admission No</th>
+                                    <th>Admission Date</th>
+                                    <th>Class</th>
+                                    <th>Gender</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($getRecord as $key => $value)
+                                    <tr>
+                                        <td class="ps-4 text-muted small">{{ $getRecord->firstItem() + $key }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
                                                 @if(!empty($value->profile_pic))
-                                                    <img src="{{ asset('storage/'.$value->profile_pic) }}" alt="user" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    <img src="{{ asset('storage/'.$value->profile_pic) }}"
+                                                         class="rounded-circle flex-shrink-0"
+                                                         style="width:38px;height:38px;object-fit:cover;">
                                                 @else
-                                                    <img src="{{ asset('upload/profile/user.jpg') }}" alt="default" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; border: 1px solid #eee;">
+                                                    <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0 fw-bold"
+                                                         style="width:38px;height:38px;font-size:.78rem;">
+                                                        {{ strtoupper(substr($value->name,0,1)) }}{{ strtoupper(substr($value->last_name??'',0,1)) }}
+                                                    </div>
                                                 @endif
+                                                <div>
+                                                    <div class="fw-semibold text-dark small">{{ $value->name }} {{ $value->last_name }}</div>
+                                                    <div class="text-muted" style="font-size:.72rem;">{{ $value->email }}</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h6 class="mb-0 text-dark fw-bold">{{ $value->name }} {{ $value->last_name }}</h6>
-                                                <small class="text-muted">{{ $value->email }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="fw-bold text-dark">{{ $value->admission_number }}</td>
-                                      <td>{{ $value->admission_date }}</td> 
-                                    
-                                    <td>{{ $value->class_name }}</td> 
-                                    
-                                    <td>{{ $value->gender }}</td>
-                                    
-                                    <td>
-                                        @if(!empty($value->mobile_number))
-                                            {{ $value->mobile_number }}
-                                        @else
-                                            <span class="text-muted">--</span>
-                                        @endif
-                                    </td>
-
-                                    <td>
-                                        @if($value->status == 0)
-                                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill">Active</span>
-                                        @else
-                                            <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1 rounded-pill">Inactive</span>
-                                        @endif
-                                    </td>
-
-                                    <td>
-                                        <div class="d-flex flex-column">
-                                            <span>{{ date('d-m-Y', strtotime($value->created_at)) }}</span>
-                                            <small class="text-muted">{{ date('h:i A', strtotime($value->created_at)) }}</small>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="10" class="text-center py-5">
-                                        <div class="text-muted">
-                                            <i class="fas fa-user-slash fa-3x mb-3"></i>
-                                            <p>No students found.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td class="fw-semibold font-monospace small text-dark">{{ $value->admission_number }}</td>
+                                        <td class="small text-muted">{{ $value->admission_date ? date('d M Y', strtotime($value->admission_date)) : '—' }}</td>
+                                        <td class="small">{{ $value->class_name }}</td>
+                                        <td class="small">{{ $value->gender }}</td>
+                                        <td class="small">{{ $value->mobile_number ?? '—' }}</td>
+                                        <td>
+                                            @if($value->status == 0)
+                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size:.45rem;vertical-align:middle;"></i>Active
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size:.45rem;vertical-align:middle;"></i>Inactive
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="small text-dark">{{ date('d-m-Y', strtotime($value->created_at)) }}</div>
+                                            <div class="text-muted" style="font-size:.7rem;">{{ date('h:i A', strtotime($value->created_at)) }}</div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center py-5">
+                                            <i class="bi bi-people d-block mb-2 text-muted" style="font-size:2rem;opacity:.3;"></i>
+                                            <div class="text-muted small">No students found</div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card-footer bg-white border-top-0 d-flex justify-content-end py-3">
+                <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3 px-4">
+                    <span class="text-muted small">
+                        Showing {{ $getRecord->firstItem() }}–{{ $getRecord->lastItem() }} of {{ $getRecord->total() }}
+                    </span>
                     {{ $getRecord->appends(request()->query())->links() }}
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-
-
 </main>
 @endsection

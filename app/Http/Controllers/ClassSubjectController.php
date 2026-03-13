@@ -120,4 +120,7 @@ class ClassSubjectController extends Controller
     return redirect('admin/assign_subject/list')
         ->with('success', 'Subject updated successfully');
     }
+
+
+    
 }

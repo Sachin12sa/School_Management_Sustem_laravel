@@ -3,127 +3,156 @@
 @section('content')
 <main class="app-main">
 
-    <!-- Header -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row align-items-center mb-3">
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">
-                     My Home Work
-                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
-                    </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-clipboard2-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Homework</h4>
+                            <span class="text-muted small">{{ $getRecord->total() }} {{ Str::plural('assignment', $getRecord->total()) }}</span>
+                        </div>
+                    </div>
                 </div>
-          
+                <div class="col-sm-6 text-end">
+                    <a href="{{ url('parent/my_student') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Back
+                    </a>
+                </div>
             </div>
 
-            <!-- Search Card -->
-           
+            {{-- Search --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-funnel-fill text-warning"></i>
+                    <h6 class="mb-0 fw-semibold">Search Homework</h6>
+                </div>
+                <div class="card-body bg-light bg-opacity-50">
+                    <form method="GET" action="">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small text-secondary">Subject</label>
+                                <input type="text" class="form-control" name="subject_name"
+                                       value="{{ Request::get('subject_name') }}" placeholder="Subject name…">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">Homework Date</label>
+                                <input type="date" class="form-control" name="homework_date"
+                                       value="{{ Request::get('homework_date') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">Submission Date</label>
+                                <input type="date" class="form-control" name="submission_date"
+                                       value="{{ Request::get('submission_date') }}">
+                            </div>
+                            <div class="col-md-2 d-flex gap-2">
+                                <button type="submit" class="btn btn-warning flex-fill fw-semibold">
+                                    <i class="bi bi-search me-1"></i>Search
+                                </button>
+                                <a href="{{ Request::url() }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Content -->
     <div class="app-content">
         <div class="container-fluid">
             @include('message')
 
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"> Home Work List</h3>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-list-task text-warning"></i>
+                    <h6 class="mb-0 fw-semibold">Homework List</h6>
                 </div>
-                <div class="card mb-3">
-    <div class="card-header">
-        <h3 class="card-title">Search Home Work</h3>
-    </div>
-    <form method="GET" action="">
-        <div class="card-body">
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label>Subject</label>
-                    <input type="text" class="form-control" name="subject_name" value="{{ Request::get('subject_name') }}" placeholder="Subject Name">
-                </div>
-                <div class="form-group col-md-2">
-                    <label>Homework Date</label>
-                    <input type="date" class="form-control" name="homework_date" value="{{ Request::get('homework_date') }}">
-                </div>
-                <div class="form-group col-md-2">
-                    <label>Submission Date</label>
-                    <input type="date" class="form-control" name="submission_date" value="{{ Request::get('submission_date') }}">
-                </div>
-                <div class="form-group col-md-2">
-                    <label style="display: block;">&nbsp;</label>
-                    <button class="btn btn-primary" type="submit">Search</button>
-                    <a href="{{ url('student/my_homework') }}" class="btn btn-success">Reset</a>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>S.N</th>
-                                <th>Class</th>
-                                <th>Subject </th>
-                                <th> HomeWork Date</th>
-                                <th> Submission Date</th>
-                                <th> Document </th>
-                                <th> Description</th>
-                                <th>Created By</th>
-                                <th>Created Date</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                            <thead>
-                                 @forelse($getRecord as $value)
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary text-uppercase" style="font-size:.72rem;letter-spacing:.04em;">
+                                <tr>
+                                    <th class="ps-4">#</th>
+                                    <th>Class</th>
+                                    <th>Subject</th>
+                                    <th>HW Date</th>
+                                    <th>Due Date</th>
+                                    <th>Document</th>
+                                    <th style="max-width:180px;">Description</th>
+                                    <th>Created By</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($getRecord as $value)
+                                    @php
+                                        $due      = \Carbon\Carbon::parse($value->submission_date)->endOfDay();
+                                        $daysLeft = now()->diffInDays($due, false);
+                                    @endphp
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->class_name }}</td>
-                                        <td>{{ $value->subject_name }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->homework_date)) }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->submission_date)) }}</td>
+                                        <td class="ps-4 text-muted small">{{ $loop->iteration }}</td>
                                         <td>
-                                            @if(!empty($value->document_file)) {{-- Change 'document' to 'document_file' --}}
-                                                <a href="{{ asset('upload/homework/'.$value->document_file) }}" 
-                                                class="btn btn-sm btn-outline-primary" 
-                                                target="_blank">
-                                                View File
+                                            <span class="badge bg-warning bg-opacity-10 text-warning px-2">
+                                                {{ $value->class_name }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-semibold small text-dark">{{ $value->subject_name }}</td>
+                                        <td class="small text-muted">{{ date('d M Y', strtotime($value->homework_date)) }}</td>
+                                        <td>
+                                            <div class="small text-muted">{{ date('d M Y', strtotime($value->submission_date)) }}</div>
+                                            @if($daysLeft < 0)
+                                                <span class="badge bg-danger bg-opacity-10 text-danger" style="font-size:.62rem;">Overdue</span>
+                                            @elseif($daysLeft <= 2)
+                                                <span class="badge bg-warning bg-opacity-15 text-warning" style="font-size:.62rem;">Due Soon</span>
+                                            @else
+                                                <span class="badge bg-success bg-opacity-10 text-success" style="font-size:.62rem;">Active</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if(!empty($value->document_file))
+                                                <a href="{{ asset('upload/homework/'.$value->document_file) }}"
+                                                   class="btn btn-sm btn-outline-secondary" target="_blank">
+                                                    <i class="bi bi-eye me-1"></i>View
                                                 </a>
-                                                <a href="{{ asset('upload/homework/'.$value->document_file) }}" 
-                                                class="btn btn-sm btn-primary" 
-                                                download="">
-                                                Download
+                                                <a href="{{ asset('upload/homework/'.$value->document_file) }}"
+                                                   class="btn btn-sm btn-secondary ms-1" download>
+                                                    <i class="bi bi-download"></i>
                                                 </a>
                                             @else
                                                 <span class="badge bg-secondary">No File</span>
                                             @endif
                                         </td>
-                                        <td>{!! $value->description !!}</td> 
-                                        <td>{{ $value->created_by_name }} {{ $value->created_by_last_name }}</td>
-                                        <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
-                                        
+                                        <td style="max-width:180px;">
+                                            <div class="text-muted small text-truncate">{!! strip_tags($value->description) !!}</div>
+                                        </td>
+                                        <td class="small text-muted">{{ $value->created_by_name }} {{ $value->created_by_last_name }}</td>
+                                        <td class="small text-muted">{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="10" class="text-center">No Homework Found.</td>
+                                        <td colspan="9" class="text-center py-5">
+                                            <i class="bi bi-clipboard2 d-block mb-2 text-muted" style="font-size:2rem;opacity:.3;"></i>
+                                            <div class="text-muted small">No homework found</div>
+                                        </td>
                                     </tr>
                                 @endforelse
-                            </thead>
-                            
-                           
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                  {{-- <div class="card-footer text-end">
+                <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3 px-4">
+                    <span class="text-muted small">{{ $getRecord->total() }} {{ Str::plural('record', $getRecord->total()) }}</span>
                     {{ $getRecord->appends(request()->query())->links() }}
                 </div>
-
-                <!-- Pagination --> --}}
-               
             </div>
+
         </div>
     </div>
-
 </main>
 @endsection

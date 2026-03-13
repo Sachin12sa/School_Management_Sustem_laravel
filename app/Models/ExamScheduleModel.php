@@ -71,6 +71,25 @@ class ExamScheduleModel extends Model
         ->where('exam_schedules.class_id','=',$class_id)
         ->get();
     }
+    // for dashboard
+   static public function getExamTimetableDashboard($class_id)
+{
+    return self::select(
+            'exam_schedules.*', 
+            'subjects.name as subject_name', 
+            'subjects.type as subject_type',
+            'exams.name as exam_name' // Join exam name for clarity
+        )
+        ->join('subjects', 'subjects.id', '=', 'exam_schedules.subject_id')
+        ->join('exams', 'exams.id', '=', 'exam_schedules.exam_id')
+        ->where('exam_schedules.class_id', '=', $class_id)
+        // Only show exams from today onwards
+        ->where('exam_schedules.exam_date', '>=', date('Y-m-d')) 
+        // Order by date so the closest exam is first
+        ->orderBy('exam_schedules.exam_date', 'asc')
+        ->limit(5) // Keep the dashboard clean by showing top 5
+        ->get();
+}
 
     // teacher 
     static public function getExamTimetableTeacher($teacher_id)

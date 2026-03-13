@@ -90,4 +90,24 @@ class ClassSubjectModel extends Model
 
             return null;
         }
+        // get getSubjectPerClass
+    static public function getSubjectPerClass($class_id){
+        return self::select(
+                'class_subjects.*',
+                'subjects.name as subject_name',
+                'subjects.type as subject_type',
+                'classes.name as class_name'
+            )
+            ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+            ->join('classes', 'classes.id', '=', 'class_subjects.class_id')
+            ->join('users', 'users.id', '=', 'class_subjects.created_by')
+            ->where('class_subjects.class_id','=',$class_id)
+            ->where('class_subjects.is_delete','=',0)
+            ->where('class_subjects.status','=',0)
+            ->orderBy('class_subjects.id', 'desc')
+            ->paginate(10);
+                       
+    }
+    
+        
 }

@@ -1,11 +1,24 @@
-@extends('layouts.app')    
+@extends('layouts.app')
 @section('content')
 <main class="app-main">
+
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Add New Student</h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Add New Student</h4>
+                            <span class="text-muted small">
+                                <i class="bi bi-arrow-left me-1"></i>
+                                <a href="{{ url('admin/student/list') }}" class="text-muted text-decoration-none">Back to Student List</a>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -13,158 +26,274 @@
 
     <div class="app-content">
         <div class="container-fluid">
-            <div class="row g-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline mb-4">
+            @include('message')
 
-                        <div class="card-header">
-                            <div class="card-title">Fill Details To Add New Student</div>
+            <form method="post" action="" enctype="multipart/form-data" autocomplete="off">
+                @csrf
+                <input type="hidden" name="user_type" value="3">
+                <input type="hidden" name="is_delete" value="0">
+
+                <div class="row g-4">
+
+                    {{-- ══ LEFT: Profile Photo ══════════════════════════════ --}}
+                    <div class="col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-image text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Profile Photo</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center gap-3 py-4">
+                                <div class="position-relative">
+                                    <img id="studentAvatarPreview"
+                                         src="{{ asset('upload/profile/user.jpg') }}"
+                                         alt="Preview"
+                                         class="rounded-circle shadow"
+                                         style="width:110px;height:110px;object-fit:cover;border:3px solid #e9ecef;">
+                                    <label for="profile_pic"
+                                           class="position-absolute bottom-0 end-0 btn btn-warning btn-sm rounded-circle p-1"
+                                           style="width:30px;height:30px;cursor:pointer;">
+                                        <i class="bi bi-camera-fill" style="font-size:.75rem;"></i>
+                                    </label>
+                                </div>
+                                <div class="text-center">
+                                    <div class="small fw-semibold text-dark">Upload Photo</div>
+                                    <div class="text-muted" style="font-size:.72rem;">JPG, PNG · Max 2MB</div>
+                                </div>
+                                <input type="file" id="profile_pic" name="profile_pic"
+                                       class="d-none" accept="image/*"
+                                       onchange="previewAvatar(this, 'studentAvatarPreview')">
+                                @error('profile_pic') <div class="text-danger small">{{ $message }}</div> @enderror
+                            </div>
                         </div>
+                    </div>
 
-                        <form method="post" action="" enctype="multipart/form-data">
-                            @csrf
+                    {{-- ══ RIGHT: Form Sections ════════════════════════════ --}}
+                    <div class="col-lg-9">
 
+                        {{-- ── Section 1: Enrollment Info ─────────────────── --}}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-mortarboard-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Enrollment Information</h6>
+                            </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row g-3">
 
-                                    {{-- First Name --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">First Name <span style="color:red">*</span></label>
-                                        <input name="name" value="{{ old('name') }}" placeholder="First Name" required class="form-control" />
-                                        <div style="color:red">{{ $errors->first('name') }}</div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="name" value="{{ old('name') }}" required
+                                               placeholder="First name"
+                                               class="form-control @error('name') is-invalid @enderror">
+                                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
 
-                                    {{-- Last Name --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Last Name <span style="color:red">*</span></label>
-                                        <input name="last_name" value="{{ old('last_name') }}" placeholder="Last Name" required class="form-control" />
-                                        <div style="color:red">{{ $errors->first('last_name') }}</div>
-
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="last_name" value="{{ old('last_name') }}" required
+                                               placeholder="Last name"
+                                               class="form-control @error('last_name') is-invalid @enderror">
+                                        @error('last_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
 
-                                    {{-- Admission Number --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Admission Number <span style="color:red">*</span></label>
-                                        <input name="admission_number" value="{{ old('admission_number') }}" placeholder="Admission Number" required class="form-control" />
-                                       <div style="color:red">{{ $errors->first('admission_number') }}</div>                                       
-
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Admission Number <span class="text-danger">*</span></label>
+                                        <input type="text" name="admission_number" value="{{ old('admission_number') }}" required
+                                               placeholder="e.g. ADM-2024-001"
+                                               class="form-control @error('admission_number') is-invalid @enderror">
+                                        @error('admission_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
 
-                                    {{-- Roll Number --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Roll Number</label>
-                                        <input name="roll_number" value="{{ old('roll_number') }}" placeholder="Roll Number" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('roll_number') }}</div></div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Roll Number</label>
+                                        <input type="text" name="roll_number" value="{{ old('roll_number') }}"
+                                               placeholder="e.g. 01"
+                                               class="form-control @error('roll_number') is-invalid @enderror">
+                                        @error('roll_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
 
-                                    {{-- Class --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Class <span style="color:red">*</span></label>
-                                        <select name="class_id" class="form-control" required>
-                                            <option value="">Select Class</option>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Class <span class="text-danger">*</span></label>
+                                        <select name="class_id" required
+                                                class="form-select @error('class_id') is-invalid @enderror">
+                                            <option value="">— Select Class —</option>
                                             @foreach($getClass as $class)
-                                                <option {{ (old('class_id')==$class->id) ? 'selected' : '' }} value="{{ $class->id }}">{{ $class->name }}</option>
+                                                <option {{ old('class_id') == $class->id ? 'selected' : '' }} value="{{ $class->id }}">{{ $class->name }}</option>
                                             @endforeach
                                         </select>
-                                    <div style="color:red">{{ $errors->first('class_id') }}</div></div>
+                                        @error('class_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
 
-                                    {{-- Gender --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Gender<span style="color:red">*</span></label>
-                                        <select name="gender" required  class="form-control">
-                                            <option value="">Select</option>
-                                            <option {{ (old('gender')=='Male')?'selected' : '' }} value="Male">Male</option>
-                                            <option {{ (old('gender')=='Female')?'selected' : '' }} value="Female">Female</option>
-                                            <option {{ (old('gender')=='Other')?'selected' : '' }} value="Other">Other</option>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Admission Date <span class="text-danger">*</span></label>
+                                        <input type="date" name="admission_date" value="{{ old('admission_date') }}" required
+                                               class="form-control @error('admission_date') is-invalid @enderror">
+                                        @error('admission_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Status <span class="text-danger">*</span></label>
+                                        <select name="status" required
+                                                class="form-select @error('status') is-invalid @enderror">
+                                            <option value="">— Select —</option>
+                                            {{-- Fixed: was using old('gender') for status --}}
+                                            <option {{ old('status') === '0' ? 'selected' : '' }} value="0">Active</option>
+                                            <option {{ old('status') === '1' ? 'selected' : '' }} value="1">Inactive</option>
                                         </select>
-                                    <div style="color:red">{{ $errors->first('gender') }}</div></div>
-
-                                    {{-- Date of Birth --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Date of Birth<span style="color:red">*</span></label>
-                                        <input type="date" id="date" value="{{ old('date_of_birth') }}" required name="date_of_birth" class="form-control" />
-                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </span>
-                                    <div style="color:red">{{ $errors->first('name') }}</div></div>
-
-                                    {{-- Admission Date --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Admission Date<span style="color:red">*</span></label>
-                                        <input type="date" id="date" name="admission_date" value="{{ old('admission_date') }}" required class="form-control" />
-                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </span>
-                                    <div style="color:red">{{ $errors->first('admission_date') }}</div></div>
-
-                                    {{-- Mobile Number --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Mobile Number</label>
-                                        <input name="mobile_number" value="{{ old('mobile_number') }}" placeholder="Enter Number" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('mobile_number') }}</div></div>
-
-                                    {{-- Blood Group --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Blood Group</label>
-                                        <input name="blood_group" value="{{ old('blood_group') }}" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('blood_group') }}</div></div>
-
-                                    {{-- Profile Picture --}}
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Profile Picture</label>
-                                        <input type="file" value="{{ old('profile_pic') }}" name="profile_pic" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('profile_pic') }}</div></div>
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Religion</label>
-                                        <input name="religion" value="{{ old('religion') }}" placeholder="Enter religion" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('religion') }}</div></div>
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Height</label>
-                                        <input name="height" value="{{ old('height') }}" placeholder="Height" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('height') }}</div></div>
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Weight</label>
-                                        <input name="weight" value="{{ old('weight') }}" placeholder="Weight" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('weight') }}</div></div>
+                                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
 
                                 </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="form-label">Status<span style="color:red">*</span></label>
-                                        <select name="status" required value="{{ old('status') }}" class="form-control">
-                                            <option value="">Select</option>
-                                            <option {{ (old('gender')=='0')?'selected' : '' }} value="0">Active</option>
-                                            <option {{ (old('gender')=='1')?'selected' : '' }} value="1">Inactive</option>
+                            </div>
+                        </div>
+
+                        {{-- ── Section 2: Personal Details ────────────────── --}}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-person-lines-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Personal Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Gender <span class="text-danger">*</span></label>
+                                        <select name="gender" required class="form-select @error('gender') is-invalid @enderror">
+                                            <option value="">— Select —</option>
+                                            <option {{ old('gender') == 'Male'   ? 'selected' : '' }} value="Male">Male</option>
+                                            <option {{ old('gender') == 'Female' ? 'selected' : '' }} value="Female">Female</option>
+                                            <option {{ old('gender') == 'Other'  ? 'selected' : '' }} value="Other">Other</option>
                                         </select>
-                                   <div style="color:red">{{ $errors->first('status') }}</div> </div>
-                                      <hr />
-                                {{-- Email --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Email Address<span style="color:red">*</span></label>
-                                    <input name="email" value="{{ old('email') }}" required placeholder="Email" type="email" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('email') }}</div>
+                                        @error('gender') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" required
+                                               class="form-control @error('date_of_birth') is-invalid @enderror">
+                                        {{-- Fixed: was showing error for 'name' --}}
+                                        @error('date_of_birth') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Mobile Number</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="bi bi-phone text-muted"></i></span>
+                                            <input type="text" name="mobile_number" value="{{ old('mobile_number') }}"
+                                                   placeholder="e.g. 9800000000"
+                                                   class="form-control @error('mobile_number') is-invalid @enderror">
+                                        </div>
+                                        @error('mobile_number') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Blood Group</label>
+                                        <input type="text" name="blood_group" value="{{ old('blood_group') }}"
+                                               placeholder="e.g. A+, B-, O+"
+                                               class="form-control @error('blood_group') is-invalid @enderror">
+                                        @error('blood_group') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Religion</label>
+                                        <input type="text" name="religion" value="{{ old('religion') }}"
+                                               placeholder="e.g. Hindu, Christian…"
+                                               class="form-control @error('religion') is-invalid @enderror">
+                                        @error('religion') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-semibold small text-secondary">Height</label>
+                                        <input type="text" name="height" value="{{ old('height') }}"
+                                               placeholder="cm"
+                                               class="form-control @error('height') is-invalid @enderror">
+                                        @error('height') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-semibold small text-secondary">Weight</label>
+                                        <input type="text" name="weight" value="{{ old('weight') }}"
+                                               placeholder="kg"
+                                               class="form-control @error('weight') is-invalid @enderror">
+                                        @error('weight') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
                                 </div>
-
-                                {{-- Password --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Password<span style="color:red">*</span></label>
-                                    <input type="password" name="password" placeholder="Password" required class="form-control" />
-                                <div style="color:red">{{ $errors->first('password') }}</div></div>
-
-                                {{-- Hidden Fields --}}
-                                <input type="hidden" name="user_type" value="3">
-                                <input type="hidden" name="is_delete" value="0">
-
                             </div>
+                        </div>
 
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                        {{-- ── Section 3: Login Credentials ───────────────── --}}
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-lock-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Login Credentials</h6>
                             </div>
+                            <div class="card-body">
+                                <div class="row g-3">
 
-                        </form>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" name="email" value="{{ old('email') }}" required
+                                               placeholder="student@school.com"
+                                               class="form-control @error('email') is-invalid @enderror">
+                                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-lock me-1"></i>Password <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="studentPassword" required
+                                                   placeholder="Set a strong password"
+                                                   class="form-control @error('password') is-invalid @enderror">
+                                            <button type="button" class="btn btn-outline-secondary px-3"
+                                                    onclick="togglePassword('studentPassword', this)" tabindex="-1">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        @error('password') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+                                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Fields marked <span class="text-danger">*</span> are required.</span>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url('admin/student/list') }}" class="btn btn-outline-secondary px-4">
+                                        <i class="bi bi-x-circle me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold">
+                                        <i class="bi bi-person-plus-fill me-2"></i>Create Student
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+
 </main>
+@endsection
+
+@section('script')
+<script>
+function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    const icon  = btn.querySelector('i');
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+function previewAvatar(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => document.getElementById(previewId).src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 @endsection

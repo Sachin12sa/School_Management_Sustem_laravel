@@ -3,195 +3,246 @@
 @section('content')
 <main class="app-main">
 
+    {{-- ── Page Header ─────────────────────────────────────────────────── --}}
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row align-items-center mb-3">
+
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">
-                        Teacher List
-                        <small class="text-muted">(Total : {{ $getRecord->total() }})</small>
-                    </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-person-video3"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Teacher List</h4>
+                            <span class="text-muted small">
+                                <i class="bi bi-people me-1"></i>
+                                {{ $getRecord->total() }} {{ Str::plural('record', $getRecord->total()) }} found
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-6 text-end">
-                    <a href="{{ url('admin/teacher/add') }}" class="btn btn-primary">
-                        + Add New Teacher
+                    <a href="{{ url('admin/teacher/add') }}" class="btn btn-success px-4 shadow-sm">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add New Teacher
                     </a>
                 </div>
             </div>
 
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">Search Teacher</h3>
-                        </div>
+            {{-- ── Search Card ──────────────────────────────────────────────── --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-funnel-fill text-success"></i>
+                    <h6 class="mb-0 fw-semibold">Filter Teachers</h6>
+                </div>
+                <div class="card-body bg-light bg-opacity-50">
+                    <form method="get" action="">
+                        <div class="row g-3 align-items-end">
 
-                        <form method="get" action="">
-                            <div class="card-body">
-                                <div class="row align-items-end">
-
-                                    <div class="col-md-3">
-                                        <label class="form-label">Name</label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value="{{ request('name') }}"
-                                            class="form-control"
-                                            placeholder="Enter name"
-                                        />
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label">Email</label>
-                                        <input
-                                            type="text"
-                                            name="email"
-                                            value="{{ request('email') }}"
-                                            class="form-control"
-                                            placeholder="Enter email"
-                                        />
-                                    </div>
-                                   
-                                    <div class="col-md-3">
-                                        <label class="form-label">Mobile Number</label>
-                                        <input
-                                            type="text"
-                                            name="mobile_number"
-                                            value="{{ request('mobile_number') }}"
-                                            class="form-control"
-                                            placeholder="Enter mobile number"
-                                        />
-                                    </div>
-                                    
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary">
-                                            Search
-                                        </button>
-                                        <a href="{{ url('admin/teacher/list') }}" class="btn btn-success ms-1">
-                                            Reset
-                                        </a>
-                                    </div>
-
-                                </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-person me-1"></i>Name
+                                </label>
+                                <input type="text" name="name"
+                                       value="{{ request('name') }}"
+                                       class="form-control"
+                                       placeholder="Search by name…">
                             </div>
-                        </form>
 
-                    </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-envelope me-1"></i>Email
+                                </label>
+                                <input type="text" name="email"
+                                       value="{{ request('email') }}"
+                                       class="form-control"
+                                       placeholder="Search by email…">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-phone me-1"></i>Mobile Number
+                                </label>
+                                <input type="text" name="mobile_number"
+                                       value="{{ request('mobile_number') }}"
+                                       class="form-control"
+                                       placeholder="Search by mobile…">
+                            </div>
+
+                            <div class="col-md-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-success flex-fill">
+                                    <i class="bi bi-search me-1"></i>Search
+                                </button>
+                                <a href="{{ url('admin/teacher/list') }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                                </a>
+                            </div>
+
+                        </div>
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
 
+    {{-- ── Content ──────────────────────────────────────────────────────── --}}
     <div class="app-content">
         <div class="container-fluid">
+
             @include('message')
 
-            <div class="card shadow-sm border-0">
-                <div class="card-header d-flex justify-content-between align-items-center bg-white">
-                    <h3 class="card-title mb-0">Teacher List</h3>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="bi bi-table me-2 text-success"></i>All Teachers
+                    </h6>
+                    <span class="badge bg-success bg-opacity-10 text-success small">
+                        Page {{ $getRecord->currentPage() }} of {{ $getRecord->lastPage() }}
+                    </span>
                 </div>
 
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover align-middle mb-0" style="min-width: 1500px;">
-                            <thead class="table-light text-secondary small text-uppercase">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Profile Pic</th>
-                                    <th>Teacher Name</th>
-                                    <th>Email</th>
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="table-light text-uppercase text-secondary" style="font-size:.72rem;letter-spacing:.05em;">
+                                    <th class="ps-4" width="50">#</th>
+                                    <th style="min-width:220px;">Teacher</th>
                                     <th>Gender</th>
-                                    <th style="min-width: 100px;">Date of Birth</th>
-                                    <th style="min-width: 100px;">Date of Joining</th>
-                                    <th>Mobile Number</th>
+                                    <th>Date of Birth</th>
+                                    <th>Date of Joining</th>
+                                    <th>Mobile</th>
                                     <th>Marital Status</th>
-                                    <th style="min-width: 150px;">Current Address</th>
-                                    <th style="min-width: 150px;">Permanent Address</th>
+                                    <th style="min-width:160px;">Current Address</th>
+                                    <th style="min-width:160px;">Permanent Address</th>
                                     <th>Qualification</th>
                                     <th>Work Exp.</th>
-                                    <th>Note</th>
+                                    <th style="min-width:140px;">Note</th>
                                     <th>Status</th>
-                                    <th style="min-width: 100px;">Created Date</th>
-                                    <th class="text-end" width="100">Action</th>
+                                    <th>Created Date</th>
+                                    <th class="text-center pe-4" width="120">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($getRecord as $key => $value)
                                     <tr>
-                                        <td>{{ $getRecord->firstItem() + $key }}</td>
-                                      
+                                        <td class="ps-4 text-muted small">{{ $getRecord->firstItem() + $key }}</td>
+
+                                        {{-- Avatar + Name + Email --}}
                                         <td>
-                                            @if(!empty($value->profile_pic))
-                                                <img src="{{ asset('storage/'.$value->profile_pic) }}" alt="user" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                                            @else
-                                                <img src="{{ asset('upload/profile/user.jpg') }}" alt="default" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #eee;">
-                                            @endif
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="flex-shrink-0">
+                                                    @if(!empty($value->profile_pic))
+                                                        <img src="{{ asset('storage/' . $value->profile_pic) }}"
+                                                             alt="{{ $value->name }}"
+                                                             class="rounded-circle shadow-sm"
+                                                             style="width:42px;height:42px;object-fit:cover;">
+                                                    @else
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white fw-bold shadow-sm"
+                                                             style="width:42px;height:42px;font-size:.9rem;">
+                                                            {{ strtoupper(substr($value->name, 0, 1)) }}{{ strtoupper(substr($value->last_name ?? '', 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold text-dark small">{{ $value->name }} {{ $value->last_name ?? '' }}</div>
+                                                    <div class="text-muted" style="font-size:.75rem;">{{ $value->email }}</div>
+                                                </div>
+                                            </div>
                                         </td>
 
-                                        <td class="fw-bold text-dark">{{ $value->name }} {{ $value->last_name }}</td>
-                                        
-                                        <td>{{ $value->email }}</td>
-                                        
-                                        <td>{{ $value->gender }}</td>
+                                        <td class="small">{{ $value->gender ?? '—' }}</td>
 
-                                        <td>
-                                            @if(!empty($value->date_of_birth))
-                                                {{ date('d-m-Y', strtotime($value->date_of_birth)) }}
-                                            @endif
+                                        <td class="small">
+                                            {{ !empty($value->date_of_birth) ? date('d M Y', strtotime($value->date_of_birth)) : '—' }}
                                         </td>
 
-                                        <td>
-                                            @if(!empty($value->admission_date))
-                                                {{ date('d-m-Y', strtotime($value->admission_date)) }}
-                                            @endif
+                                        <td class="small">
+                                            {{ !empty($value->admission_date) ? date('d M Y', strtotime($value->admission_date)) : '—' }}
                                         </td>
-                                        
-                                        <td>
+
+                                        <td class="small">
                                             @if(!empty($value->mobile_number))
-                                                {{ $value->mobile_number }}
+                                                <a href="tel:{{ $value->mobile_number }}" class="text-decoration-none text-dark">
+                                                    <i class="bi bi-telephone me-1 text-muted"></i>{{ $value->mobile_number }}
+                                                </a>
                                             @else
-                                                --
+                                                <span class="text-muted">—</span>
                                             @endif
                                         </td>
 
-                                        <td>{{ $value->marital_status }}</td>
-                                        
-                                        <td>{{ $value->address }}</td> <td>{{ $value->permanent_address }}</td>
+                                        <td class="small">{{ $value->marital_status ?? '—' }}</td>
 
-                                        <td>{{ $value->qualification }}</td>
+                                        <td class="small text-muted" style="max-width:160px;">
+                                            <span class="d-block text-truncate" title="{{ $value->address ?? '' }}">
+                                                {{ $value->address ?? '—' }}
+                                            </span>
+                                        </td>
 
-                                        <td>{{ $value->work_experience }}</td>
-                                        
-                                        <td>{{ $value->note }}</td>
+                                        <td class="small text-muted" style="max-width:160px;">
+                                            <span class="d-block text-truncate" title="{{ $value->permanent_address ?? '' }}">
+                                                {{ $value->permanent_address ?? '—' }}
+                                            </span>
+                                        </td>
+
+                                        <td class="small">{{ $value->qualification ?? '—' }}</td>
+
+                                        <td class="small">
+                                            @if(!empty($value->work_experience))
+                                                <span class="badge bg-info bg-opacity-10 text-info">{{ $value->work_experience }}</span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+
+                                        <td class="small text-muted" style="max-width:140px;">
+                                            <span class="d-block text-truncate" title="{{ $value->note ?? '' }}">
+                                                {{ $value->note ?? '—' }}
+                                            </span>
+                                        </td>
 
                                         <td>
-                                            @if($value->status == 0)
-                                                <span class="badge bg-success">Active</span>
+                                            @if(($value->status ?? 0) == 0)
+                                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-1">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size:.45rem;vertical-align:middle;"></i>Active
+                                                </span>
                                             @else
-                                                <span class="badge bg-danger">Inactive</span>
+                                                <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-1">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size:.45rem;vertical-align:middle;"></i>Inactive
+                                                </span>
                                             @endif
                                         </td>
 
-                                        <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
+                                        <td>
+                                            <div class="small text-dark">{{ date('d M Y', strtotime($value->created_at)) }}</div>
+                                            <div class="text-muted" style="font-size:.72rem;">{{ date('h:i A', strtotime($value->created_at)) }}</div>
+                                        </td>
 
-                                        <td class="text-end">
-                                            <a href="{{ url('admin/teacher/edit/' . $value->id) }}" class="btn btn-icon btn-sm btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                            <a href="{{ url('admin/teacher/delete/' . $value->id) }}"
-                                           class="btn btn-icon btn-sm btn-outline-danger"
-                                           onclick="return confirm('Are you sure you want to delete this student?')"
-                                           title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <td class="text-center pe-4">
+                                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                                <a href="{{ url('admin/teacher/edit/' . $value->id) }}"
+                                                   class="btn btn-sm btn-outline-primary px-3"
+                                                   title="Edit Teacher">
+                                                    <i class="bi bi-pencil-fill me-1"></i>Edit
+                                                </a>
+                                                <a href="{{ url('admin/teacher/delete/' . $value->id) }}"
+                                                   class="btn btn-sm btn-outline-danger px-2"
+                                                   title="Delete Teacher"
+                                                   onclick="return confirm('Are you sure you want to delete this teacher?')">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="17" class="text-center py-5">
+                                        <td colspan="15" class="text-center py-5">
                                             <div class="text-muted">
-                                                <i class="fas fa-chalkboard-teacher fa-3x mb-3"></i>
-                                                <p>No teachers found.</p>
+                                                <i class="bi bi-person-x-fill d-block mb-2" style="font-size:2.5rem;opacity:.3;"></i>
+                                                <div class="fw-semibold small">No teachers found</div>
+                                                <div style="font-size:.78rem;">Try adjusting your search filters.</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -199,11 +250,16 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-end py-3">
-                        {{ $getRecord->appends(request()->query())->links() }}
-                    </div>
+                </div>
+
+                <div class="card-footer bg-white d-flex align-items-center justify-content-between py-3">
+                    <span class="text-muted small">
+                        Showing {{ $getRecord->firstItem() }}–{{ $getRecord->lastItem() }} of {{ $getRecord->total() }} teachers
+                    </span>
+                    {{ $getRecord->appends(request()->query())->links() }}
                 </div>
             </div>
+
         </div>
     </div>
 

@@ -45,6 +45,14 @@ class ClassModel extends Model
             return $return;
         
     }
+    static public function getTotalClass(){
+           return ClassModel::select('classes.*')     
+                ->where('classes.is_delete', 0)
+                ->where('classes.status', 0)
+                ->count();
+
+    }
+    
   
 }
 

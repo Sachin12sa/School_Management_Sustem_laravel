@@ -23,7 +23,7 @@ class NoticeBoardModel extends Model
     {
         $return = self::select('notice_boards.*','users.name as created_by_name')
                     ->join('users','users.id','=','notice_boards.created_by')
-                    ->orderBy('notice_boards.id','asc');
+                    ->orderBy('notice_boards.id','desc');
                     if (request('title')) {
                         $return->where('notice_boards.title', 'like', '%' . request('title') . '%');
                             }
@@ -41,6 +41,18 @@ class NoticeBoardModel extends Model
                     ->paginate(10);
             return $return;
     }
+    // get record for dashboard getRecordDashboard
+    static public function getRecordDashboard()
+    {
+        return self::select('notice_boards.*')
+                   
+                    ->orderBy('notice_boards.id','desc')
+                    ->where('notice_boards.is_delete', 0)
+                    ->limit(5)
+                    ->get();
+
+    }
+
  
      public function getMessage()
         {
@@ -66,7 +78,7 @@ class NoticeBoardModel extends Model
                $return= $return ->where('notice_board_messages.message_to','=',$message_to)
                 ->where('notice_boards.publish_date','<=',date('Y-m-d'))
                 ->where('notice_boards.is_delete', 0)
-                ->orderBy('notice_boards.id','asc')
+                ->orderBy('notice_boards.id','desc')
                 ->distinct() // prevents duplicate rows
                 ->paginate(10);
 

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use  App\Models\ClassModel;
+use App\Http\Controllers\Controller;
+use App\Models\ClassSubjectModel;
+use App\Models\User;
 use Auth;
+use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
@@ -54,4 +57,32 @@ class ClassController extends Controller
         $user->save();
         return redirect('admin/class/list')->with('success','Class Successfully Deleted');
     } 
+
+    // to view the student per class
+public function viewStudents($class_id)
+{
+    $data['header_title'] = 'Class Students';
+
+    $data['getClass'] = ClassModel::getSingle($class_id);
+
+    $data['getRecord'] = User::getStudentPerClass($class_id);
+
+    return view('admin.class.students', $data);
+}
+public function viewSubjects($class_id)
+    {
+        $data['getClass'] = ClassModel::getSingle($class_id);
+        
+        if(!empty($data['getClass'])) {
+            $data['header_title'] = 'Subjects for ' . $data['getClass']->name;
+            $data['getRecord'] = ClassSubjectModel::getSubjectPerClass($class_id);
+            
+            return view('admin.class.subjects', $data);
+            
+        } else {
+            abort(404);
+        }
+        
+    }
+
 }

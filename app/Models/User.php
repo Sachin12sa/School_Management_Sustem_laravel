@@ -244,7 +244,7 @@ class User extends Authenticatable
 
             return collect(); // always return something
         }
-
+// to get stue=dent for parent
     static public function getMyStudent($parent_id){
         $return =User::select('users.*', 'classes.name as class_name', 'parent.name as parent_name')
                             ->leftJoin('users as parent', 'parent.id', '=', 'users.parent_id')
@@ -314,5 +314,46 @@ class User extends Authenticatable
 
 
         }
+
+        // for dashboard get the total 
+        static public function getTotalUser($user_type)
+        {
+            return self::select('users.id.*')
+                            ->where('user_type','=',$user_type)
+                            ->where('is_delete','=',0)
+                            ->orderBy('id','desc')
+                            ->count();
+              
+        }
+
+        // get student per class 
+        
+        static public function getStudentPerClass($class_id)
+        {
+            $return =  self::select(
+                            'users.*',
+                            'parent.name as parent_name',
+                            'parent.last_name as parent_last_name'
+                        )
+                        ->leftJoin('users as parent', 'parent.id', '=', 'users.parent_id')
+                        ->where('users.class_id', $class_id)
+                        ->where('users.user_type', 3)
+                        ->where('users.is_delete', 0);
+                        if (request('name')) {
+                                        $return->where('users.name', 'like', '%' . request('name') . '%');
+                                    }
+
+                                if (request('email')) {
+                                        $return->where('users.email', 'like', '%' . request('email') . '%');
+                                    }
+                                if (request('admission_number')) {
+                                    $return->where('users.admission_number', 'like', '%' . request('admission_number') . '%');
+                                }
+                        $return = $return->orderBy('id','desc')
+                        ->paginate(10);
+                        return $return;
+              
+        }
+
 
 }

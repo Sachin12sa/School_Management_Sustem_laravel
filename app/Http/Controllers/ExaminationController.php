@@ -119,49 +119,60 @@ class ExaminationController extends Controller
     }
     
     public function exam_schedule_insert(Request $request)
-    {
-        $exam_id = $request->exam_id;
-        $class_id = $request->class_id;
+{
+    $exam_id = $request->exam_id;
+    $class_id = $request->class_id;
+    $submittedSubjects = []; 
 
-        if (!empty($request->schedule)) {
-            $submittedSubjects = []; 
- 
-            foreach ($request->schedule as $schedule) {
-                if (!empty($schedule['subject_id']) &&
-                    !empty($schedule['exam_date']) &&
-                    !empty($schedule['start_time']) &&
-                    !empty($schedule['end_time']) &&
-                    !empty($schedule['room_number']) &&
-                    !empty($schedule['full_mark']) &&
-                    !empty($schedule['passing_mark'])) {
+    if (!empty($request->schedule)) {
+        foreach ($request->schedule as $schedule) {
+            if (!empty($schedule['subject_id']) &&
+                !empty($schedule['exam_date']) &&
+                !empty($schedule['start_time']) &&
+                !empty($schedule['end_time']) &&
+                !empty($schedule['room_number']) &&
+                !empty($schedule['full_mark']) &&
+                !empty($schedule['passing_mark'])) {
 
-                    $submittedSubjects[] = $schedule['subject_id'];
+                // Track which subjects were actually submitted
+                $submittedSubjects[] = $schedule['subject_id'];
 
-                    // Update existing or create new
-                    ExamScheduleModel::updateOrCreate(
-                        [
-                            'exam_id' => $exam_id,
-                            'class_id' => $class_id,
-                            'subject_id' => $schedule['subject_id'],
-                        ],
-                        [
-                            'exam_date' => $schedule['exam_date'],
-                            'start_time' => $schedule['start_time'],
-                            'end_time' => $schedule['end_time'],
-                            'room_number' => $schedule['room_number'],
-                            'full_mark' => $schedule['full_mark'],
-                            'passing_mark' => $schedule['passing_mark'],
-                            'created_by' => Auth::user()->id,
-                        ]
-                    );
-                }
+                ExamScheduleModel::updateOrCreate(
+                    [
+                        'exam_id' => $exam_id,
+                        'class_id' => $class_id,
+                        'subject_id' => $schedule['subject_id'],
+                    ],
+                    [
+                        'exam_date' => $schedule['exam_date'],
+                        'start_time' => $schedule['start_time'],
+                        'end_time' => $schedule['end_time'],
+                        'room_number' => $schedule['room_number'],
+                        'full_mark' => $schedule['full_mark'],
+                        'passing_mark' => $schedule['passing_mark'],
+                        'created_by' => Auth::user()->id,
+                    ]
+                );
             }
-
-          
         }
-
-        return redirect()->back()->with('success', 'Exam Schedule Successfully Saved');
     }
+
+    // --- CLEANUP LOGIC ---
+    // Delete subjects that were NOT in the submitted list for this specific exam and class
+    if (!empty($submittedSubjects)) {
+        ExamScheduleModel::where('exam_id', $exam_id)
+            ->where('class_id', $class_id)
+            ->whereNotIn('subject_id', $submittedSubjects)
+            ->delete();
+    } else {
+        // If the entire schedule was cleared, delete all subjects for this exam/class
+        ExamScheduleModel::where('exam_id', $exam_id)
+            ->where('class_id', $class_id)
+            ->delete();
+    }
+
+    return redirect()->back()->with('success', 'Exam Schedule Successfully Saved');
+}
 // sutuent side to show the time table 
 
     public function myExamTimetable()

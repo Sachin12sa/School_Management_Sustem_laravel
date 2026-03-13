@@ -1,173 +1,271 @@
 @extends('layouts.app')
-
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <main class="app-main">
 
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row align-items-center mb-3">
+
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">
-                        Student Attendance
-                        {{-- <small class="text-muted">Total Exams: {{ $totalExam }}</small> --}}
-                    </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Student Attendance</h4>
+                            <span class="text-muted small">Select a class and date to mark attendance</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">Search class and date</h3>
-                        </div>
+            {{-- Filter --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-funnel-fill text-success"></i>
+                    <h6 class="mb-0 fw-semibold">Select Class &amp; Date</h6>
+                </div>
+                <div class="card-body bg-light bg-opacity-50">
+                    <form method="GET" action="{{ url('admin/attendance/student_attendance') }}">
+                        <div class="row g-3 align-items-end">
 
-                        <form method="GET" action="{{ url('admin/attendance/student_attendance') }}">
-                            <div class="card-body form-control">
-                                <div class="row align-items-end">
-
-
-                                    <div class="mb-3 col-md-4">
-                                        <label class="form-label">Choose Class</label>
-                                        <select name="class_id" id="getClass" required class="form-control">
-                                            <option value="">Select Class</option>
-                                            @foreach($getClass as $class)
-                                                <option {{ (Request::get('class_id') == $class->id) ? 'selected' : '' }} value="{{ $class->id }}">
-                                                    {{ $class->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                   <div class="mb-3 col-md-4 position-relative">
-                                        <label for="attendance_date" class="form-label">Choose Attendance Date</label>
-                                        <div class="input-group">
-                                            <input 
-                                                type="date" 
-                                                class="form-control" 
-                                                name="attendance_date" 
-                                                id="attendance_date" 
-                                                placeholder="Select date"
-                                                value="{{ Request::get('attendance_date') }}" 
-                                            >
-                                            <span class="input-group-text date-icon" onclick="document.getElementById('attendance_date').showPicker()">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="col-md-4" style="margin-bottom: 15px;">
-                                        <button type="submit" class="btn btn-primary">Search</button>
-                                        <a href="{{ url('admin/attendance/student_attendance') }}" class="btn btn-success ms-1">Reset</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </form>
-                         @include('message')
-
-                    </div>
-                   @if(!empty(Request::get('class_id')) && !empty(Request::get('attendance_date')))
-                    <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Student List</h3>
-                    </div>
-
-                    <form action="{{ url('admin/examination/submit_marks_register') }}" method="post" id="SubmitMarksForm">
-                        @csrf
-                        
-
-                        <div class="card-body p-0">
-                            <table class="table table-striped mb-0">
-                                <thead>
-                                    <tr>
-                                        <th> Student Id </th>
-                                        <th>Student Name</th>
-                                        <th>Attendance</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(!empty($getStudent) && $getStudent->count() > 0)
-                                    @foreach ( $getStudent as $value)
-                                    @php
-                                        $attendance_type = '';
-                                        $getAttendance = $value->getAttendance($value->id,Request::get('class_id'),Request::get('attendance_date'));
-                                        if(!empty($getAttendance->attendance_type))
-                                        {
-                                            $attendance_type = $getAttendance->attendance_type;
-                                        }
-                                    @endphp
-                                    <tr>
-                                        <td>{{$value->id}}</td>
-                                        <td>{{$value->name}} {{$value->last_name}}</td>
-                                        <td>
-                                            <label  for=""> <input type="radio"{{($attendance_type == '1') ? 'checked' : ''}} name="attendance{{$value->id}}" value="1" class="SaveAttendance" data-student-id="{{ $value->id }}">Present</label>
-                                            <label  for=""> <input type="radio" {{($attendance_type == '2') ? 'checked' : ''}}  name="attendance{{$value->id}}" value="2" class="SaveAttendance"  data-student-id="{{ $value->id }}">Absent</label>
-                                            <label  for=""> <input type="radio" {{($attendance_type == '3') ? 'checked' : ''}} name="attendance{{$value->id}}" value="3" class="SaveAttendance"  data-student-id="{{ $value->id }}">Late</label>
-                                            <label  for=""> <input type="radio" {{($attendance_type == '4') ? 'checked' : ''}} name="attendance{{$value->id}}" value="4" class="SaveAttendance"  data-student-id="{{ $value->id }}">Half Day</label>
-                                        </td>
-                                    </tr>
-                                        
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-building me-1"></i>Class <span class="text-danger">*</span>
+                                </label>
+                                <select name="class_id" id="getClass" required class="form-select">
+                                    <option value="">— Select Class —</option>
+                                    @foreach($getClass as $class)
+                                        <option {{ Request::get('class_id') == $class->id ? 'selected' : '' }}
+                                                value="{{ $class->id }}">{{ $class->name }}</option>
                                     @endforeach
-                                    <tr>
+                                </select>
+                            </div>
 
-                                    </tr>
-                                    @endif
-                                </tbody>
-                            </table>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-calendar3 me-1"></i>Attendance Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" name="attendance_date" id="attendance_date" required
+                                       value="{{ Request::get('attendance_date') }}"
+                                       class="form-control">
+                            </div>
+
+                            <div class="col-md-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-success flex-fill fw-semibold">
+                                    <i class="bi bi-search me-1"></i>Load Students
+                                </button>
+                                <a href="{{ url('admin/attendance/student_attendance') }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                                </a>
+                            </div>
+
                         </div>
                     </form>
-                    </div>
-                @endif
-            
                 </div>
             </div>
+
         </div>
     </div>
-    <div id="ajax-response-message" 
-     class="alert" 
-     style="display:none;">
-</div>
+
+    {{-- AJAX message banner --}}
+    <div id="ajax-response-message" class="alert mx-3" style="display:none;"></div>
 
     <div class="app-content">
         <div class="container-fluid">
+            @include('message')
 
-           
+            @if(!empty(Request::get('class_id')) && !empty(Request::get('attendance_date')))
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="bi bi-person-check-fill me-2 text-success"></i>Mark Attendance
+                    </h6>
+                    <div class="d-flex align-items-center gap-2">
+                        @if(Request::get('class_id'))
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3">
+                                <i class="bi bi-building me-1"></i>
+                                {{ $getClass->firstWhere('id', Request::get('class_id'))->name ?? '' }}
+                            </span>
+                        @endif
+                        <span class="badge bg-success bg-opacity-10 text-success px-3">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            {{ \Carbon\Carbon::parse(Request::get('attendance_date'))->format('d M Y') }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Quick-mark all buttons --}}
+                <div class="px-4 py-2 border-bottom bg-light d-flex align-items-center gap-3 flex-wrap">
+                    <span class="text-muted small fw-semibold">Mark All:</span>
+                    <button type="button" class="btn btn-sm btn-outline-success mark-all-btn" data-val="1">
+                        <i class="bi bi-check-all me-1"></i>Present
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger mark-all-btn" data-val="2">
+                        <i class="bi bi-x-circle me-1"></i>Absent
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning mark-all-btn" data-val="3">
+                        <i class="bi bi-clock me-1"></i>Late
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-info mark-all-btn" data-val="4">
+                        <i class="bi bi-calendar2-half me-1"></i>Half Day
+                    </button>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="table-light text-uppercase text-secondary"
+                                    style="font-size:.72rem;letter-spacing:.05em;">
+                                    <th class="ps-4" width="60">#</th>
+                                    <th>Student</th>
+                                    <th>Mark Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(!empty($getStudent) && $getStudent->count() > 0)
+                                    @foreach($getStudent as $value)
+                                        @php
+                                            $attendance_type = '';
+                                            $getAttendance = $value->getAttendance(
+                                                $value->id,
+                                                Request::get('class_id'),
+                                                Request::get('attendance_date')
+                                            );
+                                            if (!empty($getAttendance->attendance_type)) {
+                                                $attendance_type = $getAttendance->attendance_type;
+                                            }
+                                        @endphp
+                                        <tr id="row-{{ $value->id }}">
+                                            <td class="ps-4 text-muted small">{{ $loop->iteration }}</td>
+
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    @if(!empty($value->profile_pic))
+                                                        <img src="{{ asset('upload/profile/' . $value->profile_pic) }}"
+                                                             class="rounded-circle flex-shrink-0"
+                                                             style="width:34px;height:34px;object-fit:cover;">
+                                                    @else
+                                                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                                             style="width:34px;height:34px;font-size:.78rem;">
+                                                            {{ strtoupper(substr($value->name, 0, 1)) }}{{ strtoupper(substr($value->last_name ?? '', 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <div>
+                                                        <div class="fw-semibold small text-dark">
+                                                            {{ $value->name }} {{ $value->last_name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                @php
+                                                    $options = [
+                                                        1 => ['label' => 'Present',  'color' => 'success'],
+                                                        2 => ['label' => 'Absent',   'color' => 'danger'],
+                                                        3 => ['label' => 'Late',     'color' => 'warning'],
+                                                        4 => ['label' => 'Half Day', 'color' => 'info'],
+                                                    ];
+                                                @endphp
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach($options as $val => $opt)
+                                                        <label class="att-label d-flex align-items-center gap-1 px-3 py-1 rounded-pill border"
+                                                               style="cursor:pointer;font-size:.8rem;transition:all .15s ease;"
+                                                               data-color="{{ $opt['color'] }}">
+                                                            <input type="radio"
+                                                                   class="SaveAttendance d-none"
+                                                                   name="attendance{{ $value->id }}"
+                                                                   value="{{ $val }}"
+                                                                   data-student-id="{{ $value->id }}"
+                                                                   {{ $attendance_type == $val ? 'checked' : '' }}>
+                                                            <i class="bi bi-circle-fill" style="font-size:.45rem;"></i>
+                                                            {{ $opt['label'] }}
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5">
+                                            <i class="bi bi-people d-block mb-2 text-muted" style="font-size:2.5rem;opacity:.3;"></i>
+                                            <div class="fw-semibold small text-muted">No students found in this class</div>
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            @endif
         </div>
     </div>
 
 </main>
+
+<style>
+.att-label { background: #f8f9fa; color: #555; user-select: none; }
+.att-label:hover { filter: brightness(.95); }
+.att-label.active-success { background: rgba(25,135,84,.12) !important; border-color: rgba(25,135,84,.5) !important; color: #198754 !important; font-weight: 600; }
+.att-label.active-danger  { background: rgba(220,53,69,.12)  !important; border-color: rgba(220,53,69,.5)  !important; color: #dc3545 !important; font-weight: 600; }
+.att-label.active-warning { background: rgba(255,193,7,.18)  !important; border-color: rgba(255,193,7,.6)  !important; color: #856404 !important; font-weight: 600; }
+.att-label.active-info    { background: rgba(13,202,240,.12) !important; border-color: rgba(13,202,240,.5) !important; color: #087990 !important; font-weight: 600; }
+</style>
+
 @endsection
 
 @section('script')
-<script type="text/javascript">
-
+<script>
 function showAjaxMessage(message, type) {
-    const messageDiv = $('#ajax-response-message');
-
-    messageDiv.removeClass('alert-success alert-danger alert-warning alert-info');
-
-    if (type === 'success') {
-        messageDiv.addClass('alert alert-success');
-    } else {
-        messageDiv.addClass('alert alert-danger');
-    }
-
-    messageDiv.stop(true, true).hide().html(message).fadeIn();
-
-    setTimeout(function () {
-        messageDiv.fadeOut();
-    }, 4000);
+    const $msg = $('#ajax-response-message');
+    $msg.removeClass('alert-success alert-danger')
+        .addClass('alert alert-' + type)
+        .html(message).stop(true, true).hide().fadeIn();
+    setTimeout(() => $msg.fadeOut(), 4000);
 }
 
-$('.SaveAttendance').change(function () {
+const colorMap = { 1: 'success', 2: 'danger', 3: 'warning', 4: 'info' };
 
-    var student_id = $(this).data('student-id');
-    var attendance_type = $(this).val();
-    var class_id = $('#getClass').val();
-    var attendance_date = $('#attendance_date').val();
+function applyLabel($radio) {
+    const $allLabels = $radio.closest('td').find('.att-label');
+    $allLabels.removeClass('active-success active-danger active-warning active-info');
+    $radio.closest('.att-label').addClass('active-' + colorMap[$radio.val()]);
+}
+
+// Apply active state on page load for pre-checked radios
+$(document).ready(function () {
+    $('.SaveAttendance:checked').each(function () { applyLabel($(this)); });
+});
+
+// Mark-all buttons
+$(document).on('click', '.mark-all-btn', function () {
+    const val = $(this).data('val');
+    $('.SaveAttendance[value="' + val + '"]').each(function () {
+        $(this).prop('checked', true);
+        applyLabel($(this));
+        saveAttendance($(this));
+    });
+});
+
+// Individual change
+$(document).on('change', '.SaveAttendance', function () {
+    applyLabel($(this));
+    saveAttendance($(this));
+});
+
+function saveAttendance($radio) {
+    const student_id      = $radio.data('student-id');
+    const attendance_type = $radio.val();
+    const class_id        = $('#getClass').val();
+    const attendance_date = $('#attendance_date').val();
 
     if (!class_id || !attendance_date) {
         showAjaxMessage('Please select class and date first.', 'danger');
@@ -175,29 +273,24 @@ $('.SaveAttendance').change(function () {
     }
 
     $.ajax({
-        type: "POST",
-        url: "{{ url('admin/attendance/student_attendance_save') }}",
+        type: 'POST',
+        url: '{{ url("admin/attendance/student_attendance_save") }}',
         data: {
-            _token: "{{ csrf_token() }}",
-            student_id: student_id,
+            _token: '{{ csrf_token() }}',
+            student_id:      student_id,
             attendance_type: attendance_type,
-            class_id: class_id,
+            class_id:        class_id,
             attendance_date: attendance_date
         },
-        dataType: "json",
-
-        success: function (data) {
-            showAjaxMessage(data.message, 'success');
-        },
-
+        dataType: 'json',
+        success: function (data) { showAjaxMessage(data.message, 'success'); },
         error: function (xhr) {
-            if (xhr.status === 422 && xhr.responseJSON) {
-                showAjaxMessage(xhr.responseJSON.message, 'danger');
-            } else {
-                showAjaxMessage('A server error occurred. Please try again.', 'danger');
-            }
+            const msg = (xhr.status === 422 && xhr.responseJSON)
+                ? xhr.responseJSON.message
+                : 'A server error occurred. Please try again.';
+            showAjaxMessage(msg, 'danger');
         }
     });
-});
+}
 </script>
 @endsection

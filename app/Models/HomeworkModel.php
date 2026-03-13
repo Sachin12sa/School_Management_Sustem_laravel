@@ -109,4 +109,24 @@ public function getHomework()
     {
         return $this->belongsTo(HomeworkSubmitModel::class,'homework_id');
     }
+
+    // get total home work for dashboard
+    static public function getTotalHomework()
+        {
+            return self::select('homeworks.id') 
+                ->where('homeworks.is_delete','=',0)
+                ->where('homeworks.submission_date', '>=', date('Y-m-d')) 
+                ->count();
+        }
+        static public function getRecordDashboard()
+        {
+            return self::select('homeworks.*', 'classes.name as class_name', 'subjects.name as subject_name', 'users.name as created_by_name','users.last_name as created_by_last_name')
+                ->join('users', 'users.id', '=', 'homeworks.created_by')
+                ->join('classes', 'classes.id', '=', 'homeworks.class_id')
+                ->join('subjects', 'subjects.id', '=', 'homeworks.subject_id')
+                ->where('homeworks.submission_date', '>=', date('Y-m-d'))
+                ->where('homeworks.is_delete', '=', 0)
+                ->orderBy('homeworks.id', 'desc')
+                ->get();
+        }
 }

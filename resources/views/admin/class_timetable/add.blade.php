@@ -3,72 +3,294 @@
 @section('content')
 <main class="app-main">
 
-    <!-- Header -->
+    {{-- ── Page Header ─────────────────────────────────────────────────── --}}
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row align-items-center mb-3">
+
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">
-                       Add Class TimeTable                       
-                         {{-- <small class="text-muted">(Total : {{ $getRecord->total() }})</small> --}}
-                    </h3>
-                </div>
-           
-            </div>
-
-            <!-- Search Card -->
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">Search Class Timetable </h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-calendar-plus-fill"></i>
                         </div>
-
-                        <form method="get" action="">
-                            <div class="card-body">
-                                <div class="row align-items-end">
-
-                                    <div class="col-md-3">
-                                        <label class="form-label"> Class Name</label>
-                                        <input
-                                            type="text"
-                                            name="class_name"
-                                            value="{{ request('name') }}"
-                                            class="form-control"
-                                            placeholder="Enter name"
-                                        />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label"> Subject Name</label>
-                                        <input
-                                            type="text"
-                                            name="Subject_name"
-                                            value="{{ request('name') }}"
-                                            class="form-control"
-                                            placeholder="Enter name"
-                                        />
-                                    </div>
-                
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary">
-                                            Search
-                                        </button>
-                                        <a href="{{ url('admin/class_timetable/list') }}" class="btn btn-success ms-1">
-                                            Reset
-                                        </a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </form>
-
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Add Class Timetable</h4>
+                            <span class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Search for a class and subject, then fill in the weekly schedule
+                            </span>
+                        </div>
                     </div>
                 </div>
+                <div class="col-sm-6 text-end">
+                    <a href="{{ url('admin/class_timetable/list') }}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Timetable
+                    </a>
+                </div>
             </div>
+
+            @include('message')
+
+            {{-- ── Search / Select Card ─────────────────────────────────────── --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3">
+                    <i class="bi bi-funnel-fill text-warning"></i>
+                    <h6 class="mb-0 fw-semibold">Select Class & Subject</h6>
+                </div>
+                <div class="card-body bg-light bg-opacity-50">
+                    <form method="get" action="">
+                        <div class="row g-3 align-items-end">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-building me-1"></i>Class Name
+                                </label>
+                                <select name="class_id" class="form-select getClass">
+                                    <option value="">— Select Class —</option>
+                                    @foreach($getClass as $class)
+                                        <option value="{{ $class->id }}"
+                                            {{ Request::get('class_id') == $class->id ? 'selected' : '' }}>
+                                            {{ $class->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-journal-bookmark me-1"></i>Subject Name
+                                </label>
+                                <select name="subject_id" class="form-select getSubject">
+                                    @if(!empty($getSubject) && $getSubject->count() > 0)
+                                        <option value="">— Select Subject —</option>
+                                        @foreach($getSubject as $subject)
+                                            <option value="{{ $subject->subject_id }}"
+                                                {{ Request::get('subject_id') == $subject->subject_id ? 'selected' : '' }}>
+                                                {{ $subject->subject_name }}
+                                            </option>
+                                        @endforeach
+                                    @elseif(!empty(Request::get('class_id')))
+                                        <option value="">No subjects assigned</option>
+                                    @else
+                                        <option value="">Select a class first</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-warning text-dark flex-fill">
+                                    <i class="bi bi-search me-1"></i>Load Schedule
+                                </button>
+                                <a href="{{ url('admin/class_timetable/add') }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                                </a>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Content -->
+    {{-- ── Timetable Entry Form ─────────────────────────────────────────── --}}
+    <div class="app-content">
+        <div class="container-fluid">
+
+            @if(!empty(Request::get('class_id')) && !empty(Request::get('subject_id')))
+
+                {{-- Context Pills --}}
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="text-muted small">Entering timetable for:</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 fw-semibold">
+                        <i class="bi bi-building me-1"></i>
+                        {{ optional($getClass->firstWhere('id', Request::get('class_id')))->name ?? 'Selected Class' }}
+                    </span>
+                    <span class="badge bg-info bg-opacity-10 text-info px-3 py-1 fw-semibold">
+                        <i class="bi bi-journal-bookmark me-1"></i>
+                        {{ optional($getSubject?->firstWhere('subject_id', Request::get('subject_id')))->subject_name ?? 'Selected Subject' }}
+                    </span>
+                </div>
+
+                <form action="{{ url('admin/class_timetable/add') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="class_id" value="{{ Request::get('class_id') }}">
+                    <input type="hidden" name="subject_id" value="{{ Request::get('subject_id') }}">
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between py-3">
+                            <h6 class="mb-0 fw-semibold">
+                                <i class="bi bi-calendar3-week me-2 text-warning"></i>Weekly Schedule Entry
+                            </h6>
+                            <span class="badge bg-warning bg-opacity-10 text-warning small">
+                                <i class="bi bi-plus-circle me-1"></i>New Entry
+                            </span>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr class="table-light text-uppercase text-secondary" style="font-size:.72rem;letter-spacing:.05em;">
+                                            <th class="ps-4" style="width:140px;">Day</th>
+                                            <th style="width:200px;">Start Time</th>
+                                            <th style="width:200px;">End Time</th>
+                                            <th>Room Number</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php $i = 1; @endphp
+                                        @foreach($week as $value)
+                                            <tr>
+                                                <input type="hidden" name="timetable[{{ $i }}][week_id]" value="{{ $value['id'] }}">
+
+                                                {{-- Day Label --}}
+                                                <td class="ps-4">
+                                                    @php
+                                                        $dayColors = [
+                                                            'Sunday'    => 'danger',
+                                                            'Monday'    => 'primary',
+                                                            'Tuesday'   => 'success',
+                                                            'Wednesday' => 'info',
+                                                            'Thursday'  => 'warning',
+                                                            'Friday'    => 'secondary',
+                                                            'Saturday'  => 'dark',
+                                                        ];
+                                                        $color = $dayColors[$value['week_name']] ?? 'primary';
+                                                    @endphp
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="rounded-2 bg-{{ $color }} bg-opacity-10 text-{{ $color }} d-flex align-items-center justify-content-center flex-shrink-0"
+                                                             style="width:32px;height:32px;font-size:.75rem;font-weight:700;">
+                                                            {{ strtoupper(substr($value['week_name'], 0, 2)) }}
+                                                        </div>
+                                                        <span class="fw-semibold small text-dark">{{ $value['week_name'] }}</span>
+                                                    </div>
+                                                </td>
+
+                                                {{-- Start Time --}}
+                                                <td>
+                                                    <div class="input-group input-group-sm" style="max-width:160px;">
+                                                        <span class="input-group-text bg-light border-end-0">
+                                                            <i class="bi bi-clock text-muted" style="font-size:.75rem;"></i>
+                                                        </span>
+                                                        <input type="time"
+                                                               name="timetable[{{ $i }}][start_time]"
+                                                               value="{{ $value['start_time'] ?? '' }}"
+                                                               class="form-control border-start-0 ps-0">
+                                                    </div>
+                                                </td>
+
+                                                {{-- End Time --}}
+                                                <td>
+                                                    <div class="input-group input-group-sm" style="max-width:160px;">
+                                                        <span class="input-group-text bg-light border-end-0">
+                                                            <i class="bi bi-clock-history text-muted" style="font-size:.75rem;"></i>
+                                                        </span>
+                                                        <input type="time"
+                                                               name="timetable[{{ $i }}][end_time]"
+                                                               value="{{ $value['end_time'] ?? '' }}"
+                                                               class="form-control border-start-0 ps-0">
+                                                    </div>
+                                                </td>
+
+                                                {{-- Room Number --}}
+                                                <td>
+                                                    <div class="input-group input-group-sm" style="max-width:220px;">
+                                                        <span class="input-group-text bg-light border-end-0">
+                                                            <i class="bi bi-door-open text-muted" style="font-size:.75rem;"></i>
+                                                        </span>
+                                                        <input type="text"
+                                                               name="timetable[{{ $i }}][room_number]"
+                                                               value="{{ trim($value['room_number'] ?? '') }}"
+                                                               placeholder="e.g. Room 101"
+                                                               class="form-control border-start-0 ps-0">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @php $i++; @endphp
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white d-flex align-items-center justify-content-between py-3">
+                            <span class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Leave fields empty to mark a day as no class.
+                            </span>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url('admin/class_timetable/list') }}" class="btn btn-outline-secondary px-4">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold">
+                                    <i class="bi bi-floppy-fill me-2"></i>Save Timetable
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            @else
+
+                {{-- Placeholder state --}}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center" style="padding:4rem;">
+                        <i class="bi bi-calendar-plus d-block mb-3 text-warning" style="font-size:3.5rem;opacity:.4;"></i>
+                        <h6 class="fw-semibold text-dark mb-1">Ready to Add a Timetable</h6>
+                        <p class="text-muted small mb-3">
+                            Select a <strong>Class</strong> and <strong>Subject</strong> using the filter above to begin entering the weekly schedule.
+                        </p>
+                        <a href="{{ url('admin/class_timetable/list') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye me-1"></i>View Existing Timetables
+                        </a>
+                    </div>
+                </div>
+
+            @endif
+
+        </div>
+    </div>
 
 </main>
+@endsection
+
+@section('script')
+<script>
+$(document).ready(function () {
+
+    $('.getClass').on('change', function () {
+        var class_id = $(this).val();
+        var $subjectSelect = $('.getSubject');
+
+        if (class_id !== '') {
+            $subjectSelect.html('<option value="">Loading subjects…</option>').prop('disabled', true);
+
+            $.ajax({
+                url: "{{ url('admin/class_timetable/get_subject') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    class_id: class_id,
+                },
+                dataType: 'json',
+                success: function (response) {
+                    $subjectSelect.prop('disabled', false).html(response.html);
+                },
+                error: function () {
+                    $subjectSelect.prop('disabled', false)
+                                  .html('<option value="">Failed to load subjects</option>');
+                }
+            });
+        } else {
+            $subjectSelect.prop('disabled', false)
+                          .html('<option value="">Select a class first</option>');
+        }
+    });
+
+});
+</script>
 @endsection

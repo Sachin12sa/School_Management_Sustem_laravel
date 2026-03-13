@@ -1,92 +1,117 @@
-@extends('layouts.app')    
+@extends('layouts.app')
 @section('content')
- <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Add New Assign Subject</h3>
-              </div>
-            </div>
-            <!--end::Row-->
-          </div>
-          <!--end::Container-->
-        </div>
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-4">
-              <!--begin::Col-->
-    
-              <!--end::Col-->
-              <!--begin::Col-->
-              <div class="col-md-12">
-                <!--begin::Quick Example-->
-                <div class="card card-primary card-outline mb-4">
-                  <!--begin::Header-->
-                  <div class="card-header">
-                    <div class="card-title">Fill All the Details To Add New Assign Subject</div>
-                  </div>
-                  <!--end::Header-->
-                  <!--begin::Form-->
-                  <form method="post" action="">
-                    @csrf
-                    <!--begin::Body-->
-                    <div class="card-body">
-                         <div class="mb-3">
-                        <label  class="form-label"> Assign_subject Name</label>
-                           <select name="class_id" required class="form-control" id="">
-                          <option value="">Select Class</option>
-                                @foreach($getClass as $class)
-                                <option value="{{$class->id}}">{{$class->name}}</option>
-                                @endforeach
-                        </select>
+<main class="app-main">
 
-                      </div>
-
-                         <div class="mb-3">
-                        <label  class="form-label"> Subject Name</label>
-                       
-                            @foreach($getSubject as $subject)
-                             <div>
-                                <label style="font-weight:normal">
-                                  <input type="checkbox" value="{{$subject->id}}"  name="subject_id[]" id="" >{{$subject->name}}
-                                </label>
-                                    </div>
-                                @endforeach
- 
-                        
-                                
-
-                      </div>
-                      <div class="form-group">
-                        <label for="">Status</label>
-                        <select name="status" class="form-control" id="">
-                          <option value="0">Active</option>
-                          <option value="1">Inactive</option>
-                        </select>
-
-                      </div>
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row align-items-center mb-4">
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-journal-bookmark-fill"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Assign Subjects to Class</h4>
+                            <span class="text-muted small">
+                                <i class="bi bi-arrow-left me-1"></i>
+                                <a href="{{ url('admin/assign_subject/list') }}" class="text-muted text-decoration-none">Back to Assign Subject List</a>
+                            </span>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                    <!--end::Footer-->
-                  </form>
-                  <!--end::Form-->
                 </div>
-
-              </div>
-           
             </div>
-            <!--end::Row-->
-          </div>
-          <!--end::Container-->
         </div>
-        <!--end::App Content-->
-      </main>
+    </div>
+
+    <div class="app-content">
+        <div class="container-fluid">
+            @include('message')
+
+            <div class="row justify-content-center">
+                <div class="col-md-7">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-journal-bookmark-fill text-info"></i>
+                            <h6 class="mb-0 fw-semibold">Assignment Details</h6>
+                        </div>
+
+                        <form method="post" action="">
+                            @csrf
+                            <div class="card-body">
+                                <div class="row g-4">
+
+                                    {{-- Class --}}
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-building me-1"></i>Class <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="class_id" required
+                                                class="form-select @error('class_id') is-invalid @enderror">
+                                            <option value="">— Select Class —</option>
+                                            @foreach($getClass as $class)
+                                                <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('class_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    {{-- Subjects --}}
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-journal-text me-1"></i>Select Subjects <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="border rounded-3 p-3 bg-light" style="max-height:280px;overflow-y:auto;">
+                                            @forelse($getSubject as $subject)
+                                                <div class="form-check py-1 border-bottom border-light-subtle">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           name="subject_id[]"
+                                                           value="{{ $subject->id }}"
+                                                           id="subject_{{ $subject->id }}">
+                                                    <label class="form-check-label small fw-semibold text-dark" for="subject_{{ $subject->id }}">
+                                                        {{ $subject->name }}
+                                                        <span class="badge bg-secondary bg-opacity-10 text-secondary ms-1" style="font-size:.65rem;">
+                                                            {{ $subject->type == 0 ? 'Theory' : 'Practical' }}
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            @empty
+                                                <p class="text-muted small mb-0">No subjects available.</p>
+                                            @endforelse
+                                        </div>
+                                        @error('subject_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">Status</label>
+                                        <select name="status" class="form-select @error('status') is-invalid @enderror">
+                                            <option value="0">Active</option>
+                                            <option value="1">Inactive</option>
+                                        </select>
+                                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+                                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Select at least one subject.</span>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url('admin/assign_subject/list') }}" class="btn btn-outline-secondary px-4">
+                                        <i class="bi bi-x-circle me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-info text-white px-4 fw-semibold">
+                                        <i class="bi bi-check-circle-fill me-2"></i>Assign Subjects
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
 @endsection

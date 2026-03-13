@@ -1,176 +1,310 @@
-@extends('layouts.app')    
+@extends('layouts.app')
 @section('content')
 <main class="app-main">
+
+    {{-- ── Page Header ─────────────────────────────────────────── --}}
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Edit Teacher</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="app-content">
-        <div class="container-fluid">
-            <div class="row g-4">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline mb-4">
-
-                        <div class="card-header">
-                            <div class="card-title">Edit Details for Teacher: {{ $getRecord->name }}</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:46px;height:46px;font-size:1.4rem;">
+                            <i class="bi bi-person-video3"></i>
                         </div>
-
-                        <form method="post" action="" enctype="multipart/form-data">
-                            @csrf
-
-                            <div class="card-body">
-                                <div class="row">
-                                    {{-- First Name --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">First Name <span style="color:red">*</span></label>
-                                        <input name="name" value="{{ old('name', $getRecord->name) }}" placeholder="First Name" required class="form-control" />
-                                        <div style="color:red">{{ $errors->first('name') }}</div>
-                                    </div>
-
-                                    {{-- Last Name --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Last Name <span style="color:red">*</span></label>
-                                        <input name="last_name" value="{{ old('last_name', $getRecord->last_name) }}" placeholder="Last Name" required class="form-control" />
-                                        <div style="color:red">{{ $errors->first('last_name') }}</div>
-                                    </div>
-
-                                    {{-- Gender --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Gender <span style="color:red">*</span></label>
-                                        <select name="gender" required class="form-control">
-                                            <option value="">Select Gender</option>
-                                            <option {{ (old('gender', $getRecord->gender) == 'Male') ? 'selected' : '' }} value="Male">Male</option>
-                                            <option {{ (old('gender', $getRecord->gender) == 'Female') ? 'selected' : '' }} value="Female">Female</option>
-                                            <option {{ (old('gender', $getRecord->gender) == 'Other') ? 'selected' : '' }} value="Other">Other</option>
-                                        </select>
-                                        <div style="color:red">{{ $errors->first('gender') }}</div>
-                                    </div>
-
-                                    {{-- Date of Birth --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Date of Birth <span style="color:red">*</span></label>
-                                        <input type="date" id="date" value="{{ old('date_of_birth', $getRecord->date_of_birth) }}" required name="date_of_birth" class="form-control" />
-                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </span>
-                                        <div style="color:red">{{ $errors->first('date_of_birth') }}</div>
-                                    </div>
-
-                                    {{-- Date of Joining (Mapped to admission_date col) --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Date of Joining <span style="color:red">*</span></label>
-                                        <input type="date" id="teacher" name="date_of_joining" value="{{ old('date_of_joining', $getRecord->admission_date) }}" required class="form-control" />
-                                        <span  class="input-group-text" onclick="document.getElementById('date').showPicker()">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </span>
-                                        <div style="color:red">{{ $errors->first('date_of_joining') }}</div>
-                                    </div>
-
-                                    {{-- Mobile Number --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Mobile Number <span style="color:red">*</span></label>
-                                        <input name="mobile_number" value="{{ old('mobile_number', $getRecord->mobile_number) }}" required class="form-control" />
-                                        <div style="color:red">{{ $errors->first('mobile_number') }}</div>
-                                    </div>
-
-                                    {{-- Marital Status --}}
-                                        <div class="form-group col-md-6 mb-3">
-                                            <label class="form-label">Marital Status</label>
-                                                <select name="marital_status" class="form-control">
-                                                    <option {{ (old('marital_status', $getRecord->marital_status) == 0) ? 'selected' : '' }} value="0">Married</option>
-                                                    <option {{ (old('marital_status', $getRecord->marital_status) == 1) ? 'selected' : '' }} value="1">Unmarried</option>
-                                                </select>
-                                                <div style="color:red">{{ $errors->first('marital_status') }}</div>
-                                            </div>
-
-                                    {{-- Profile Picture --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Profile Picture</label>
-                                        <input type="file" name="profile_pic" class="form-control" />
-                                        <div style="color:red">{{ $errors->first('profile_pic') }}</div>
-                                        @if(!empty($getRecord->getProfile()))
-                                            <img src="{{ $getRecord->getProfile() }}" style="width:100px; margin-top:10px; border-radius:5px;" alt="Profile">
-                                        @endif
-                                    </div>
-
-                                    {{-- Addresses --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Current Address</label>
-                                        <textarea name="current_address" class="form-control">{{ old('current_address', $getRecord->address) }}</textarea>
-                                        <div style="color:red">{{ $errors->first('current_address') }}</div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Permanent Address</label>
-                                        <textarea name="permanent_address" class="form-control">{{ old('permanent_address', $getRecord->permanent_address) }}</textarea>
-                                        <div style="color:red">{{ $errors->first('permanent_address') }}</div>
-                                    </div>
-
-                                    {{-- Qualification/Exp --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Qualification</label>
-                                        <textarea name="qualification" class="form-control">{{ old('qualification', $getRecord->qualification) }}</textarea>
-                                        <div style="color:red">{{ $errors->first('qualification') }}</div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Work Experience</label>
-                                        <textarea name="work_experience" class="form-control">{{ old('work_experience', $getRecord->work_experience) }}</textarea>
-                                        <div style="color:red">{{ $errors->first('work_experience') }}</div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Note</label>
-                                        <textarea name="note" class="form-control">{{ old('note', $getRecord->note) }}</textarea>
-                                        <div style="color:red">{{ $errors->first('note') }}</div>
-                                    </div>
-
-                                    {{-- Status --}}
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label class="form-label">Status <span style="color:red">*</span></label>
-                                        <select name="status" required class="form-control">
-                                            <option value="">Select</option>
-                                            <option {{ (old('status', $getRecord->status) == '0') ? 'selected' : '' }} value="0">Active</option>
-                                            <option {{ (old('status', $getRecord->status) == '1') ? 'selected' : '' }} value="1">Inactive</option>
-                                        </select>
-                                        <div style="color:red">{{ $errors->first('status') }}</div>
-                                    </div>
-                                </div>
-
-                                <hr />
-
-                                {{-- Email --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Email Address <span style="color:red">*</span></label>
-                                    <input name="email" value="{{ old('email', $getRecord->email) }}" required type="email" class="form-control" />
-                                    <div style="color:red">{{ $errors->first('email') }}</div>
-                                </div>
-
-                                {{-- Password --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Password</label>
-                                    <input type="password" name="password" placeholder="Password" class="form-control" />
-                                    <small class="text-muted">Do you want to change the password? If so, please enter a new one. Otherwise, leave it blank.</small>
-                                    <div style="color:red">{{ $errors->first('password') }}</div>
-                                </div>
-
+                        <div>
+                            <h4 class="mb-0 fw-semibold text-dark">Edit Teacher</h4>
+                            <span class="text-muted small">
+                                <i class="bi bi-arrow-left me-1"></i>
+                                <a href="{{ url('admin/teacher/list') }}" class="text-muted text-decoration-none">Back to Teacher List</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <div class="d-inline-flex align-items-center gap-2 bg-light rounded-3 px-3 py-2">
+                        @if(!empty($getRecord->getProfile()))
+                            <img src="{{ $getRecord->getProfile() }}" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;">
+                        @else
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold"
+                                 style="width:32px;height:32px;font-size:.8rem;">
+                                {{ strtoupper(substr($getRecord->name, 0, 1)) }}{{ strtoupper(substr($getRecord->last_name ?? '', 0, 1)) }}
                             </div>
-
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Update Teacher</button>
-                            </div>
-
-                        </form>
+                        @endif
+                        <div class="text-start">
+                            <div class="fw-semibold small text-dark lh-1">{{ $getRecord->name }} {{ $getRecord->last_name }}</div>
+                            <div class="text-muted" style="font-size:.72rem;">Teacher</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- ── Form ─────────────────────────────────────────────────── --}}
+    <div class="app-content">
+        <div class="container-fluid">
+            @include('message')
+
+            <form method="post" action="" enctype="multipart/form-data" autocomplete="off">
+                @csrf
+
+                <div class="row g-4">
+
+                    {{-- ══ LEFT: Profile Photo ══════════════════════════════ --}}
+                    <div class="col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-image text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Profile Photo</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center gap-3 py-4">
+                                <div class="position-relative">
+                                    <img id="avatarPreview"
+                                         src="{{ !empty($getRecord->getProfile()) ? $getRecord->getProfile() : asset('upload/profile/user.jpg') }}"
+                                         alt="Profile"
+                                         class="rounded-circle shadow"
+                                         style="width:110px;height:110px;object-fit:cover;border:3px solid #e9ecef;">
+                                    <label for="profile_pic"
+                                           class="position-absolute bottom-0 end-0 btn btn-warning btn-sm rounded-circle p-1"
+                                           style="width:30px;height:30px;cursor:pointer;" title="Change photo">
+                                        <i class="bi bi-camera-fill" style="font-size:.75rem;"></i>
+                                    </label>
+                                </div>
+                                <div class="text-center">
+                                    <div class="small fw-semibold text-dark">Change Photo</div>
+                                    <div class="text-muted" style="font-size:.72rem;">JPG, PNG · Max 2MB</div>
+                                </div>
+                                <input type="file" id="profile_pic" name="profile_pic"
+                                       class="d-none" accept="image/*"
+                                       onchange="previewAvatar(this, 'avatarPreview')">
+                                @error('profile_pic')
+                                    <div class="text-danger small">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ══ RIGHT: Form Fields ═══════════════════════════════ --}}
+                    <div class="col-lg-9">
+
+                        {{-- ── Section 1: Personal Info ──────────────────── --}}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-person-lines-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Personal Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="name"
+                                               value="{{ old('name', $getRecord->name) }}" required
+                                               placeholder="First name"
+                                               class="form-control @error('name') is-invalid @enderror">
+                                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="last_name"
+                                               value="{{ old('last_name', $getRecord->last_name) }}" required
+                                               placeholder="Last name"
+                                               class="form-control @error('last_name') is-invalid @enderror">
+                                        @error('last_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Gender <span class="text-danger">*</span></label>
+                                        <select name="gender" required class="form-select @error('gender') is-invalid @enderror">
+                                            <option value="">— Select —</option>
+                                            <option {{ old('gender', $getRecord->gender) == 'Male'   ? 'selected' : '' }} value="Male">Male</option>
+                                            <option {{ old('gender', $getRecord->gender) == 'Female' ? 'selected' : '' }} value="Female">Female</option>
+                                            <option {{ old('gender', $getRecord->gender) == 'Other'  ? 'selected' : '' }} value="Other">Other</option>
+                                        </select>
+                                        @error('gender') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" name="date_of_birth"
+                                               value="{{ old('date_of_birth', $getRecord->date_of_birth) }}" required
+                                               class="form-control @error('date_of_birth') is-invalid @enderror">
+                                        @error('date_of_birth') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Marital Status</label>
+                                        <select name="marital_status" class="form-select @error('marital_status') is-invalid @enderror">
+                                            <option {{ old('marital_status', $getRecord->marital_status) == 1 ? 'selected' : '' }} value="1">Unmarried</option>
+                                            <option {{ old('marital_status', $getRecord->marital_status) == 0 ? 'selected' : '' }} value="0">Married</option>
+                                        </select>
+                                        @error('marital_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Mobile Number <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="bi bi-phone text-muted"></i></span>
+                                            <input type="text" name="mobile_number"
+                                                   value="{{ old('mobile_number', $getRecord->mobile_number) }}" required
+                                                   class="form-control @error('mobile_number') is-invalid @enderror">
+                                        </div>
+                                        @error('mobile_number') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Date of Joining <span class="text-danger">*</span></label>
+                                        <input type="date" name="date_of_joining"
+                                               value="{{ old('date_of_joining', $getRecord->admission_date) }}" required
+                                               class="form-control @error('date_of_joining') is-invalid @enderror">
+                                        @error('date_of_joining') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Status <span class="text-danger">*</span></label>
+                                        <select name="status" required class="form-select @error('status') is-invalid @enderror">
+                                            <option value="">— Select —</option>
+                                            <option {{ old('status', $getRecord->status) == '0' ? 'selected' : '' }} value="0">Active</option>
+                                            <option {{ old('status', $getRecord->status) == '1' ? 'selected' : '' }} value="1">Inactive</option>
+                                        </select>
+                                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ── Section 2: Address & Qualifications ────────── --}}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-geo-alt-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Address &amp; Qualifications</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">Current Address</label>
+                                        <textarea name="current_address" rows="3"
+                                                  class="form-control @error('current_address') is-invalid @enderror">{{ old('current_address', $getRecord->address) }}</textarea>
+                                        @error('current_address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">Permanent Address</label>
+                                        <textarea name="permanent_address" rows="3"
+                                                  class="form-control @error('permanent_address') is-invalid @enderror">{{ old('permanent_address', $getRecord->permanent_address) }}</textarea>
+                                        @error('permanent_address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Qualification</label>
+                                        <textarea name="qualification" rows="2"
+                                                  class="form-control @error('qualification') is-invalid @enderror">{{ old('qualification', $getRecord->qualification) }}</textarea>
+                                        @error('qualification') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Work Experience</label>
+                                        <textarea name="work_experience" rows="2"
+                                                  class="form-control @error('work_experience') is-invalid @enderror">{{ old('work_experience', $getRecord->work_experience) }}</textarea>
+                                        @error('work_experience') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small text-secondary">Note</label>
+                                        <textarea name="note" rows="2"
+                                                  class="form-control @error('note') is-invalid @enderror">{{ old('note', $getRecord->note) }}</textarea>
+                                        @error('note') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ── Section 3: Login Credentials ───────────────── --}}
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom py-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-lock-fill text-warning"></i>
+                                <h6 class="mb-0 fw-semibold">Login Credentials</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" name="email"
+                                               value="{{ old('email', $getRecord->email) }}" required
+                                               class="form-control @error('email') is-invalid @enderror">
+                                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small text-secondary">
+                                            <i class="bi bi-lock me-1"></i>New Password
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary ms-1" style="font-size:.65rem;">Optional</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="password" name="password"
+                                                   id="teacherEditPassword"
+                                                   placeholder="Leave blank to keep current"
+                                                   class="form-control @error('password') is-invalid @enderror">
+                                            <button type="button" class="btn btn-outline-secondary px-3"
+                                                    onclick="togglePassword('teacherEditPassword', this)" tabindex="-1">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>Leave blank to keep the current password.
+                                        </div>
+                                        @error('password') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+                                <span class="text-muted small">
+                                    <i class="bi bi-info-circle me-1"></i>Fields marked <span class="text-danger">*</span> are required.
+                                </span>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url('admin/teacher/list') }}" class="btn btn-outline-secondary px-4">
+                                        <i class="bi bi-x-circle me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold">
+                                        <i class="bi bi-floppy-fill me-2"></i>Update Teacher
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>{{-- end col-lg-9 --}}
+                </div>{{-- end row --}}
+            </form>
+
+        </div>
+    </div>
+
 </main>
+@endsection
+
+@section('script')
+<script>
+function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    const icon  = btn.querySelector('i');
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+function previewAvatar(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => document.getElementById(previewId).src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 @endsection

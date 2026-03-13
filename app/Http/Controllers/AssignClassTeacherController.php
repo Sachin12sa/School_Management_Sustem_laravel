@@ -77,7 +77,7 @@ class AssignClassTeacherController extends Controller
     }
 
     
-            public function update(Request $request)
+    public function update(Request $request)
             {
                 DB::transaction(function () use ($request) {
 
@@ -140,4 +140,44 @@ class AssignClassTeacherController extends Controller
       $data['getRecord'] = AssignClassTeacherModel::getMyClassSubject(Auth::user()->id);
       return view('teacher.my_class_subject',$data);  
     }
+
+    // from class to subject 
+    public function editAssignSubjectFromClass($class_id) 
+        {
+            // Fetch the Class directly
+            $getRecord = ClassModel::getSingle($class_id);
+            
+            if (!empty($getRecord)) {
+                $data['getRecord'] = $getRecord;
+                $data['getSubject'] = Subject::getSubject();
+
+                // Use the method to get IDs of already assigned subjects
+                $data['assignedSubjectIds'] = ClassSubjectModel::getAssignSubjectID($class_id)
+                                                ->pluck('subject_id')
+                                                ->toArray();
+
+                $data['header_title'] = 'Assign Subject';
+                return view('admin.class.assign_subject', $data);
+            }
+
+            abort(404);
+        }
+    public function UpdateAssignSubjectFromClass($class_id, Request $request)
+{
+    // 1. Delete old subjects for this class
+    ClassSubjectModel::deleteSubject($class_id);
+
+    // 2. Insert the new selected subjects
+    if (!empty($request->subject_id)) {
+        foreach ($request->subject_id as $subject_id) {
+            $save = new ClassSubjectModel;
+            $save->class_id = $class_id;
+            $save->subject_id = $subject_id;
+            $save->status = $request->status;
+            $save->created_by = Auth::user()->id;
+            $save->save();
+        }
+    }
+
+    return redirect('admin/class/subjects/' . $class_id)->with('success', "Subjects assigned successfully");}   
 }

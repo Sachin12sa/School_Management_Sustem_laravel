@@ -163,14 +163,14 @@ public function update(Request $request, $id)
         }
 
         // teacher side 
+ 
+        
      public function HomeworkTeacher() {
         $class_ids = array();
-        // Fetch only classes assigned to the logged-in teacher
         $getClass = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id); 
         foreach($getClass as $class) {
             $class_ids[] = $class->class_id;
         }
-
         // Pass class IDs to the Model to filter results
         $data['getRecord'] = HomeworkModel::getRecordTeacher($class_ids);
         $data['header_title'] = 'Homework';
@@ -276,21 +276,18 @@ public function update(Request $request, $id)
                 abort(404);
             }
         }
-        public function submittedTeacher($homework_id)
-        {
-            $homework = HomeworkModel::getSingle($homework_id);
-            if(!empty($homework))
-                {
-                    $data['homework_id'] = $homework_id;
-                    $data['getRecord'] = HomeworkSubmitModel::getRecord($homework_id); 
-                    $data['header_title']= 'Submitted Work';
-                    return view('admin.homework.submitted',$data);
-                }
-                else{
-
-                }
+public function homeworkReportTeacher()
+    {
+        $class_ids = array();
+        $getClass = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id); 
+        foreach($getClass as $class) {
+            $class_ids[] = $class->class_id;
         }
-
+        $data['getClass'] = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id);
+        $data['getRecord'] = HomeworkSubmitModel::getHomeworkReportTeacher($class_ids); 
+        $data['header_title']= 'Home Work Report';
+        return view('teacher.homework.submitted',$data);
+    }
  // Student side 
          public function homeworkStudent()
     {
