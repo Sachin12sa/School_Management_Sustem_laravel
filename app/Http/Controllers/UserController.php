@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ClassModel;
-use Str;
-use Auth;
-use Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     function MyAccount()
@@ -28,6 +28,14 @@ class UserController extends Controller
         elseif(Auth::user()->user_type == 4)
             {
                  return view('parent.my_account',$data);
+            }
+        elseif(Auth::user()->user_type == 5)
+            {
+                 return view('accountant.my_account',$data);
+            }
+        elseif(Auth::user()->user_type == 6)
+            {
+                 return view('librarian.my_account',$data);
             }
        
         
@@ -70,7 +78,7 @@ class UserController extends Controller
                 'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
 
-            $teacher = Auth::user();
+            $teacher = User::getSingle($id);
             $teacher->name = trim($request->name);
             $teacher->last_name = trim($request->last_name);
             $teacher->gender = $request->gender;
@@ -119,7 +127,7 @@ class UserController extends Controller
                         'weight'            => 'nullable|string|max:10',
                     ]);
 
-                    $student = Auth::user();
+                    $student = User::getSingle($id);
                     $student->name = trim($request->name);
                     $student->last_name = trim($request->last_name);
                     $student->gender = $request->gender;
@@ -164,7 +172,7 @@ class UserController extends Controller
                         'address'            => 'nullable|string|max:255',
                     ]);
 
-                    $student = Auth::user();
+                    $student = User::getSingle($id);
                     $student->name = trim($request->name);
                     $student->last_name = trim($request->last_name);
                     $student->blood_group = trim($request->blood_group);
@@ -192,6 +200,96 @@ class UserController extends Controller
 
                     return redirect()->back()->with('success','Account Successfully Updated');
                 }
+                elseif(Auth::user()->user_type == 5)
+                {
+                     $id = Auth::user()->id;
+            $request->validate([
+                'email'             => 'required|email|unique:users,email,'.$id,
+                'name'              => 'required|string|max:100',
+                'last_name'         => 'required|string|max:100',
+                'gender'            => 'required|in:Male,Female,Other',
+                'date_of_birth'     => 'required|date',
+                'mobile_number'     => 'required|string|max:15|min:8',
+                'marital_status'    => 'nullable|in:0,1',
+                'current_address'   => 'nullable|string|max:255',
+                'permanent_address' => 'nullable|string|max:255',
+               
+                'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            $accountant = User::getSingle($id);
+            $accountant->name = trim($request->name);
+            $accountant->last_name = trim($request->last_name);
+            $accountant->gender = $request->gender;
+            $accountant->date_of_birth = $request->date_of_birth;
+            $accountant->mobile_number = trim($request->mobile_number);
+            $accountant->marital_status = $request->marital_status;
+            $accountant->address = trim($request->current_address);
+            $accountant->permanent_address = trim($request->permanent_address);
+            $accountant->email = trim($request->email);
+            
+            if ($request->hasFile('profile_pic')) {
+                if (!empty($teacher->profile_pic) && file_exists(storage_path('app/public/' . $teacher->profile_pic))) {
+                    unlink(storage_path('app/public/' . $teacher->profile_pic));
+                }
+                $file = $request->file('profile_pic');
+                $extension = $file->getClientOriginalExtension();
+                $slugName = Str::slug($request->name . ' ' . $request->last_name);
+                $fileName = $slugName . '-' . time() . '.' . $extension;
+                $accountant->profile_pic = $file->storeAs('profile', $fileName, 'public');
+            }
+
+            $accountant->save();
+
+            return redirect()->back()->with('success','Account Successfully Updated');
+        
+            
+                }
+        elseif(Auth::user()->user_type == 6)
+                {
+                     $id = Auth::user()->id;
+            $request->validate([
+                'email'             => 'required|email|unique:users,email,'.$id,
+                'name'              => 'required|string|max:100',
+                'last_name'         => 'required|string|max:100',
+                'gender'            => 'required|in:Male,Female,Other',
+                'date_of_birth'     => 'required|date',
+                'mobile_number'     => 'required|string|max:15|min:8',
+                'marital_status'    => 'nullable|in:0,1',
+                'current_address'   => 'nullable|string|max:255',
+                'permanent_address' => 'nullable|string|max:255',
+                'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            $librarian = User::getSingle($id);
+            $librarian->name = trim($request->name);
+            $librarian->last_name = trim($request->last_name);
+            $librarian->gender = $request->gender;
+            $librarian->date_of_birth = $request->date_of_birth;
+        
+            $librarian->mobile_number = trim($request->mobile_number);
+            $librarian->marital_status = $request->marital_status;
+            $librarian->address = trim($request->current_address);
+            $librarian->permanent_address = trim($request->permanent_address);
+           
+            $librarian->email = trim($request->email);
+            
+            if ($request->hasFile('profile_pic')) {
+                if (!empty($librarian->profile_pic) && file_exists(storage_path('app/public/' . $librarian->profile_pic))) {
+                    unlink(storage_path('app/public/' . $librarian->profile_pic));
+                }
+                $file = $request->file('profile_pic');
+                $extension = $file->getClientOriginalExtension();
+                $slugName = Str::slug($request->name . ' ' . $request->last_name);
+                $fileName = $slugName . '-' . time() . '.' . $extension;
+                $librarian->profile_pic = $file->storeAs('profile', $fileName, 'public');
+            }
+
+            $librarian->save();
+
+            return redirect()->back()->with('success','Account Successfully Updated');
+        
+            }
             
     }
     public function change_password() {
@@ -203,6 +301,8 @@ class UserController extends Controller
         2 => 'teacher.profile.change_password',
         3 => 'student.profile.change_password',
         4 => 'parent.profile.change_password',
+        5 => 'accountant.profile.change_password',
+        6 => 'librarian.profile.change_password',
         default => abort(404),
     };
 

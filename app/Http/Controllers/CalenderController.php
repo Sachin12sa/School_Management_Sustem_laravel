@@ -10,7 +10,7 @@ use App\Models\ClassSubjectTimetableModel;
 use App\Models\ExamScheduleModel;
 use App\Models\User;
 use App\Models\WeekModel;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class CalenderController extends Controller

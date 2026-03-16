@@ -117,6 +117,11 @@ class DashboardController extends Controller
             case 5:
 
                 return view('accountant.dashboard', $data);
+            
+            // ───────────────── LIBRARIAN DASHBOARD ────────────
+            case 6:
+
+                return view('librarian.dashboard', $data);
 
 
             default:

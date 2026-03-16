@@ -96,6 +96,26 @@ class User extends Authenticatable
                             ->paginate(10);
                         return $return;
     }
+    // Function to get Accountant
+    
+    static public function getAccountant(){
+        $return= User::select('users.*')
+                            ->where('user_type','=',5)
+                            ->where('is_delete','=',0);
+                            if (request('name')) {
+                                    $return->where('name', 'like', '%' . request('name') . '%');
+                                }
+                            if (request('email')) {
+                                    $return->where('email', 'like', '%' . request('email') . '%');
+                                }
+                                if (request('date')) {
+                                    $return->whereDate('created_at', 'like', '%' . request('date') . '%');
+                                }
+
+                           $return = $return->orderBy('id','desc')
+                            ->paginate(10);
+                        return $return;
+    }
     // Function to get Parent
     static public function getParent(){
         $return= User::select('users.*')
@@ -354,6 +374,7 @@ class User extends Authenticatable
                         return $return;
               
         }
+  
 
 
 }

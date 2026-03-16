@@ -12,7 +12,7 @@ use App\Models\MarksGradeModel;
 use App\Models\MarksRegisterModel;
 use App\Models\Subject;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ExaminationController extends Controller

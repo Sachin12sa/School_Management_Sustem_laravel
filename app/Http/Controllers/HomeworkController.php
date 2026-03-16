@@ -10,10 +10,10 @@ use App\Models\HomeworkModel;
 use App\Models\HomeworkSubmitModel;
 use App\Models\Subject;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Str;
+use Illuminate\Support\Str;
 
 class HomeworkController extends Controller
 {

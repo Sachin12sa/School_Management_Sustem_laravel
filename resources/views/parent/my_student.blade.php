@@ -115,6 +115,10 @@
                                                    class="btn btn-sm btn-outline-secondary fw-semibold" title="Submitted">
                                                     <i class="bi bi-box-arrow-in-down me-1"></i>Submitted
                                                 </a>
+                                                <a href="{{ url('parent/my_student/fees/'.$value->id) }}"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-cash-coin me-1"></i>View Fees
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>

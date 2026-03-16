@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
-use Auth;
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Mail\ForgetPasswordMail;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Str;
+use Illuminate\Support\Str;
+
 class AuthController extends Controller
 {
     function login(){
@@ -30,6 +32,10 @@ class AuthController extends Controller
                 }
                 else if(Auth::user()->user_type == 5){
                     return redirect('accountant/dashboard');
+                    
+                }
+                else if(Auth::user()->user_type == 6){
+                    return redirect('librarian/dashboard');
                     
                 }
 
@@ -59,6 +65,10 @@ class AuthController extends Controller
                 }
                 else if(Auth::user()->user_type == 5){
                     return redirect('accountant/dashboard');
+                    
+                }
+                else if(Auth::user()->user_type == 6){
+                    return redirect('librarian/dashboard');
                     
                 }
                 

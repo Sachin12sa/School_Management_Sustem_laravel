@@ -1,49 +1,49 @@
-<div class="clear-both"></div>
-
-@if(!empty(session('success')))
-<div class="alert alert-success alert-dismissible " role="alert">
-    {{ session('success') }}
-</div>
+@if (!empty(session('success')))
+    <script>
+        document.addEventListener("DOMContentLoaded", () => showToast('✅', "{{ session('success') }}"));
+    </script>
 @endif
 
-@if(!empty(session('error')))
-<div class="alert alert-danger" role="alert">
-    {{ session('error') }}
-</div>
+@if (!empty(session('error')))
+    <script>
+        document.addEventListener("DOMContentLoaded", () => showToast('⚠', "{{ session('error') }}"));
+    </script>
 @endif
 
-{{-- @if(!empty(session('payment error'))) <!-- Ensure this key matches what you set in your controller -->
-<div class="alert alert-danger alert-dismissible " role="alert"> <!-- Changed alert-error to alert-danger -->
-    {{ session('payment error') }} <!-- This should match the key used in the @if statement -->
-</div>
-@endif --}}
-
-@if(!empty(session('warning')))
-<div class="alert alert-warning alert-dismissible " role="alert">
-    {{ session('warning') }}
-</div>
+@if (!empty(session('warning')))
+    <script>
+        document.addEventListener("DOMContentLoaded", () => showToast('✋', "{{ session('warning') }}"));
+    </script>
 @endif
 
-@if(!empty(session('info')))
-<div class="alert alert-info alert-dismissible " role="alert">
-    {{ session('info') }} <!-- Corrected from 'into' to 'info' -->
-</div>
+@if (!empty(session('info')))
+    <script>
+        document.addEventListener("DOMContentLoaded", () => showToast('ℹ', "{{ session('info') }}"));
+    </script>
 @endif
 
-@if(!empty(session('secondary')))
-<div class="alert alert-secondary alert-dismissible " role="alert">
-    {{ session('secondary') }}
-</div>
+@if (!empty(session('primary')) || !empty(session('secondary')))
+    <script>
+        document.addEventListener("DOMContentLoaded", () => showToast('🔔',
+            "{{ session('primary') ?? session('secondary') }}"));
+    </script>
 @endif
 
-@if(!empty(session('primary')))
-<div class="alert alert-primary alert-dismissible " role="alert">
-    {{ session('primary') }}
-</div>
+{{-- Optional: Handle Laravel's default $errors validation object --}}
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            @foreach ($errors->all() as $error)
+                showToast('❌', "{{ $error }}");
+            @endforeach
+        });
+    </script>
 @endif
-
-@if(!empty(session('light')))
-<div class="alert alert-light alert-dismissible " role="alert">
-    {{ session('light') }}
-</div>
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}<button type="button"
+            class="btn-close" data-bs-dismiss="alert"></button></div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}<button type="button"
+            class="btn-close" data-bs-dismiss="alert"></button></div>
 @endif

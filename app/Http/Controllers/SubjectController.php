@@ -7,7 +7,7 @@ use App\Models\ClassModel;
 use App\Models\ClassSubjectModel;
 use App\Models\Subject;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller

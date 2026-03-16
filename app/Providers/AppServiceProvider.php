@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\LibrarianMiddleware;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;  
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Route::aliasMiddleware('librarian', LibrarianMiddleware::class);
     }
 
     /**

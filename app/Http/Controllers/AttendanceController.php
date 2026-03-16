@@ -7,7 +7,7 @@ use App\Models\AssignClassTeacherModel;
 use App\Models\ClassModel;
 use App\Models\StudentAttendanceModel;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
