@@ -16,6 +16,7 @@ class AccountantController extends Controller
                                     ->where('is_delete', 0)
                                     ->orderBy('name')
                                     ->get();
+                                    // dd($data['getRecord']);
         $data['header_title'] = 'Accountant List';
         return view('admin.accountant.list', $data);
     }
@@ -30,6 +31,7 @@ class AccountantController extends Controller
     {
         $request->validate([
             'name'               => 'required|string|max:100',
+            'middle_name'        => 'nullable|max:100',
             'last_name'          => 'required|string|max:100',
             'email'              => 'required|email|unique:users,email',
             'password'           => 'required|min:5',
@@ -49,6 +51,7 @@ class AccountantController extends Controller
 
         $user                    = new User;
         $user->name              = trim($request->name);
+        $user->middle_name       = trim($request->middle_name);
         $user->last_name         = trim($request->last_name);
         $user->email             = trim($request->email);
         $user->password          = Hash::make($request->password);
@@ -57,7 +60,7 @@ class AccountantController extends Controller
         $user->mobile_number     = trim($request->mobile_number);
         $user->status            = $request->status;
         $user->date_of_birth     = $request->date_of_birth;
-        $user->admission_date    = $request->date_of_joining;  // reusing existing col
+        $user->date_of_joining    = $request->date_of_joining;  // reusing existing col
         $user->marital_status    = $request->marital_status;
         $user->qualification     = trim($request->qualification);
         $user->work_experience   = trim($request->work_experience);
@@ -93,6 +96,7 @@ class AccountantController extends Controller
     {
         $request->validate([
             'name'               => 'required|string|max:100',
+            'middle_name'        => 'nullable|max:100',
             'last_name'          => 'required|string|max:100',
             'email'              => 'required|email|unique:users,email,' . $id,
             'gender'             => 'required|in:Male,Female,Other',
@@ -111,13 +115,14 @@ class AccountantController extends Controller
 
         $user                    = User::getSingle($id);
         $user->name              = trim($request->name);
+        $user->middle_name       = trim($request->middle_name);
         $user->last_name         = trim($request->last_name);
         $user->email             = trim($request->email);
         $user->gender            = $request->gender;
         $user->mobile_number     = trim($request->mobile_number);
         $user->status            = $request->status;
         $user->date_of_birth     = $request->date_of_birth;
-        $user->admission_date    = $request->date_of_joining;
+        $user->date_of_joining    = $request->date_of_joining;
         $user->marital_status    = $request->marital_status;
         $user->qualification     = trim($request->qualification);
         $user->work_experience   = trim($request->work_experience);

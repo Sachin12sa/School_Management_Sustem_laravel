@@ -73,6 +73,7 @@ class Book extends Model
     // ── Dashboard summary ─────────────────────────────────────────
     public static function getSummary()
     {
+        
         return [
             'total_books'     => self::where('is_delete', 0)->count(),
             'available_books' => self::where('is_delete', 0)->where('available', '>', 0)->count(),

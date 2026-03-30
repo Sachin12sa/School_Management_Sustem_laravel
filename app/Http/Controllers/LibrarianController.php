@@ -88,6 +88,7 @@ class LibrarianController extends Controller
     {
         $request->validate([
             'name'               => 'required|string|max:100',
+            'middle_name'        => 'max:100',
             'last_name'          => 'required|string|max:100',
             'email'              => 'required|email|unique:users,email',
             'password'           => 'required|min:5',
@@ -107,6 +108,7 @@ class LibrarianController extends Controller
 
         $user                    = new User;
         $user->name              = trim($request->name);
+        $user->middle_name       = trim($request->middle_name);
         $user->last_name         = trim($request->last_name);
         $user->email             = trim($request->email);
         $user->password          = Hash::make($request->password);
@@ -115,7 +117,7 @@ class LibrarianController extends Controller
         $user->mobile_number     = trim($request->mobile_number);
         $user->status            = $request->status;
         $user->date_of_birth     = $request->date_of_birth;
-        $user->admission_date    = $request->date_of_joining;  // reusing existing col
+        $user->date_of_joining    = $request->date_of_joining;  // reusing existing col
         $user->marital_status    = $request->marital_status;
         $user->qualification     = trim($request->qualification);
         $user->work_experience   = trim($request->work_experience);
@@ -151,6 +153,7 @@ class LibrarianController extends Controller
     {
         $request->validate([
             'name'               => 'required|string|max:100',
+            'middle_name'        => 'max:100',
             'last_name'          => 'required|string|max:100',
             'email'              => 'required|email|unique:users,email,' . $id,
             'gender'             => 'required|in:Male,Female,Other',
@@ -169,13 +172,14 @@ class LibrarianController extends Controller
 
         $user                    = User::getSingle($id);
         $user->name              = trim($request->name);
+        $user->middle_name       = trim($request->middle_name);
         $user->last_name         = trim($request->last_name);
         $user->email             = trim($request->email);
         $user->gender            = $request->gender;
         $user->mobile_number     = trim($request->mobile_number);
         $user->status            = $request->status;
         $user->date_of_birth     = $request->date_of_birth;
-        $user->admission_date    = $request->date_of_joining;
+        $user->date_of_joining    = $request->date_of_joining;
         $user->marital_status    = $request->marital_status;
         $user->qualification     = trim($request->qualification);
         $user->work_experience   = trim($request->work_experience);

@@ -37,31 +37,52 @@ public function getRemainingAmount() {
 }
 
     // All fees with student + fee type info (admin/accountant list)
-    public static function getRecord($filters = [])
-    {
-        $query = self::with(['student', 'feeType'])
-            ->where('student_fees.is_delete', 0)
-            ->join('users as s', 's.id', '=', 'student_fees.student_id')
-            ->join('classes as c', 'c.id', '=', 'student_fees.class_id')
-            ->join('fee_types as ft', 'ft.id', '=', 'student_fees.fee_type_id')
-            ->select('student_fees.*', 's.name as student_name', 's.last_name as student_last_name',
-                     's.admission_number', 'ft.name as fee_type_name','c.name as class_name');
+   // StudentFee.php — replace the getRecord() method
 
-        if (!empty($filters['student_id'])) {
-            $query->where('student_fees.student_id', $filters['student_id']);
-        }
-        if (!empty($filters['fee_type_id'])) {
-            $query->where('student_fees.fee_type_id', $filters['fee_type_id']);
-        }
-        if (!empty($filters['status'])) {
+public static function getRecord($filters = [])
+{
+    $query = self::with(['student', 'feeType'])
+        ->where('student_fees.is_delete', 0)
+        ->join('users as s',          's.id',  '=', 'student_fees.student_id')
+        ->leftJoin('class_sections as cs', 'cs.id', '=', 's.section_id')
+        ->join('classes as c',        'c.id',  '=', 'student_fees.class_id')
+        ->join('fee_types as ft',     'ft.id', '=', 'student_fees.fee_type_id')
+        ->select(
+            'student_fees.*',
+            's.name as student_name', 's.last_name as student_last_name',
+            's.admission_number',
+            'ft.name as fee_type_name',
+            'c.name as class_name',
+            'cs.name as section_name'
+        );
+
+    if (!empty($filters['student_id'])) {
+        $query->where('student_fees.student_id', $filters['student_id']);
+    }
+    if (!empty($filters['class_id'])) {
+        $query->where('student_fees.class_id', $filters['class_id']);   // ← was missing
+    }
+    if (!empty($filters['section_id'])) {
+        $query->where('s.section_id', $filters['section_id']);          // ← new
+    }
+    if (!empty($filters['fee_type_id'])) {
+        $query->where('student_fees.fee_type_id', $filters['fee_type_id']);
+    }
+    if (!empty($filters['due_date'])) {
+        $query->where('student_fees.due_date', $filters['due_date']);
+    }
+    // status — handle 'overdue' as a virtual status
+    if (!empty($filters['status'])) {
+        if ($filters['status'] === 'overdue') {
+            $query->whereIn('student_fees.status', ['pending', 'partial'])
+                  ->where('student_fees.due_date', '<', now()->toDateString());
+        } else {
             $query->where('student_fees.status', $filters['status']);
         }
-        if (!empty($filters['due_date'])) {
-            $query->where('student_fees.due_date', $filters['due_date']);
-        }
-
-        return $query->orderByDesc('student_fees.created_at')->paginate(20);
     }
+
+    return $query->orderByDesc('student_fees.created_at')->paginate(20);
+}
 
     // Fees for a single student (student portal view)
     public static function getStudentFees($student_id)

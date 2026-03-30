@@ -15,6 +15,7 @@ class AssignClassTeacherModel extends Model
        protected $fillable = [
         'class_id',
         'teacher_id',
+        'section_id',
         'status',
         'created_by',
     ];
@@ -25,11 +26,13 @@ class AssignClassTeacherModel extends Model
                     'teacher.name as teacher_name',
                     'teacher.last_name as teacher_last_name',
                     'classes.name as class_name',
-                    'users.name as created_by_name'
+                    'users.name as created_by_name',
+                    'class_sections.name as section_name'
                 )
                 ->join('users as teacher', 'teacher.id', '=', 'assign_class_teachers.teacher_id')
                 ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
                 ->join('users', 'users.id', '=', 'assign_class_teachers.created_by')
+                ->join('class_sections', 'class_sections.id', '=', 'assign_class_teachers.section_id')
                 ->where('assign_class_teachers.is_delete', 0);
 
             if (request()->filled('class_name')) {
@@ -66,47 +69,59 @@ class AssignClassTeacherModel extends Model
         return self::where('class_id','=',$class_id)->delete();
     }
     // teacher side to get class and subject
-    static public function getMyClassSubject($teacher_id)
-    {
-            return self::select(
-                        'assign_class_teachers.*',
-                        'classes.name as class_name',
-                        'subjects.name as subject_name',
-                        'subjects.type as subject_type',
-                        'classes.id as class_id',
-                        'subjects.id as subject_id'
-                    )
-                    ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
-                    ->join('class_subjects', 'class_subjects.class_id', '=', 'classes.id')
-                    ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
-                    ->where('assign_class_teachers.is_delete', 0)
-                    ->where('assign_class_teachers.status', 0)
-                    ->where('subjects.status', 0)
-                    ->where('subjects.is_delete', 0)
-                     ->where('class_subjects.status', 0)
-                    ->where('class_subjects.is_delete', 0)
-                    ->where('assign_class_teachers.teacher_id', $teacher_id)
-                    ->orderByDesc('assign_class_teachers.id')
-                    ->paginate(10);
-
-    }
+static public function getMyClassSubject($teacher_id)
+{
+    return self::select(
+                'assign_class_teachers.id as assign_id', // Select unique ID
+                'classes.name as class_name',
+                'subjects.name as subject_name',
+                'subjects.type as subject_type',
+                'classes.id as class_id',
+                'class_sections.name as section_name',
+                'class_sections.id as section_id',
+                'assign_class_teachers.created_at',
+                'subjects.id as subject_id',
+                'cst.start_time',
+                'cst.end_time',
+                'cst.room_number'
+            )
+            ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
+            ->join('class_sections', 'class_sections.id', '=', 'assign_class_teachers.section_id')
+            ->join('class_subjects', 'class_subjects.class_id', '=', 'classes.id')
+            ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+            ->leftJoin('class_subject_timetables as cst', function($join) {
+                $join->on('cst.class_id', '=', 'classes.id')
+                    ->on('cst.subject_id', '=', 'subjects.id');
+            })
+            ->leftJoin('weeks', 'weeks.id', '=', 'cst.week_id')
+            ->where('assign_class_teachers.teacher_id', $teacher_id)
+            ->where('assign_class_teachers.is_delete', 0)
+            ->where('subjects.is_delete', 0)
+            ->where('class_subjects.is_delete', 0)
+            // 👇 ADD THIS TO REMOVE DUPLICATES
+            ->groupBy('classes.id', 'class_sections.id', 'subjects.id') 
+            ->orderByDesc('assign_class_teachers.id')
+            ->paginate(10);
+}
     // get teacher subject 
-       static public function getMyClassSubjectGroup($teacher_id)
-    {
-            return self::select(
-                        'assign_class_teachers.*',
-                        'classes.name as class_name',
-                        'classes.id as class_id',
-                    )
-                    ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
-                    ->where('assign_class_teachers.is_delete', 0)
-                    ->where('assign_class_teachers.status', 0)
-                    ->where('assign_class_teachers.teacher_id', $teacher_id)
-                    ->distinct('assign_class_teachers.class_id')
-                    ->get();
-
-    }
-    static public function getMyTimeTable($class_id, $subject_id)
+      static public function getMyClassSubjectGroup($teacher_id)
+{
+    return self::select(
+            'assign_class_teachers.*',
+            'classes.name as class_name',
+            'classes.id as class_id',
+            'class_sections.name as section_name'
+        )
+        ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
+        ->leftJoin('class_sections', 'class_sections.id', '=', 'assign_class_teachers.section_id')
+        ->where('assign_class_teachers.is_delete', 0)
+        ->where('assign_class_teachers.status', 0)
+        ->where('assign_class_teachers.teacher_id', $teacher_id)
+        ->groupBy('assign_class_teachers.class_id', 'assign_class_teachers.section_id') // ✅ FIX
+        ->orderBy('assign_class_teachers.class_id', 'asc')
+        ->get();
+}
+    static public function getMyTimeTable($class_id, $section_id, $subject_id)
         {
 
             $todayName = date('l');
@@ -116,6 +131,7 @@ class AssignClassTeacherModel extends Model
 
                 return ClassSubjectTimetableModel::getRecordClassSubject(
                     $class_id,
+                    $section_id,
                     $subject_id,
                     $getWeek->id 
                 );
@@ -132,11 +148,13 @@ static public function getCalendarTeacher($teacher_id)
             'subjects.name as subject_name',
             'class_subject_timetables.start_time',
             'class_subject_timetables.end_time',
+            'class_sections.name as section_name',
             'weeks.fullcalender_day'
         )
         ->join('classes', 'classes.id', '=', 'assign_class_teachers.class_id')
         ->join('class_subjects', 'class_subjects.class_id', '=', 'assign_class_teachers.class_id')
         ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+        ->join('class_sections', 'class_sections.id', '=', 'assign_class_teachers.section_id')
         ->join('class_subject_timetables', function($join) {
             $join->on('class_subject_timetables.class_id', '=', 'class_subjects.class_id')
                  ->on('class_subject_timetables.subject_id', '=', 'class_subjects.subject_id');

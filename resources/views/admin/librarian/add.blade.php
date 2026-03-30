@@ -64,6 +64,13 @@
                                                         value="{{ old('name') }}" placeholder="First name" required>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Middle Name <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="middle_name" class="form-control"
+                                                        value="{{ old('middle_name') }}" placeholder="Middle name" required>
+                                                </div>
+
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Last Name <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text" name="last_name" class="form-control"
@@ -77,15 +84,21 @@
                                                         <option value="Male"
                                                             {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
                                                         <option value="Female"
-                                                            {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                                                            {{ old('gender') == 'Female' ? 'selected' : '' }}>Female
+                                                        </option>
                                                         <option value="Other"
                                                             {{ old('gender') == 'Other' ? 'selected' : '' }}>Other</option>
                                                     </select>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Date of Birth</label>
-                                                    <input type="date" name="date_of_birth" class="form-control"
-                                                        value="{{ old('date_of_birth') }}">
+                                                <div class="col-md-4">
+                                                    <label class="form-label fw-semibold small text-secondary">
+                                                        Date of Birth <span class="text-danger">*</span>
+                                                    </label>
+                                                    <div class="input-group">
+                                                        <x-bs-date-input name="date_of_birth" id="date_of_birth"
+                                                            required></x-bs-date-input>
+
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Marital Status</label>
@@ -125,8 +138,8 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Date of Joining</label>
-                                            <input type="date" name="date_of_joining" class="form-control"
-                                                value="{{ old('date_of_joining') }}">
+                                            <x-bs-date-input name="date_of_joining" id="date_of_joining" required>
+                                            </x-bs-date-input>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Qualification</label>
@@ -142,9 +155,11 @@
                                             <label class="form-label fw-semibold">Status <span
                                                     class="text-danger">*</span></label>
                                             <select name="status" class="form-select" required>
-                                                <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Active
+                                                <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>
+                                                    Active
                                                 </option>
-                                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive
+                                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>
+                                                    Inactive
                                                 </option>
                                             </select>
                                         </div>
@@ -221,7 +236,7 @@
     </main>
 @endsection
 
-@section('scripts')
+@section('script')
     <script>
         function previewImg(input) {
             if (input.files && input.files[0]) {

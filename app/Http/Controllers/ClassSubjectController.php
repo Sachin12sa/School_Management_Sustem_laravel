@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Models\ClassModel;
+use App\Models\ClassSectionModel;
+use App\Models\ClassSubjectModel;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ClassModel;
-use App\Models\Subject;
-use App\Models\ClassSubjectModel;
 use Illuminate\Support\Facades\DB;
 
 class ClassSubjectController extends Controller
@@ -14,6 +16,7 @@ class ClassSubjectController extends Controller
     public function list()
     {
         $data['getRecord'] = ClassSubjectModel::getRecord();
+
         $data['header_title']= 'Assign_Subject List';
         return view('admin.assign_subject.list',$data);
     }
@@ -31,6 +34,7 @@ class ClassSubjectController extends Controller
                         [
                             'class_id'   => $request->class_id,
                             'subject_id' => $subject_id,
+                            'section_id' => $request->section_id,
                         ],
                         [
                             'status'     => $request->status,
@@ -57,8 +61,12 @@ class ClassSubjectController extends Controller
                 $data['getAssignSubjectID']=ClassSubjectModel::getAssignSubjectID($getRecord->class_id);
                 $data['assignedSubjectIds'] = $data['getAssignSubjectID']->pluck('subject_id')->toArray();
                 $data['getClass'] = ClassModel::getClass();
+                $data['getSection'] = ClassSectionModel::getRecord();
                 $data['getSubject'] = Subject::getSubject();
                 $data['header_title']= 'Edit Assign Subject';
+                $data['getSections'] = $getRecord->class_id
+            ? ClassSectionModel::getSectionsByClass($getRecord->class_id)
+            : collect();
                 return view('admin.assign_subject.edit',$data);
             }else{
                 abort(404);
@@ -76,6 +84,7 @@ class ClassSubjectController extends Controller
                     foreach ($request->subject_id as $subject_id) {
                         ClassSubjectModel::create([
                             'class_id'   => $request->class_id,
+                            'section_id' => $request->section_id,
                             'subject_id' => $subject_id,
                             'status'     => $request->status,
                             'created_by' => Auth::id(),
@@ -101,6 +110,9 @@ class ClassSubjectController extends Controller
                 $data['getClass'] = ClassModel::getClass();
                 $data['getSubject'] = Subject::getSubject();
                 $data['header_title']= 'Edit Assign Subject';
+                $data['getSections'] = $getRecord->class_id
+            ? ClassSectionModel::getSectionsByClass($getRecord->class_id)
+            : collect();
                 return view('admin.assign_subject.edit_single',$data);
             }else{
                 abort(404);
@@ -113,6 +125,7 @@ class ClassSubjectController extends Controller
 
     $record->update([
         'class_id'   => $request->class_id,
+        'section_id' => $request->section_id,
         'subject_id' => $request->subject_id,
         'status'     => $request->status,
     ]);

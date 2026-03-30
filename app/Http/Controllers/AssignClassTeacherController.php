@@ -6,10 +6,12 @@ use  App\Models\AssignClassTeacherModel;
 use  App\Models\ClassModel;
 use  App\Models\User;
 use App\Models\ClassSubjectModel;
+use App\Models\ClassSubjectTimetableModel;
 use App\Models\Subject;
-use Illuminate\Support\Facades\Auth;
+use App\Models\WeekModel;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssignClassTeacherController extends Controller
@@ -34,6 +36,7 @@ class AssignClassTeacherController extends Controller
                         [
                             'class_id'   => $request->class_id,
                             'teacher_id' => $teacher_id,
+                            'section_id' => $request->section_id,
                         ],
                         [
                             'status'     => $request->status,
@@ -89,6 +92,7 @@ class AssignClassTeacherController extends Controller
                         AssignClassTeacherModel::create([
                             'class_id'   => $request->class_id,
                             'teacher_id' => $teacher_id,
+                            'section_id' => $request->section_id,
                             'status'     => $request->status,
                             'created_by' => Auth::id(),
                         ]);
@@ -125,6 +129,7 @@ class AssignClassTeacherController extends Controller
 
     $record->update([
         'class_id'   => $request->class_id,
+        'section_id' => $request->section_id,
         'teacher_id' => $request->teacher_id,
         'status'     => $request->status,
     ]);
@@ -134,13 +139,37 @@ class AssignClassTeacherController extends Controller
     }
 
     // teacher's section my class and subject 
-    public function MyClassSubject()
-    {
-      $data['header_title']= 'Class and Subject List';
-      $data['getRecord'] = AssignClassTeacherModel::getMyClassSubject(Auth::user()->id);
-      return view('teacher.my_class_subject',$data);  
+   public function myClassSubject()
+{
+    $today     = strtolower(date('l'));
+    $todayWeek = WeekModel::whereRaw('LOWER(name) = ?', [$today])->first();
+
+    $records = AssignClassTeacherModel::getMyClassSubject(Auth::user()->id);
+    // dd($records);
+    foreach ($records as $record) {
+        $record->today_slot = null;
+
+        if ($todayWeek) {
+            $query = [
+                'class_id'   => $record->class_id,
+                'subject_id' => $record->subject_id,
+                'week_id'    => $todayWeek->id,
+            ];
+
+            // Only add section if it exists
+            if (!empty($record->section_id)) {
+                $query['section_id'] = $record->section_id;
+            }
+
+            $record->today_slot = ClassSubjectTimetableModel::where($query)->first();
+        }
     }
 
+    return view('teacher.my_class_subject', [
+        'getRecord'    => $records,
+        'header_title' => 'My Class & Subjects',
+    ]);
+}
     // from class to subject 
     public function editAssignSubjectFromClass($class_id) 
         {
@@ -172,6 +201,7 @@ class AssignClassTeacherController extends Controller
         foreach ($request->subject_id as $subject_id) {
             $save = new ClassSubjectModel;
             $save->class_id = $class_id;
+            $save->section_id = $request->section_id;
             $save->subject_id = $subject_id;
             $save->status = $request->status;
             $save->created_by = Auth::user()->id;

@@ -14,7 +14,7 @@ use App\Models\StudentAttendanceModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Tekdam\NepaliDate\NepaliDate;
 class DashboardController extends Controller
 {
     public function dashboard()
@@ -35,6 +35,7 @@ class DashboardController extends Controller
                 $data['TotalHomework']  = HomeworkModel::getTotalHomework();
                 $data['getRecentHomework']  = HomeworkModel::getRecordDashboard();
                 $data['getRecentNotice']  = NoticeBoardModel::getRecordDashboard();
+                // $data['bsDate'] = NepaliDate::AD(\Carbon\Carbon::now()->format('Y-m-d')); // e.g. 2082-12-03
 
                 
 
@@ -47,11 +48,9 @@ class DashboardController extends Controller
 
                 // Classes assigned to teacher
                 $students = User::getTeacherStudent($user->id);
-
                 $total = $students->total(); // returns 18
                 $data['TotalStudent'] = $students->total();
                 
-
                 // Subjects teacher teaches
                 $data['TotalSubject'] = AssignClassTeacherModel::getMyClassSubject($user->id)->count();
 

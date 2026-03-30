@@ -26,6 +26,7 @@ class TeacherController extends Controller
     {
         $request->validate([
             'name'              => 'required|string|max:100',
+            'middle_name'       => 'max:100',
             'last_name'         => 'required|string|max:100',
             'email'             => 'required|email|unique:users,email',
             'password'          => 'required|min:5',
@@ -45,6 +46,7 @@ class TeacherController extends Controller
 
         $teacher = new User;
         $teacher->name = trim($request->name);
+        $teacher->middle_name = trim($request->middle_name);
         $teacher->last_name = trim($request->last_name);
         $teacher->gender = $request->gender;
         $teacher->date_of_birth = $request->date_of_birth;
@@ -91,6 +93,7 @@ class TeacherController extends Controller
         $request->validate([
             'email'             => 'required|email|unique:users,email,'.$id,
             'name'              => 'required|string|max:100',
+            'middle_name'       => 'max:100',
             'last_name'         => 'required|string|max:100',
             'gender'            => 'required|in:Male,Female,Other',
             'date_of_birth'     => 'required|date',
@@ -108,6 +111,7 @@ class TeacherController extends Controller
 
         $teacher = User::getSingle($id);
         $teacher->name = trim($request->name);
+        $teacher->middle_name = trim($request->middle_name);
         $teacher->last_name = trim($request->last_name);
         $teacher->gender = $request->gender;
         $teacher->date_of_birth = $request->date_of_birth;

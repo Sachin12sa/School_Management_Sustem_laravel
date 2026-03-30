@@ -28,6 +28,7 @@ class CommunicateController extends Controller
     }
     
     public function insertNoticeBoard(Request $request){
+     
         $save = new NoticeBoardModel;
         $save->title = $request->title;
         $save->notice_date = $request->notice_date;
@@ -110,19 +111,19 @@ class CommunicateController extends Controller
     // teacher side
     public function myNoticeBoardTeacher()
     {
-        $student_id = Auth::user()->user_type;
+        $teacher_id = Auth::user()->user_type;
         $data['header_title'] = 'My Notice Board';
-        $data['getRecord'] = NoticeBoardModel::getRecordUser($student_id);
-        return view('student.my_notice_board', $data);
+        $data['getRecord'] = NoticeBoardModel::getRecordUser($teacher_id);
+        return view('teacher.my_notice_board', $data);
     }
 
     // parent side 
     public function myNoticeBoardParent()
     {
-        $student_id = Auth::user()->user_type;
+        $parent_id = Auth::user()->user_type;
         $data['header_title'] = 'My Notice Board';
-        $data['getRecord'] = NoticeBoardModel::getRecordUser($student_id);
-        return view('student.my_notice_board', $data);
+        $data['getRecord'] = NoticeBoardModel::getRecordUser($parent_id);
+        return view('parent.my_notice_board', $data);
     }
     // Send Emails
     public function sendEmail()

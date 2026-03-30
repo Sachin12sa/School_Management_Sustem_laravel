@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\AssignClassTeacherModel;
 use App\Models\ClassModel;
+use App\Models\ClassSectionModel;
 use App\Models\ClassSubjectModel;
 use App\Models\HomeworkModel;
 use App\Models\HomeworkSubmitModel;
 use App\Models\Subject;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class HomeworkController extends Controller
@@ -36,71 +37,112 @@ class HomeworkController extends Controller
         return view('admin.homework.add', $data);
     }
 
-    public function ajax_get_subject(Request $request) {
-        // Trim the input to prevent whitespace issues
-        $class_id = trim($request->class_id);
+ public function ajax_get_subject(Request $request)
+{
+    $class_id = trim($request->class_id);
+    $section_id = trim($request->section_id ?? '');
 
-        $getSubject = ClassSubjectModel::mySubject($class_id);
-        $html = '<option value="">Select Subject</option>';
-
-        foreach ($getSubject as $value) {
-            $html .= '<option value="'.$value->subject_id.'">'.$value->subject_name.'</option>';
-        }
-
-        return response()->json([
-            'success' => $html
-        ]);
+    // Determine section IDs array
+    $section_ids = [];
+    if ($section_id && $section_id !== '0' && $section_id !== 'all') {
+        $section_ids = [$section_id]; // single section
+    } else {
+        // Get all sections of the class
+        $section_ids = ClassSectionModel::where('class_id', $class_id)
+                        ->pluck('id')
+                        ->toArray();
     }
 
-    public function insert(Request $request) 
-        {
-        $homework = new HomeworkModel;
-        $homework->class_id = trim($request->class_id);
-        $homework->subject_id = trim($request->subject_id);
-        $homework->homework_date = trim($request->homework_date);
-        $homework->submission_date = trim($request->submission_date);
-        $homework->description = trim($request->message);
-        $homework->created_by = Auth::user()->id;
+    // Get subjects that exist in ALL of the selected sections
+    $getSubject = ClassSubjectModel::select(
+                    'class_subjects.subject_id',
+                    'subjects.name as subject_name'
+                )
+                ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+                ->where('class_subjects.class_id', $class_id)
+                ->whereIn('class_subjects.section_id', $section_ids)
+                ->where('class_subjects.is_delete', 0)
+                ->where('class_subjects.status', 0)
+                ->groupBy('class_subjects.subject_id', 'subjects.name')
+                ->havingRaw('COUNT(DISTINCT class_subjects.section_id) = ?', [count($section_ids)])
+                ->get();
 
-        if (!empty($request->file('document_file'))) {
-            $file = $request->file('document_file');
-            $ext = $file->getClientOriginalExtension();
-
-            // 1. Fetch names for the filename
-            $className = \App\Models\ClassModel::find($request->class_id)->name;
-            $subjectName = \App\Models\Subject::find($request->subject_id)->name;
-
-            // 2. Clean names (remove spaces and special characters)
-            $cleanClassName = Str::slug($className);
-            $cleanSubjectName = Str::slug($subjectName);
-            $dateStr = date('d-m-Y', strtotime($request->homework_date));
-
-            // 3. Create descriptive filename: subject-class-date-random.ext
-            $filename = $cleanSubjectName . '-' . $cleanClassName . '-' . $dateStr . '-' . Str::random(5) . '.' . $ext;
-            
-            // 4. Move to public folder
-            $file->move('upload/homework/', $filename);
-            $homework->document_file = $filename;
-        }
-
-        $homework->save();
-        return redirect('admin/homework/homework')->with('success', "Homework successfully created");
+    $html = '<option value="">— Select Subject —</option>';
+    foreach ($getSubject as $value) {
+        $html .= '<option value="' . $value->subject_id . '">'
+               . htmlspecialchars($value->subject_name) . '</option>';
     }
-    public function edit($id) 
-        {
-        $getRecord = HomeworkModel::getSingle($id);
-        if (!empty($getRecord)) {
-            $data['getRecord'] = $getRecord;
-            $data['getClass'] = ClassModel::getClass();
-            // Get subjects specifically for the already selected class
-            $data['getSubject'] = ClassSubjectModel::mySubject($getRecord->class_id);
-            
-            $data['header_title'] = 'Edit Home Work';
-            return view('admin.homework.edit', $data);
-        } else {
-            abort(404);
+
+    return response()->json(['subject_html' => $html]);
+}
+
+  public function insert(Request $request)
+{
+    $request->validate([
+        'class_id'        => 'required|integer',
+        'subject_id'      => 'required|integer',
+        'homework_date'   => 'required|date',
+        'submission_date' => 'required|date',
+        'message'         => 'required',
+    ]);
+
+    $sectionIds   = json_decode($request->section_ids ?? '[]', true);
+    $isAllSection = empty($sectionIds) || in_array('all', $sectionIds);
+
+    // Handle file upload once
+    $filename = null;
+    if ($request->hasFile('document_file')) {
+        $file        = $request->file('document_file');
+        $ext         = $file->getClientOriginalExtension();
+        $className   = ClassModel::find($request->class_id)->name;
+        $subjectName = Subject::find($request->subject_id)->name;
+        $dateStr     = date('d-m-Y', strtotime($request->homework_date));
+        $filename    = Str::slug($subjectName) . '-' . Str::slug($className)
+                     . '-' . $dateStr . '-' . Str::random(5) . '.' . $ext;
+        $file->move('upload/homework/', $filename);
+    }
+
+    if ($isAllSection) {
+        // null section_id = applies to all sections
+        $this->saveHomework($request, null, $filename);
+    } else {
+        // One record per selected section
+        foreach ($sectionIds as $secId) {
+            $this->saveHomework($request, (int)$secId, $filename);
         }
     }
+
+    return redirect('admin/homework/homework')
+        ->with('success', 'Homework successfully assigned');
+}
+
+private function saveHomework(Request $request, $sectionId, $filename)
+{
+    $homework                  = new HomeworkModel;
+    $homework->class_id        = $request->class_id;
+    $homework->section_id      = $sectionId; // null = all sections
+    $homework->subject_id      = $request->subject_id;
+    $homework->homework_date   = $request->homework_date;
+    $homework->submission_date = $request->submission_date;
+    $homework->description     = trim($request->message);
+    $homework->created_by      = Auth::user()->id;
+    $homework->document_file   = $filename;
+    $homework->save();
+}
+
+   public function edit($id)
+{
+    $getRecord = HomeworkModel::getSingle($id);
+    if (empty($getRecord)) abort(404);
+
+    $data['getRecord']  = $getRecord;
+    $data['getClass']   = ClassModel::getClass();
+    $data['getSections'] = ClassSectionModel::getSectionsByClass($getRecord->class_id);
+    $data['getSubject'] = ClassSubjectModel::mySubject($getRecord->class_id);
+    $data['header_title'] = 'Edit Homework';
+
+    return view('admin.homework.edit', $data);
+}
 
 public function update(Request $request, $id) 
     {
@@ -165,18 +207,37 @@ public function update(Request $request, $id)
         // teacher side 
  
         
-     public function HomeworkTeacher() {
+     public function HomeworkTeacher(Request $request) {
         $class_ids = array();
         $getClass = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id); 
         foreach($getClass as $class) {
             $class_ids[] = $class->class_id;
         }
         // Pass class IDs to the Model to filter results
-        $data['getRecord'] = HomeworkModel::getRecordTeacher($class_ids);
+        $data['getRecord'] = HomeworkModel::getRecordTeacher($class_ids, [
+                'class_name' => $request->class_name,
+                'subject_name' => $request->subject_name,
+                'homework_date' => $request->homework_date,
+                'submission_date' => $request->submission_date,
+            ]);
+        $data['getClass'] = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id);
+        
         $data['header_title'] = 'Homework';
         return view('teacher.homework.list', $data);
     }
-        public function addTeacher() {
+      public function getSections(Request $request)
+{
+    $sections = ClassSectionModel::getSectionsByClass($request->class_id);
+    $html     = '<option value="">— Select Section —</option>';
+    foreach ($sections as $sec) {
+        $html .= '<option value="' . $sec->id . '">Section ' . $sec->name . '</option>';
+    }
+    return response()->json([
+        'section_html' => $html,
+        'sections'     => $sections,   // ← add this so JS knows if empty
+    ]);
+}
+    public function addTeacher() {
         $data['getClass'] = AssignClassTeacherModel::getMyClassSubjectGroup(Auth::user()->id);
         $data['header_title'] = 'Add New Home Work';
         return view('teacher.homework.add', $data);
@@ -221,7 +282,7 @@ public function update(Request $request, $id)
         if (!empty($getRecord)) {
             $data['getRecord'] = $getRecord;
             $data['getClass'] = ClassModel::getClass();
-            // Get subjects specifically for the already selected class
+            $data['getSections'] = ClassSectionModel::getSectionsByClass($getRecord->class_id);
             $data['getSubject'] = ClassSubjectModel::mySubject($getRecord->class_id);
             
             $data['header_title'] = 'Edit Home Work';

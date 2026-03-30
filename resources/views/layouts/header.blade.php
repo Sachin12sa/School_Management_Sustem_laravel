@@ -1,247 +1,741 @@
 {{-- ============================================================
-     TOP NAVBAR
+     HEADER & SIDEBAR — School Management System
      ============================================================ --}}
-<nav class="app-header navbar navbar-expand bg-body shadow-sm">
-    <div class="container-fluid">
 
-        {{-- Sidebar Toggle --}}
-        <ul class="navbar-nav">
+@php
+    $__u = Auth::user();
+    $__type = $__u->user_type ?? 1;
+
+    $__roleLabel = match ($__type) {
+        1 => 'Administrator',
+        2 => 'Teacher',
+        3 => 'Student',
+        4 => 'Parent',
+        5 => 'Accountant',
+        6 => 'Librarian',
+        default => 'User',
+    };
+    $__roleShort = match ($__type) {
+        1 => 'Admin',
+        2 => 'Teacher',
+        3 => 'Student',
+        4 => 'Parent',
+        5 => 'Accountant',
+        6 => 'Librarian',
+        default => 'User',
+    };
+    $__roleColor = match ($__type) {
+        1 => '#ef4444',
+        2 => '#22c55e',
+        3 => '#f59e0b',
+        4 => '#06b6d4',
+        5 => '#3b82f6',
+        6 => '#8b5cf6',
+        default => '#6b7280',
+    };
+    $__roleBg = match ($__type) {
+        1 => 'rgba(239,68,68,.18)',
+        2 => 'rgba(34,197,94,.18)',
+        3 => 'rgba(245,158,11,.18)',
+        4 => 'rgba(6,182,212,.18)',
+        5 => 'rgba(59,130,246,.18)',
+        6 => 'rgba(139,92,246,.18)',
+        default => 'rgba(107,114,128,.18)',
+    };
+    $__prefix = match ($__type) {
+        1 => 'admin',
+        2 => 'teacher',
+        3 => 'student',
+        4 => 'parent',
+        5 => 'accountant',
+        6 => 'librarian',
+        default => 'admin',
+    };
+
+    $__bsToday = \App\Helpers\NepaliCalendar::today();
+    $__dayEn = \Carbon\Carbon::now()->format('l');
+@endphp
+
+<style>
+    /* ══ NAVBAR ══════════════════════════════════════════════════════════ */
+    .app-header {
+        background: rgba(255, 255, 255, .95) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, .08) !important;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .04) !important;
+        height: 56px;
+    }
+
+    .nav-datetime {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 13px;
+        background: #f8faff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        font-size: .78rem;
+        font-weight: 500;
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    .nav-datetime .dot-sep {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        flex-shrink: 0;
+    }
+
+    .nav-icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: #4b5563;
+        border: none;
+        transition: background .15s, color .15s, transform .1s;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .nav-icon-btn:hover {
+        background: rgba(0, 0, 0, .06);
+        color: #111827;
+        transform: translateY(-1px);
+    }
+
+    .nav-badge {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        font-size: .6rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #fff;
+        line-height: 1;
+        padding: 0 3px;
+    }
+
+    .nav-dropdown-panel {
+        border: 1px solid rgba(0, 0, 0, .1) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, .14), 0 2px 8px rgba(0, 0, 0, .06) !important;
+        overflow: hidden;
+        padding: 0 !important;
+        animation: panelIn .15s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    @keyframes panelIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px) scale(.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .nav-panel-header {
+        padding: 12px 16px;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .drop-view-all {
+        display: block;
+        text-align: center;
+        padding: 10px 16px;
+        font-size: .73rem;
+        font-weight: 600;
+        border-top: 1px solid rgba(0, 0, 0, .06);
+        text-decoration: none;
+        transition: background .12s;
+    }
+
+    .drop-view-all:hover {
+        background: rgba(0, 0, 0, .03);
+    }
+
+    /* ── Profile trigger ── */
+    .profile-dropdown-header {
+        padding: 16px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-dropdown-header::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .05);
+    }
+
+    .profile-avatar-ring {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        border: 2px solid rgba(255, 255, 255, .2);
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .profile-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 14px;
+        font-size: .82rem;
+        color: #374151;
+        text-decoration: none;
+        transition: background .12s;
+    }
+
+    .profile-menu-item:hover {
+        background: rgba(0, 0, 0, .04);
+        color: #111827;
+    }
+
+    .profile-menu-item .pm-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .84rem;
+        flex-shrink: 0;
+    }
+
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 8px 4px 4px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 0, 0, .1);
+        background: rgba(0, 0, 0, .02);
+        cursor: pointer;
+        transition: background .15s, box-shadow .15s;
+        text-decoration: none;
+    }
+
+    .profile-trigger:hover {
+        background: rgba(0, 0, 0, .05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    .profile-trigger img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* ── Dropdown scroll area ── */
+    .nav-dropdown-scroll {
+        max-height: 340px;
+        overflow-y: auto;
+    }
+
+    .nav-dropdown-scroll::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .nav-dropdown-scroll::-webkit-scrollbar-thumb {
+        background: #d1d9e0;
+        border-radius: 4px;
+    }
+
+    /* ── Unread pulse animation ── */
+    @keyframes badgePulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, .4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+        }
+    }
+
+    .badge-pulse {
+        animation: badgePulse 2s ease-in-out infinite;
+    }
+
+    /* ══ SIDEBAR ══════════════════════════════════════════════════════════ */
+    .app-sidebar {
+        background: #1e293b !important;
+        border-right: none !important;
+    }
+
+    .sidebar-brand {
+        background: #162032;
+        border-bottom: 1px solid rgba(255, 255, 255, .08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-brand .brand-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px !important;
+        text-decoration: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .brand-bg {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(59, 130, 246, .35), transparent 70%);
+        top: -20px;
+        left: -20px;
+        filter: blur(20px);
+        z-index: 0;
+    }
+
+    .logo-wrapper {
+        background: rgba(255, 255, 255, .1);
+        padding: 7px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        transition: transform .25s;
+    }
+
+    .logo-wrapper:hover {
+        transform: scale(1.08) rotate(4deg);
+    }
+
+    .brand-image {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+    }
+
+    .sb-school-name {
+        font-size: .9rem;
+        font-weight: 700;
+        color: #f0f6ff;
+        letter-spacing: .01em;
+        transition: color .2s;
+    }
+
+    .sb-school-sub {
+        font-size: .68rem;
+        color: #94a3b8;
+        margin-top: 1px;
+        letter-spacing: .03em;
+    }
+
+    .brand-link:hover .sb-school-name {
+        color: #7dd3fc;
+    }
+
+    .user-panel {
+        margin: 10px 12px !important;
+        padding: 10px 12px !important;
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, .07) !important;
+        border: 1px solid rgba(255, 255, 255, .1) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, .1) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-bg {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(56, 189, 248, .2), transparent 70%);
+        top: -40px;
+        left: -20px;
+        filter: blur(25px);
+        z-index: 0;
+    }
+
+    .avatar-wrapper {
+        z-index: 1;
+        padding: 2px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .08);
+        transition: transform .25s;
+        flex-shrink: 0;
+    }
+
+    .avatar-wrapper:hover {
+        transform: scale(1.07);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 10px;
+        display: block;
+    }
+
+    .online-dot {
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #22c55e;
+        border: 2px solid #1e293b;
+        box-shadow: 0 0 6px rgba(34, 197, 94, .5);
+    }
+
+    .user-name {
+        font-size: .82rem !important;
+        font-weight: 600;
+        color: #e8f0fe !important;
+        text-decoration: none;
+        display: block;
+        z-index: 1;
+        transition: color .2s;
+    }
+
+    .user-panel:hover .user-name {
+        color: #7dd3fc !important;
+    }
+
+    .user-role-badge {
+        font-size: .68rem;
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-weight: 600;
+        letter-spacing: .03em;
+        display: inline-block;
+        z-index: 1;
+    }
+
+    .nav-header {
+        font-size: .65rem !important;
+        font-weight: 700 !important;
+        letter-spacing: .1em !important;
+        text-transform: uppercase !important;
+        color: rgba(255, 255, 255, .45) !important;
+        padding: 14px 18px 5px !important;
+    }
+
+    .sidebar-menu .nav-link {
+        padding: 8px 14px 8px 18px !important;
+        border-radius: 8px !important;
+        margin: 1px 8px !important;
+        color: rgba(255, 255, 255, .82) !important;
+        font-size: .83rem !important;
+        font-weight: 500;
+        line-height: 1.4;
+        display: flex;
+        align-items: center;
+        transition: background .15s, color .15s, transform .1s !important;
+        position: relative;
+    }
+
+    .sidebar-menu .nav-link:hover {
+        background: rgba(255, 255, 255, .1) !important;
+        color: #fff !important;
+        transform: translateX(2px);
+    }
+
+    .sidebar-menu .nav-link.active {
+        background: rgba(255, 255, 255, .14) !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+
+    .sidebar-menu .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        height: 60%;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: var(--role-color, #3b82f6);
+    }
+
+    .nav-icon {
+        width: 20px;
+        text-align: center;
+        font-size: .9rem !important;
+        opacity: .8;
+        margin-right: 9px !important;
+        flex-shrink: 0;
+    }
+
+    .sidebar-menu .nav-link.active .nav-icon,
+    .sidebar-menu .nav-link:hover .nav-icon {
+        opacity: 1;
+    }
+
+    .nav-treeview {
+        background: rgba(0, 0, 0, .18) !important;
+        border-radius: 8px;
+        margin: 2px 8px !important;
+        padding: 4px 0 !important;
+    }
+
+    .nav-treeview .nav-link {
+        margin: 0 4px !important;
+        padding: 7px 12px 7px 36px !important;
+        font-size: .8rem !important;
+        color: rgba(255, 255, 255, .72) !important;
+        border-radius: 6px !important;
+    }
+
+    .nav-treeview .nav-link:hover {
+        color: #fff !important;
+        background: rgba(255, 255, 255, .08) !important;
+    }
+
+    .nav-treeview .nav-link.active {
+        color: #fff !important;
+        background: rgba(255, 255, 255, .12) !important;
+    }
+
+    .sidebar-wrapper::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .sidebar-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, .18);
+        border-radius: 3px;
+    }
+
+    .logout-item .nav-link {
+        color: rgba(252, 165, 165, .85) !important;
+    }
+
+    .logout-item .nav-link:hover {
+        background: rgba(239, 68, 68, .12) !important;
+        color: #fca5a5 !important;
+    }
+</style>
+
+{{-- ══ TOP NAVBAR ══════════════════════════════════════════════════════ --}}
+<nav class="app-header navbar navbar-expand">
+    <div class="container-fluid px-3">
+
+        <ul class="navbar-nav align-items-center gap-2">
             <li class="nav-item">
-                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                    <i class="bi bi-list fs-5"></i>
+                <a class="nav-icon-btn" data-lte-toggle="sidebar" href="#" role="button">
+                    <i class="bi bi-layout-sidebar fs-5"></i>
                 </a>
             </li>
-
-            <li class="nav-item d-none d-md-block">
-                <span class="nav-link text-muted small">
-                    <i class="bi bi-calendar3 me-1"></i>
-                    <span id="nepal-datetime"></span>
-                </span>
+            <li class="nav-item d-none d-lg-flex">
+                <div class="nav-datetime">
+                    <i class="bi bi-calendar3" style="color:#3b82f6;font-size:.8rem;"></i>
+                    <span style="color:#6b7280;">{{ $__dayEn }}</span>
+                    <span class="dot-sep"></span>
+                    <strong style="color:#1e293b;">{{ $__bsToday['day'] }} {{ $__bsToday['month_name'] }}
+                        {{ $__bsToday['year'] }}</strong>
+                    <span style="color:#6b7280;font-size:.7rem;">B.S.</span>
+                    <span class="dot-sep"></span>
+                    <i class="bi bi-clock" style="color:#3b82f6;font-size:.75rem;"></i>
+                    <span id="hdr-clock" style="font-variant-numeric:tabular-nums;color:#374151;"></span>
+                </div>
             </li>
         </ul>
 
-        <script>
-            function updateNepalTime() {
-                const options = {
-                    timeZone: 'Asia/Kathmandu',
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                };
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
 
-                const now = new Date().toLocaleString('en-US', options);
-                document.getElementById("nepal-datetime").innerHTML = now;
-            }
-
-            setInterval(updateNepalTime, 1000);
-            updateNepalTime();
-        </script>
-
-        {{-- Right-side Nav Items --}}
-        <ul class="navbar-nav ms-auto align-items-center">
-
-            {{-- Messages Dropdown --}}
+            {{-- ── Messages Dropdown ────────────────────────────────────── --}}
             <li class="nav-item dropdown">
-                <a class="nav-link position-relative" data-bs-toggle="dropdown" href="#" title="Messages">
-                    <i class="bi bi-chat-text fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="font-size:.6rem;">
-                        3
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow border-0 p-0"
-                    style="min-width:320px;">
-                    <div
-                        class="dropdown-header bg-primary text-white rounded-top px-3 py-2 d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-chat-text me-1"></i> Messages</span>
-                        <span class="badge bg-white text-primary">3 New</span>
+                <button class="nav-icon-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Messages"
+                    id="msgDropBtn">
+                    <i class="bi bi-chat-square-text" style="font-size:1rem;"></i>
+                    <span class="nav-badge bg-danger text-white badge-pulse" id="header_msg_badge"
+                        style="display:none;">0</span>
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-end nav-dropdown-panel" style="width:340px;">
+                    <div class="nav-panel-header"
+                        style="background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;">
+                        <span><i class="bi bi-chat-square-text me-2"></i>Messages</span>
+                        <span id="header_msg_count_text"
+                            style="font-size:.7rem;font-weight:500;opacity:.85;
+                                     text-transform:none;letter-spacing:0;">
+                            0 unread
+                        </span>
                     </div>
+                    <div class="nav-dropdown-scroll" id="header_msg_list">
+                        <div class="text-center py-4" style="color:#9ca3af;">
+                            <i class="bi bi-hourglass-split"
+                                style="font-size:1.5rem;opacity:.5;display:block;margin-bottom:8px;"></i>
+                            <div style="font-size:.78rem;">Loading…</div>
+                        </div>
+                    </div>
+                    <a href="{{ url($__prefix . '/chat') }}" class="drop-view-all" style="color:#2563eb;">
+                        View all messages <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </li>
 
-                    @php
-                        $messages = [
-                            [
-                                'img' => 'user1-128x128.jpg',
-                                'name' => 'Brad Diesel',
-                                'text' => 'Call me whenever you can...',
-                                'time' => '4 Hours Ago',
-                                'star' => 'text-danger',
-                            ],
-                            [
-                                'img' => 'user8-128x128.jpg',
-                                'name' => 'John Pierce',
-                                'text' => 'I got your message bro',
-                                'time' => '6 Hours Ago',
-                                'star' => 'text-secondary',
-                            ],
-                            [
-                                'img' => 'user3-128x128.jpg',
-                                'name' => 'Nora Silvester',
-                                'text' => 'The subject goes here',
-                                'time' => '1 Day Ago',
-                                'star' => 'text-warning',
-                            ],
-                        ];
-                    @endphp
+            {{-- ── Notifications Dropdown ───────────────────────────────── --}}
+            <li class="nav-item dropdown">
+                <button class="nav-icon-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                    title="Notifications" id="notifDropBtn">
+                    <i class="bi bi-bell" style="font-size:1rem;"></i>
+                    <span class="nav-badge bg-warning text-dark badge-pulse" id="header_notif_badge"
+                        style="display:none;">0</span>
+                </button>
 
-                    @foreach ($messages as $msg)
-                        <a href="#" class="dropdown-item py-2 px-3 border-bottom">
-                            <div class="d-flex align-items-start">
-                                <img src="{{ asset('dist/assets/img/' . $msg['img']) }}" alt="{{ $msg['name'] }}"
-                                    class="rounded-circle me-3 flex-shrink-0"
-                                    style="width:42px;height:42px;object-fit:cover;">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <div class="d-flex justify-content-between">
-                                        <strong class="text-dark small">{{ $msg['name'] }}</strong>
-                                        <i class="bi bi-star-fill {{ $msg['star'] }} small"></i>
-                                    </div>
-                                    <p class="text-muted small mb-0 text-truncate">{{ $msg['text'] }}</p>
-                                    <p class="text-secondary" style="font-size:.7rem;">
-                                        <i class="bi bi-clock me-1"></i>{{ $msg['time'] }}
-                                    </p>
+                <div class="dropdown-menu dropdown-menu-end nav-dropdown-panel" style="width:330px;">
+                    <div class="nav-panel-header"
+                        style="background:linear-gradient(135deg,#b45309,#d97706);color:#fff;">
+                        <span><i class="bi bi-bell me-2"></i>Notifications</span>
+                        <button onclick="markAllNotifsRead()"
+                            style="font-size:.7rem;color:rgba(255,255,255,.85);background:none;
+                                       border:none;cursor:pointer;padding:0;font-weight:500;">
+                            Mark all read
+                        </button>
+                    </div>
+                    <div class="nav-dropdown-scroll" id="header_notif_list">
+                        <div class="text-center py-4" style="color:#9ca3af;">
+                            <i class="bi bi-hourglass-split"
+                                style="font-size:1.5rem;opacity:.5;display:block;margin-bottom:8px;"></i>
+                            <div style="font-size:.78rem;">Loading…</div>
+                        </div>
+                    </div>
+                    <a href="{{ url($__prefix . '/my_notice_board') }}" class="drop-view-all" style="color:#d97706;">
+                        See all notifications <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </li>
+
+            <li class="nav-item d-none d-md-flex align-items-center" style="height:20px;padding:0 4px;">
+                <div style="width:1px;height:100%;background:rgba(0,0,0,.12);"></div>
+            </li>
+
+            {{-- ── Profile Dropdown ─────────────────────────────────────── --}}
+            <li class="nav-item dropdown">
+                <a href="#" class="profile-trigger nav-link" data-bs-toggle="dropdown" role="button">
+                    <img src="{{ $__u->getProfile() }}" alt="{{ $__u->name }}"
+                        style="border:2px solid {{ $__roleColor }};">
+                    <div class="d-none d-md-block" style="line-height:1.3;">
+                        <div
+                            style="font-size:.78rem;font-weight:600;color:#111827;
+                                    max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            {{ $__u->name }}
+                        </div>
+                        <div style="font-size:.67rem;color:#6b7280;">{{ $__roleLabel }}</div>
+                    </div>
+                    <i class="bi bi-chevron-down d-none d-md-block" style="font-size:.6rem;color:#9ca3af;"></i>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end nav-dropdown-panel" style="width:244px;">
+                    <div class="profile-dropdown-header">
+                        <div class="d-flex align-items-center gap-3 position-relative" style="z-index:1;">
+                            <img src="{{ $__u->getProfile() }}" alt="{{ $__u->name }}"
+                                class="profile-avatar-ring" style="border-color:{{ $__roleColor }}!important;">
+                            <div>
+                                <div style="font-size:.85rem;font-weight:700;color:#f1f5f9;line-height:1.2;">
+                                    {{ $__u->name }} {{ $__u->last_name }}
                                 </div>
-                            </div>
-                        </a>
-                    @endforeach
-
-                    <a href="#" class="dropdown-item text-center text-primary py-2 small fw-semibold">
-                        <i class="bi bi-arrow-right-circle me-1"></i> See All Messages
-                    </a>
-                </div>
-            </li>
-
-            {{-- Notifications Dropdown --}}
-            <li class="nav-item dropdown">
-                <a class="nav-link position-relative" data-bs-toggle="dropdown" href="#" title="Notifications">
-                    <i class="bi bi-bell-fill fs-5"></i>
-                    <span
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                        style="font-size:.6rem;">
-                        1
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow border-0 p-0"
-                    style="min-width:300px;">
-                    <div
-                        class="dropdown-header bg-warning text-dark rounded-top px-3 py-2 d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-bell me-1"></i> Notifications</span>
-                        <span class="badge bg-dark text-white">15</span>
-                    </div>
-
-                    <a href="#" class="dropdown-item py-2 px-3 border-bottom d-flex align-items-center">
-                        <span
-                            class="me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:36px;height:36px;">
-                            <i class="bi bi-envelope-fill"></i>
-                        </span>
-                        <div>
-                            <div class="small fw-semibold text-dark">4 new messages</div>
-                            <div class="text-secondary" style="font-size:.72rem;"><i class="bi bi-clock me-1"></i>3 mins
-                                ago</div>
-                        </div>
-                    </a>
-                    <a href="#" class="dropdown-item py-2 px-3 border-bottom d-flex align-items-center">
-                        <span
-                            class="me-3 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:36px;height:36px;">
-                            <i class="bi bi-people-fill"></i>
-                        </span>
-                        <div>
-                            <div class="small fw-semibold text-dark">8 new enrolment requests</div>
-                            <div class="text-secondary" style="font-size:.72rem;"><i class="bi bi-clock me-1"></i>12
-                                hours ago</div>
-                        </div>
-                    </a>
-                    <a href="#" class="dropdown-item py-2 px-3 border-bottom d-flex align-items-center">
-                        <span
-                            class="me-3 bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:36px;height:36px;">
-                            <i class="bi bi-file-earmark-text-fill"></i>
-                        </span>
-                        <div>
-                            <div class="small fw-semibold text-dark">3 new reports submitted</div>
-                            <div class="text-secondary" style="font-size:.72rem;"><i class="bi bi-clock me-1"></i>2 days
-                                ago</div>
-                        </div>
-                    </a>
-
-                    <a href="#" class="dropdown-item text-center text-primary py-2 small fw-semibold">
-                        <i class="bi bi-arrow-right-circle me-1"></i> See All Notifications
-                    </a>
-                </div>
-            </li>
-
-            {{-- Divider --}}
-            <li class="nav-item d-none d-md-block">
-                <span class="nav-link text-muted px-1">|</span>
-            </li>
-
-            {{-- User Profile Dropdown --}}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 pe-0" data-bs-toggle="dropdown"
-                    href="#" role="button">
-                    {{-- SMALL NAV ICON --}}
-                    <img src="{{ Auth::user()->getProfile() }}" alt="{{ Auth::user()->name }}"
-                        class="rounded-circle border border-2 border-primary"
-                        style="width:34px;height:34px;object-fit:cover;">
-                    {{ Auth::user()->name }}
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0" style="min-width:220px;">
-                    {{-- DROPDOWN HEADER PIC --}}
-                    <div class="px-3 py-3 bg-light rounded-top border-bottom d-flex align-items-center gap-3">
-                        <img src="{{ Auth::user()->getProfile() }}" alt="{{ Auth::user()->name }}"
-                            class="rounded-circle border border-2 border-primary"
-                            style="width:34px;height:34px;object-fit:cover;">
-                        <div>
-                            <div class="fw-semibold text-dark small">{{ Auth::user()->name }}</div>
-                            <div class="text-muted" style="font-size:.72rem;">
-                                @if (Auth::user()->user_type == 1)
-                                    Admin
-                                @elseif(Auth::user()->user_type == 2)
-                                    Teacher
-                                @elseif(Auth::user()->user_type == 3)
-                                    Student
-                                @elseif(Auth::user()->user_type == 4)
-                                    Parent
-                                @elseif(Auth::user()->user_type == 5)
-                                    Accountant
+                                <div class="mt-1">
+                                    <span class="user-role-badge"
+                                        style="background:{{ $__roleBg }};color:{{ $__roleColor }};">
+                                        {{ $__roleShort }}
+                                    </span>
+                                </div>
+                                @if ($__u->email)
+                                    <div
+                                        style="font-size:.67rem;color:rgba(255,255,255,.7);margin-top:5px;
+                                                max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                        <i class="bi bi-envelope me-1"></i>{{ $__u->email }}
+                                    </div>
+                                @endif
+                                @if (!empty($__u->mobile_number))
+                                    <div style="font-size:.67rem;color:rgba(255,255,255,.6);margin-top:3px;">
+                                        <i class="bi bi-telephone me-1"></i>{{ $__u->mobile_number }}
+                                    </div>
+                                @endif
+                                @if ($__type == 3 && !empty($__u->admission_number))
+                                    <div style="font-size:.67rem;color:rgba(255,255,255,.6);margin-top:3px;">
+                                        <i class="bi bi-person-badge me-1"></i>Admission: {{ $__u->admission_number }}
+                                    </div>
+                                @elseif($__type == 2 && !empty($__u->qualification))
+                                    <div style="font-size:.67rem;color:rgba(255,255,255,.6);margin-top:3px;">
+                                        <i
+                                            class="bi bi-mortarboard me-1"></i>{{ \Illuminate\Support\Str::limit($__u->qualification, 25) }}
+                                    </div>
                                 @endif
                             </div>
                         </div>
                     </div>
-
-                    {{-- Menu Items --}}
-                    @php
-                        $prefix = match (Auth::user()->user_type) {
-                            1 => 'admin',
-                            2 => 'teacher',
-                            3 => 'student',
-                            4 => 'parent',
-                            5 => 'accountant',
-                            default => 'admin',
-                        };
-                    @endphp
-                    <a href="{{ url($prefix . '/account') }}"
-                        class="dropdown-item py-2 px-3 d-flex align-items-center gap-2">
-                        <i class="bi bi-person-circle text-primary"></i> My Profile
-                    </a>
-                    <a href="{{ url($prefix . '/profile/change_password') }}"
-                        class="dropdown-item py-2 px-3 d-flex align-items-center gap-2">
-                        <i class="bi bi-shield-lock text-warning"></i> Change Password
-                    </a>
-                    <div class="dropdown-divider my-1"></div>
-                    <a href="{{ route('logout') }}"
-                        class="dropdown-item py-2 px-3 d-flex align-items-center gap-2 text-danger"
-                        onclick="event.preventDefault(); document.getElementById('nav-logout-form').submit();">
-                        <i class="bi bi-box-arrow-right"></i> Sign Out
-                    </a>
-                    <form id="nav-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
+                    <div class="py-1">
+                        <a href="{{ url($__prefix . '/account') }}" class="profile-menu-item">
+                            <span class="pm-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <div>
+                                <div style="font-weight:500;">My Profile</div>
+                                <div style="font-size:.7rem;color:#9ca3af;">View & edit account</div>
+                            </div>
+                        </a>
+                        <a href="{{ url($__prefix . '/profile/change_password') }}" class="profile-menu-item">
+                            <span class="pm-icon" style="background:rgba(245,158,11,.1);color:#f59e0b;">
+                                <i class="bi bi-shield-lock"></i>
+                            </span>
+                            <div>
+                                <div style="font-weight:500;">Change Password</div>
+                                <div style="font-size:.7rem;color:#9ca3af;">Security settings</div>
+                            </div>
+                        </a>
+                        <a href="{{ url($__prefix . '/dashboard') }}" class="profile-menu-item">
+                            <span class="pm-icon" style="background:rgba(34,197,94,.1);color:#22c55e;">
+                                <i class="bi bi-speedometer2"></i>
+                            </span>
+                            <div>
+                                <div style="font-weight:500;">Dashboard</div>
+                                <div style="font-size:.7rem;color:#9ca3af;">Back to home</div>
+                            </div>
+                        </a>
+                        <div style="height:1px;background:rgba(0,0,0,.07);margin:4px 0;"></div>
+                        <a href="{{ route('logout') }}" class="profile-menu-item" style="color:#ef4444!important;"
+                            onclick="event.preventDefault();document.getElementById('nav-logout-form').submit();">
+                            <span class="pm-icon" style="background:rgba(239,68,68,.1);color:#ef4444;">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </span>
+                            <div>
+                                <div style="font-weight:600;">Sign Out</div>
+                                <div style="font-size:.7rem;color:#9ca3af;">End your session</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </li>
 
@@ -249,64 +743,152 @@
     </div>
 </nav>
 
+<form id="nav-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
 
-{{-- ============================================================
-     SIDEBAR
-     ============================================================ --}}
-<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+<script>
+    (function() {
+        /* ── Clock ─────────────────────────────────────────────────────────── */
+        function tick() {
+            var el = document.getElementById('hdr-clock');
+            if (el) el.textContent = new Date().toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Kathmandu',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+        tick();
+        setInterval(tick, 1000);
+
+        /* ── Unread messages ────────────────────────────────────────────────── */
+        function fetchUnreadMessages() {
+            fetch('{{ url('chat/global-unread') }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(res => {
+                    var badge = document.getElementById('header_msg_badge');
+                    var text = document.getElementById('header_msg_count_text');
+                    var list = document.getElementById('header_msg_list');
+                    if (!badge) return;
+
+                    if (res.count > 0) {
+                        badge.textContent = res.count > 99 ? '99+' : res.count;
+                        badge.style.display = 'flex';
+                        text.textContent = res.count + ' unread';
+                    } else {
+                        badge.style.display = 'none';
+                        text.textContent = '0 unread';
+                    }
+                    list.innerHTML = res.html;
+                })
+                .catch(() => {});
+        }
+
+        /* ── Notifications ──────────────────────────────────────────────────── */
+        function fetchNotifications() {
+            fetch('{{ url('notifications/global') }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(res => {
+                    var badge = document.getElementById('header_notif_badge');
+                    var list = document.getElementById('header_notif_list');
+                    if (!badge) return;
+
+                    if (res.count > 0) {
+                        badge.textContent = res.count > 99 ? '99+' : res.count;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                    list.innerHTML = res.html;
+                })
+                .catch(() => {});
+        }
+
+        window.markAllNotifsRead = function() {
+            fetch('{{ url('notifications/mark-read') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => fetchNotifications())
+                .catch(() => {});
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial fetch
+            fetchUnreadMessages();
+            fetchNotifications();
+
+            // Poll messages every 10s, notifications every 30s
+            setInterval(fetchUnreadMessages, 10000);
+            setInterval(fetchNotifications, 30000);
+
+            // Refresh when dropdown is opened
+            var msgBtn = document.getElementById('msgDropBtn');
+            var notifBtn = document.getElementById('notifDropBtn');
+            if (msgBtn) msgBtn.addEventListener('click', fetchUnreadMessages);
+            if (notifBtn) notifBtn.addEventListener('click', fetchNotifications);
+        });
+    })();
+</script>
+
+{{-- ══ SIDEBAR ═════════════════════════════════════════════════════════ --}}
+<aside class="app-sidebar shadow" data-bs-theme="dark" style="--role-color:{{ $__roleColor }};">
 
     {{-- Brand --}}
-    <div class="sidebar-brand">
-        <a href="#" class="brand-link d-flex align-items-center gap-2 px-3 py-2">
-            <img src="{{ asset('dist/assets/img/school.png') }}" class="brand-image opacity-75 shadow"
-                alt="Logo" style="width:32px;height:32px;object-fit:contain;">
-            <span class="brand-text fw-semibold fs-6">Brain Fart Institute</span>
+    <div class="sidebar-brand position-relative overflow-hidden">
+        <a href="{{ url($__prefix . '/dashboard') }}" class="brand-link">
+            <div class="brand-bg"></div>
+            <div class="logo-wrapper">
+                <img src="{{ asset('dist/assets/img/school.png') }}" class="brand-image" alt="Logo">
+            </div>
+            <div style="z-index:1;">
+                <div class="sb-school-name">Brain Fart Institute</div>
+                <div class="sb-school-sub">School Management System</div>
+            </div>
         </a>
     </div>
 
-    {{-- User Panel --}}
-    <div class="user-panel mt-3 pb-4 mb-3 mx-4 d-flex align-items-center border-bottom border-secondary">
-        <div class="image">
-            {{-- Updated logic to check the profile_pic column and the upload/profile folder --}}
-            <img src="{{ Auth::user()->getProfile() }}" alt="{{ Auth::user()->name }}"
-                class="rounded-circle border border-2 border-primary"
-                style="width:34px;height:34px;object-fit:cover;">
+    {{-- User panel --}}
+    <div class="user-panel d-flex align-items-center gap-3">
+        <div class="user-bg"></div>
+        <div class="position-relative avatar-wrapper">
+            <img src="{{ $__u->getProfile() }}" alt="{{ $__u->name }}" class="user-avatar"
+                style="border:2px solid {{ $__roleColor }};">
+            <span class="online-dot"></span>
         </div>
-        <div class="info ps-2">
-            {{-- Linking to a profile page (optional, you can keep # if not ready) --}}
-            <a href="{{ url(Auth::user()->user_type == 1 ? 'admin/account' : '#') }}"
-                class="d-block text-white fw-semibold small text-truncate" style="max-width:160px;">
-                {{ Auth::user()->name }} {{ Auth::user()->last_name }}
+        <div class="overflow-hidden" style="z-index:1;">
+            <a href="{{ url($__prefix . '/account') }}" class="user-name">
+                {{ $__u->name }} {{ $__u->last_name }}
             </a>
-            <span class="badge bg-primary bg-opacity-75 mt-1" style="font-size:.65rem;">
-                @if (Auth::user()->user_type == 1)
-                    Admin
-                @elseif(Auth::user()->user_type == 2)
-                    Teacher
-                @elseif(Auth::user()->user_type == 3)
-                    Student
-                @elseif(Auth::user()->user_type == 4)
-                    Parent
-                @elseif(Auth::user()->user_type == 5)
-                    Accountant
-                @endif
-            </span>
+            <div class="mt-1">
+                <span class="user-role-badge" style="background:{{ $__roleBg }};color:{{ $__roleColor }};">
+                    {{ $__roleShort }}
+                </span>
+            </div>
         </div>
     </div>
 
-    {{-- Sidebar Menu --}}
+    {{-- Navigation --}}
     <div class="sidebar-wrapper">
-        <nav class="mt-2 pb-3">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview">
+        <nav class="mt-1 pb-4">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview"
+                style="--role-color:{{ $__roleColor }};">
 
-
-                {{-- ================================================
-                     ADMIN MENU  (user_type == 1)
-                     ================================================ --}}
-                @if (Auth::user()->user_type == 1)
-                    <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                        style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
+                {{-- ══ ADMIN (1) ══ --}}
+                @if ($__type == 1)
+                    <li class="nav-header">Main</li>
                     <li class="nav-item">
                         <a href="{{ url('admin/dashboard') }}"
                             class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
@@ -314,850 +896,411 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-
-                    <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                        style="font-size:.67rem;letter-spacing:.08em;">Users</li>
-
-                    <li class="nav-item">
-                        <a href="{{ url('admin/admin/list') }}"
-                            class="nav-link {{ request()->is('admin/admin*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-person-badge"></i>
-                            <p>Admins</p>
-                        </a>
-                    </li>
-                    @php
-                        $staffRoutes = ['admin/teacher*', 'admin/accountant*', 'admin/librarian*'];
-                        $adminStaffActive = request()->is($staffRoutes);
-                    @endphp
-
-                    <li class="nav-item {{ $adminStaffActive ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ $adminStaffActive ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-megaphone-fill"></i>
+                    <li class="nav-header">Users</li>
+                    @foreach ([['admin/admin/list', 'bi-person-badge', 'Admins', 'admin/admin*'], ['admin/student/list', 'bi-people-fill', 'Students', 'admin/student*'], ['admin/parent/list', 'bi-house-heart-fill', 'Parents', 'admin/parent*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    @php $sActive=request()->is(['admin/teacher*','admin/accountant*','admin/librarian*']); @endphp
+                    <li class="nav-item {{ $sActive ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $sActive ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-people"></i>
                             <p>Staff <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
-
                         <ul class="nav nav-treeview">
-                            @php
-                                $staffLinks = [
-                                    [
-                                        'url' => 'admin/teacher/list',
-                                        'icon' => 'bi-person-video3',
-                                        'label' => 'Teachers',
-                                    ],
-                                    [
-                                        'url' => 'admin/accountant/list',
-                                        'icon' => 'bi-person-badge',
-                                        'label' => 'Accountants',
-                                    ],
-                                    [
-                                        'url' => 'admin/librarian/list',
-                                        'icon' => 'bi-person-badge',
-                                        'label' => 'Librarians',
-                                    ],
-                                ];
-                            @endphp
-
-                            @foreach ($staffLinks as $link)
-                                <li class="nav-item">
-                                    <a href="{{ url($link['url']) }}"
-                                        class="nav-link {{ request()->is(str_replace('list', '*', $link['url'])) ? 'active' : '' }}">
-                                        <i class="nav-icon bi {{ $link['icon'] }}"></i>
-                                        <p>{{ $link['label'] }}</p>
-                                    </a>
-                                </li>
+                            @foreach ([['admin/teacher/list', 'bi-person-video3', 'Teachers'], ['admin/accountant/list', 'bi-calculator', 'Accountants'], ['admin/librarian/list', 'bi-book', 'Librarians']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
                             @endforeach
                         </ul>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="{{ url('admin/student/list') }}"
-                            class="nav-link {{ request()->is('admin/student*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-people-fill"></i>
-                            <p>Students</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/parent/list') }}"
-                            class="nav-link {{ request()->is('admin/parent*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-house-heart-fill"></i>
-                            <p>Parents</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                        style="font-size:.67rem;letter-spacing:.08em;">Academic</li>
-
-                    {{-- Academic Submenu --}}
-                    @php
-                        $academicActive = request()->is([
-                            'admin/class*',
-                            'admin/subject*',
-                            'admin/assign_subject*',
-                            'admin/assign_class_teacher*',
-                            'admin/class_timetable*',
-                        ]);
-                    @endphp
-                    <li class="nav-item {{ $academicActive ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ $academicActive ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-mortarboard-fill"></i>
+                    <li class="nav-header">Academic</li>
+                    @php $acaA=request()->is(['admin/class*','admin/section*','admin/subject*','admin/assign_subject*','admin/assign_class_teacher*','admin/class_timetable*']); @endphp
+                    <li class="nav-item {{ $acaA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $acaA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-mortarboard-fill"></i>
                             <p>Academic <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/class/list') }}"
-                                    class="nav-link {{ request()->is('admin/class*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-building"></i>
-                                    <p>Classes</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/subject/list') }}"
-                                    class="nav-link {{ request()->is('admin/subject*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-journal-bookmark-fill"></i>
-                                    <p>Subjects</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/assign_subject/list') }}"
-                                    class="nav-link {{ request()->is('admin/assign_subject*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-pencil-square"></i>
-                                    <p>Assign Subject</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/assign_class_teacher/list') }}"
-                                    class="nav-link {{ request()->is('admin/assign_class_teacher*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-person-check-fill"></i>
-                                    <p>Assign Class Teacher</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/class_timetable/list') }}"
-                                    class="nav-link {{ request()->is('admin/class_timetable*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-calendar3-week"></i>
-                                    <p>Class Timetable</p>
-                                </a>
-                            </li>
+                            @foreach ([['admin/class/list', 'bi-building', 'Classes'], ['admin/section/list', 'bi-building', 'Sections'], ['admin/subject/list', 'bi-journal-bookmark-fill', 'Subjects'], ['admin/assign_subject/list', 'bi-pencil-square', 'Assign Subject'], ['admin/assign_class_teacher/list', 'bi-person-check-fill', 'Class Teacher'], ['admin/class_timetable/list', 'bi-calendar3-week', 'Timetable']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
                         </ul>
                     </li>
-
-                    {{-- Examinations Submenu --}}
-                    @php
-                        $examActive = request()->is([
-                            'admin/examination/exam/list*',
-                            'admin/examination/exam_schedule*',
-                            'admin/examination/marks_register*',
-                            'admin/examination/marks_grade/list*',
-                        ]);
-                    @endphp
-                    <li class="nav-item {{ $examActive ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ $examActive ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-clipboard2-check-fill"></i>
+                    @php $exA=request()->is(['admin/examination*']); @endphp
+                    <li class="nav-item {{ $exA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $exA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-clipboard2-check-fill"></i>
                             <p>Examinations <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/examination/exam/list') }}"
-                                    class="nav-link {{ request()->is('admin/examination/exam/list*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-card-list"></i>
-                                    <p>Exam List</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/examination/exam_schedule') }}"
-                                    class="nav-link {{ request()->is('admin/examination/exam_schedule*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-calendar-event-fill"></i>
-                                    <p>Exam Schedule</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/examination/marks_register') }}"
-                                    class="nav-link {{ request()->is('admin/examination/marks_register*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-table"></i>
-                                    <p>Marks Register</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/examination/marks_grade/list') }}"
-                                    class="nav-link {{ request()->is('admin/examination/marks_grade/list*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-award-fill"></i>
-                                    <p>Marks Grade</p>
-                                </a>
-                            </li>
+                            @foreach ([['admin/examination/exam/list', 'bi-card-list', 'Exam List'], ['admin/examination/exam_schedule', 'bi-calendar-event-fill', 'Schedule'], ['admin/examination/marks_register', 'bi-table', 'Marks Register'], ['admin/examination/marks_grade/list', 'bi-award-fill', 'Marks Grade']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
                         </ul>
                     </li>
-                    {{-- Library Submenu --}}
-                    @php
-                        $adminLibraryActive = request()->is(['admin/library*']);
-                    @endphp
-                    <li class="nav-item {{ $adminLibraryActive ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ $adminLibraryActive ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-book-fill"></i>
+                    <li class="nav-item"><a href="{{ url('admin/academic_session/list') }}"
+                            class="nav-link {{ request()->is('admin/academic_session*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-calendar3-range-fill"></i>
+                            <p>Academic Sessions</p>
+                        </a></li>
+                    <li class="nav-header">Operations</li>
+                    @php $lbA=request()->is(['admin/library*']); @endphp
+                    <li class="nav-item {{ $lbA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $lbA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-book-fill"></i>
                             <p>Library <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/library/book/list') }}"
-                                    class="nav-link {{ request()->is('admin/library/book*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-journals"></i>
-                                    <p>Books</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/library/issue/list') }}"
-                                    class="nav-link {{ request()->is('admin/library/issue*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-journal-arrow-up"></i>
-                                    <p>Issue / Return</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/library/fine/list') }}"
-                                    class="nav-link {{ request()->is('admin/library/fine*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-cash-coin"></i>
-                                    <p>Library Fines</p>
-                                </a>
-                            </li>
+                            @foreach ([['admin/library/book/list', 'bi-journals', 'Books'], ['admin/library/issue/list', 'bi-journal-arrow-up', 'Issue / Return'], ['admin/library/fine/list', 'bi-cash-coin', 'Fines'], ['admin/library/return_policy', 'bi-journal-text', 'Return Policy']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
                         </ul>
                     </li>
-
-
-                    {{-- Attendance Submenu --}}
-                    @php
-                        $adminAttendanceActive = request()->is([
-                            'admin/attendance/student_attendance*',
-                            'admin/attendance/attendance_report*',
-                            'admin/attendance/teacher_attendance',
-                            'admin/attendance/teacher_attendance_report',
-                        ]);
-                    @endphp
-                    <li class="nav-item {{ $adminAttendanceActive ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ $adminAttendanceActive ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-person-check"></i>
+                    @php $atA=request()->is(['admin/attendance*']); @endphp
+                    <li class="nav-item {{ $atA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $atA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-person-check"></i>
                             <p>Attendance <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/attendance/student_attendance') }}"
-                                    class="nav-link {{ request()->is('admin/attendance/student_attendance*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-calendar-check"></i>
-                                    <p>Student Attendance</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('admin/attendance/attendance_report') }}"
-                                    class="nav-link {{ request()->is('admin/attendance/attendance_report*') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-bar-chart-line-fill"></i>
-                                    <p>Attendance Report</p>
-                                </a>
-                            </li>
-                            {{-- </ul>
-                    </li> --}}
-                            {{-- <li class="nav-item {{ request()->is('admin/attendance/teacher_attendance*') ? 'menu-open' : '' }}">
-                    <a href="#"
-                    class="nav-link {{ request()->is('admin/attendance/teacher_attendance*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-check-fill"></i>
-                        <p>
-                            Teacher Attendance
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a> --}}
-                            {{-- <ul class="nav nav-treeview">
-                        <li class="nav-item"> --}}
-                            <a href="{{ url('admin/attendance/teacher_attendance') }}"
-                                class="nav-link {{ request()->is('admin/attendance/teacher_attendance*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-pencil-square"></i>
-                                <p>Teacher Attendance</p>
-                            </a>
+                            @foreach ([['admin/attendance/student_attendance', 'bi-calendar-check', 'Student Attendance'], ['admin/attendance/attendance_report', 'bi-bar-chart-line-fill', 'Student Report'], ['admin/attendance/teacher_attendance', 'bi-pencil-square', 'Teacher Attendance'], ['admin/attendance/teacher_attendance_report', 'bi-bar-chart-fill', 'Teacher Report']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
                     </li>
+                    @php $cmA=request()->is(['admin/communicate*']); @endphp
+                    <li class="nav-item {{ $cmA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $cmA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-megaphone-fill"></i>
+                            <p>Communicate <i class="nav-arrow bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['admin/communicate/notice_board', 'bi-pin-angle-fill', 'Notice Board'], ['admin/communicate/send_email', 'bi-envelope-fill', 'Send Email']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    @php $hwA=request()->is(['admin/homework*']); @endphp
+                    <li class="nav-item {{ $hwA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $hwA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-journal-text"></i>
+                            <p>Homework <i class="nav-arrow bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['admin/homework/homework', 'bi-pencil-fill', 'Homework'], ['admin/homework/homework_report', 'bi-file-earmark-bar-graph-fill', 'Report']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    @php $feA=request()->is(['admin/fee_type*','admin/fee*','admin/fee_group*']); @endphp
+                    <li class="nav-item {{ $feA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $feA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-cash-coin"></i>
+                            <p>Fee Management <i class="nav-arrow bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['admin/fee_type/list', 'bi-tags-fill', 'Fee Types'], ['admin/fee_group/list', 'bi-collection-fill', 'Fee Groups'], ['admin/fee_group/allocate', 'bi-people-fill', 'Fees Allocation'], ['admin/fee/list', 'bi-receipt-cutoff', 'Student Fees'], ['admin/fee/add', 'bi-plus-circle-fill', 'Assign Fee'], ['admin/fee/payment_report', 'bi-bar-chart-line-fill', 'Payment Report']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    @php $certA=request()->is('admin/certificate*'); @endphp
+                    <li class="nav-item {{ $certA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $certA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-patch-check"></i>
+                            <p>Certificate <i class="nav-arrow bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['admin/certificate/list', 'bi-list-ul', 'Templates'], ['admin/certificate/student-generate', 'bi-mortarboard', 'Student Certificate'], ['admin/certificate/employee-generate', 'bi-person-badge', 'Employee Certificate']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    @php $icA=request()->is('admin/id_card*'); @endphp
+                    <li class="nav-item {{ $icA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $icA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-person-badge-fill"></i>
+                            <p>ID Cards <i class="nav-arrow bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['admin/id_card/list', 'bi-layout-text-sidebar-reverse', 'Templates'], ['admin/id_card/student_generate', 'bi-people-fill', 'Student ID Cards'], ['admin/id_card/staff_generate', 'bi-person-workspace', 'Staff ID Cards']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li class="nav-header">Communication</li>
                     <li class="nav-item">
-                        <a href="{{ url('admin/attendance/teacher_attendance_report') }}"
-                            class="nav-link {{ request()->is('admin/attendance/teacher_attendance_report*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-bar-chart-fill"></i>
-                            <p>Attendance Report</p>
+                        <a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
                         </a>
                     </li>
-            </ul>
-            {{-- </li> --}}
+                    <li class="nav-header">Account</li>
+                    @foreach ([['admin/account', 'bi-person-circle', 'My Account', 'admin/account*'], ['admin/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'admin/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
 
-            {{-- Communicate Submenu --}}
-            @php
-                $adminCommunicateActive = request()->is([
-                    'admin/communicate/notice_board*',
-                    'admin/communicate/send_email*',
-                ]);
-            @endphp
-            <li class="nav-item {{ $adminCommunicateActive ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ $adminCommunicateActive ? 'active' : '' }}">
-                    <i class="nav-icon bi bi-megaphone-fill"></i>
-                    <p>Communicate <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="{{ url('admin/communicate/notice_board') }}"
-                            class="nav-link {{ request()->is('admin/communicate/notice_board*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-pin-angle-fill"></i>
-                            <p>Notice Board</p>
+                {{-- ══ TEACHER (2) ══ --}}
+                @if ($__type == 2)
+                    <li class="nav-header">Main</li>
+                    @foreach ([['teacher/dashboard', 'bi-speedometer2', 'Dashboard', 'teacher/dashboard'], ['teacher/my_student', 'bi-people-fill', 'My Students', 'teacher/my_student*'], ['teacher/my_class_subject', 'bi-journal-bookmark-fill', 'Class & Subjects', 'teacher/my_class_subject*'], ['teacher/my_exam_timetable', 'bi-calendar-event-fill', 'Exam Timetable', 'teacher/my_exam_timetable*'], ['teacher/marks_register', 'bi-clipboard2-data-fill', 'Marks Register', 'teacher/marks_register*'], ['teacher/my_notice_board', 'bi-pin-angle-fill', 'Notice Board', 'teacher/my_notice_board*'], ['teacher/my_calender', 'bi-calendar3', 'My Calendar', 'teacher/my_calender*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    @php $tAtA=request()->is(['teacher/attendance*']); @endphp
+                    <li class="nav-item {{ $tAtA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $tAtA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-person-check"></i>
+                            <p>Attendance <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['teacher/attendance/student_attendance', 'bi-calendar-check', 'Mark Attendance'], ['teacher/attendance/attendance_report', 'bi-bar-chart-line-fill', 'Report']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/communicate/send_email') }}"
-                            class="nav-link {{ request()->is('admin/communicate/send_email*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-envelope-fill"></i>
-                            <p>Send Email</p>
+                    @php $tHwA=request()->is(['teacher/homework*']); @endphp
+                    <li class="nav-item {{ $tHwA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $tHwA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-journal-text"></i>
+                            <p>Homework <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['teacher/homework/homework', 'bi-pencil-fill', 'Homework'], ['teacher/homework/homework_report', 'bi-file-earmark-bar-graph-fill', 'Report']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
                     </li>
-                </ul>
-            </li>
+                    <li class="nav-header">Library</li>
+                    @foreach ([['teacher/library/my_books', 'bi-book-fill', 'My Books', 'teacher/library/my_books*'], ['teacher/library/my_fines', 'bi-cash-coin', 'Library Fines', 'teacher/library/my_fines*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    <li class="nav-header">Communication</li>
+                    <li class="nav-item"><a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
+                        </a></li>
+                    <li class="nav-header">Account</li>
+                    @foreach ([['teacher/account', 'bi-person-circle', 'My Account', 'teacher/account*'], ['teacher/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'teacher/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
 
-            {{-- Homework Submenu --}}
-            @php
-                $adminHomeworkActive = request()->is(['admin/homework/homework*', 'admin/homework/homework_report*']);
-            @endphp
-            <li class="nav-item {{ $adminHomeworkActive ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ $adminHomeworkActive ? 'active' : '' }}">
-                    <i class="nav-icon bi bi-journal-text"></i>
-                    <p>Home Work <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="{{ url('admin/homework/homework') }}"
-                            class="nav-link {{ request()->is('admin/homework/homework*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-pencil-fill"></i>
-                            <p>Homework</p>
+                {{-- ══ STUDENT (3) ══ --}}
+                @if ($__type == 3)
+                    <li class="nav-header">Main</li>
+                    @foreach ([['student/dashboard', 'bi-speedometer2', 'Dashboard', 'student/dashboard'], ['student/my_subject', 'bi-journal-bookmark-fill', 'My Subjects', 'student/my_subject*'], ['student/my_timetable', 'bi-calendar3-week', 'My Timetable', 'student/my_timetable*'], ['student/my_exam_timetable', 'bi-calendar-event-fill', 'Exam Timetable', 'student/my_exam_timetable*'], ['student/my_exam_result', 'bi-award-fill', 'Exam Results', 'student/my_exam_result*'], ['student/my_attendance', 'bi-calendar-check', 'My Attendance', 'student/my_attendance*'], ['student/my_notice_board', 'bi-pin-angle-fill', 'Notice Board', 'student/my_notice_board*'], ['student/my_homework', 'bi-pencil-square', 'My Homework', 'student/my_homework*'], ['student/my_submitted_homework', 'bi-check2-square', 'Submitted', 'student/my_submitted_homework*'], ['student/my_fees', 'bi-cash-coin', 'My Fees', 'student/my_fees*'], ['student/my_calender', 'bi-calendar3', 'My Calendar', 'student/my_calender*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    <li class="nav-header">Library</li>
+                    @foreach ([['student/library/my_books', 'bi-book-fill', 'My Books', 'student/library/my_books*'], ['student/library/my_fines', 'bi-cash-coin', 'Library Fines', 'student/library/my_fines*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    <li class="nav-header">Communication</li>
+                    <li class="nav-item"><a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
+                        </a></li>
+                    <li class="nav-header">Account</li>
+                    @foreach ([['student/account', 'bi-person-circle', 'My Account', 'student/account*'], ['student/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'student/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
+
+                {{-- ══ PARENT (4) ══ --}}
+                @if ($__type == 4)
+                    <li class="nav-header">Main</li>
+                    @foreach ([['parent/dashboard', 'bi-speedometer2', 'Dashboard', 'parent/dashboard'], ['parent/my_student', 'bi-people-fill', 'My Children', 'parent/my_student*'], ['parent/my_notice_board', 'bi-pin-angle-fill', 'Notice Board', 'parent/my_notice_board*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    <li class="nav-header">Communication</li>
+                    <li class="nav-item"><a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
+                        </a></li>
+                    <li class="nav-header">Account</li>
+                    @foreach ([['parent/account', 'bi-person-circle', 'My Account', 'parent/account*'], ['parent/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'parent/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
+
+                {{-- ══ ACCOUNTANT (5) ══ --}}
+                @if ($__type == 5)
+                    <li class="nav-header">Main</li>
+                    <li class="nav-item"><a href="{{ url('accountant/dashboard') }}"
+                            class="nav-link {{ request()->is('accountant/dashboard*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-speedometer2"></i>
+                            <p>Dashboard</p>
+                        </a></li>
+                    <li class="nav-header">Fee Management</li>
+                    @foreach ([['accountant/fee/list', 'bi-cash-coin', 'Fee Collection', 'accountant/fee*'], ['accountant/fee/payment_report', 'bi-bar-chart-line-fill', 'Payment Report', 'accountant/fee/payment_report*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                    <li class="nav-header">Communication</li>
+                    <li class="nav-item"><a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
+                        </a></li>
+                    <li class="nav-header">Account</li>
+                    @foreach ([['accountant/account', 'bi-person-circle', 'My Account', 'accountant/account*'], ['accountant/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'accountant/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
+
+                {{-- ══ LIBRARIAN (6) ══ --}}
+                @if ($__type == 6)
+                    <li class="nav-header">Main</li>
+                    <li class="nav-item"><a href="{{ url('librarian/dashboard') }}"
+                            class="nav-link {{ request()->is('librarian/dashboard*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-speedometer2"></i>
+                            <p>Dashboard</p>
+                        </a></li>
+                    <li class="nav-header">Book Management</li>
+                    @php $lbBA=request()->is(['librarian/library*']); @endphp
+                    <li class="nav-item {{ $lbBA ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ $lbBA ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-book-fill"></i>
+                            <p>Library <i class="nav-arrow bi bi-chevron-right"></i></p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            @foreach ([['librarian/library/book/list', 'bi-journals', 'Books'], ['librarian/library/issue/list', 'bi-journal-arrow-up', 'Issue / Return'], ['librarian/library/fine/list', 'bi-cash-coin', 'Fines'], ['librarian/library/return_policy', 'bi-journal-text', 'Return Policy']] as [$u, $i, $l])
+                                <li class="nav-item"><a href="{{ url($u) }}"
+                                        class="nav-link {{ request()->is($u . '*') ? 'active' : '' }}"><i
+                                            class="nav-icon bi {{ $i }}"></i>
+                                        <p>{{ $l }}</p>
+                                    </a></li>
+                            @endforeach
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/homework/homework_report') }}"
-                            class="nav-link {{ request()->is('admin/homework/homework_report*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-file-earmark-bar-graph-fill"></i>
-                            <p>Homework Report</p>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            {{-- Fee Management Submenu --}}
-            @php
-                $adminFeeActive = request()->is(['admin/fee_type*', 'admin/fee*']);
-            @endphp
-            <li class="nav-item {{ $adminFeeActive ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ $adminFeeActive ? 'active' : '' }}">
-                    <i class="nav-icon bi bi-cash-coin"></i>
-                    <p>Fee Management <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="{{ url('admin/fee_type/list') }}"
-                            class="nav-link {{ request()->is('admin/fee_type*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-tags-fill"></i>
-                            <p>Fee Types</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/fee/list') }}"
-                            class="nav-link {{ request()->is('admin/fee*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-receipt-cutoff"></i>
-                            <p>Student Fees</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/fee/add') }}"
-                            class="nav-link {{ request()->is('admin/fee/add*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-plus-circle-fill"></i>
-                            <p>Assign Fee</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('admin/fee/payment_report') }}"
-                            class="nav-link {{ request()->is('admin/fee/payment_report*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-bar-chart-line-fill"></i>
-                            <p>Payment Report</p>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+                    <li class="nav-header">Communication</li>
+                    <li class="nav-item"><a href="{{ url($__prefix . '/chat') }}"
+                            class="nav-link {{ request()->is($__prefix . '/chat*') ? 'active' : '' }}"><i
+                                class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Messages</p>
+                        </a></li>
+                    <li class="nav-header">Account</li>
+                    @foreach ([['librarian/account', 'bi-person-circle', 'My Account', 'librarian/account*'], ['librarian/profile/change_password', 'bi-shield-lock-fill', 'Change Password', 'librarian/change_password*']] as [$u, $i, $l, $m])
+                        <li class="nav-item"><a href="{{ url($u) }}"
+                                class="nav-link {{ request()->is($m) ? 'active' : '' }}"><i
+                                    class="nav-icon bi {{ $i }}"></i>
+                                <p>{{ $l }}</p>
+                            </a></li>
+                    @endforeach
+                @endif
 
-            <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-            <li class="nav-item">
-                <a href="{{ url('admin/account') }}"
-                    class="nav-link {{ request()->is('admin/account*') ? 'active' : '' }}">
-                    <i class="nav-icon bi bi-person-circle"></i>
-                    <p>My Account</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url('admin/profile/change_password') }}"
-                    class="nav-link {{ request()->is('admin/change_password*') ? 'active' : '' }}">
-                    <i class="nav-icon bi bi-shield-lock-fill"></i>
-                    <p>Change Password</p>
-                </a>
-            </li>
-            @endif
-
-
-            {{-- ================================================
-                     TEACHER MENU  (user_type == 2)
-                     ================================================ --}}
-            @if (Auth::user()->user_type == 2)
-                <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('teacher/dashboard') }}"
-                        class="nav-link {{ request()->is('teacher/dashboard') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
+                {{-- Sign Out --}}
+                <li class="nav-item logout-item"
+                    style="margin-top:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:6px;">
+                    <a href="{{ route('logout') }}" class="nav-link"
+                        onclick="event.preventDefault();document.getElementById('sidebar-logout-form').submit();">
+                        <i class="nav-icon bi bi-box-arrow-right"></i>
+                        <p>Sign Out</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/my_student') }}"
-                        class="nav-link {{ request()->is('teacher/my_student*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-people-fill"></i>
-                        <p>My Students</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/my_class_subject') }}"
-                        class="nav-link {{ request()->is('teacher/my_class_subject*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-journal-bookmark-fill"></i>
-                        <p>My Class &amp; Subject Timetable</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/my_exam_timetable') }}"
-                        class="nav-link {{ request()->is('teacher/my_exam_timetable*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar-event-fill"></i>
-                        <p>My Exam Timetable</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/library/my_books') }}"
-                        class="nav-link {{ request()->is('teacher/library*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-book-fill"></i>
-                        <p>My Books</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/library/my_fines') }}"
-                        class="nav-link {{ request()->is('teacher/library/my_fines*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cash-coin"></i>
-                        <p>Library Fines</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/my_calender') }}"
-                        class="nav-link {{ request()->is('teacher/my_calender*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar3"></i>
-                        <p>My Calendar</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/marks_register') }}"
-                        class="nav-link {{ request()->is('teacher/marks_register*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-clipboard2-data-fill"></i>
-                        <p>Marks Register</p>
-                    </a>
-                </li>
-
-                {{-- Teacher Attendance Submenu --}}
-                @php
-                    $teacherAttendanceActive = request()->is([
-                        'teacher/attendance/student_attendance*',
-                        'teacher/attendance/attendance_report*',
-                    ]);
-                @endphp
-                <li class="nav-item {{ $teacherAttendanceActive ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ $teacherAttendanceActive ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-check"></i>
-                        <p>Attendance <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ url('teacher/attendance/student_attendance') }}"
-                                class="nav-link {{ request()->is('teacher/attendance/student_attendance*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-calendar-check"></i>
-                                <p>Student Attendance</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('teacher/attendance/attendance_report') }}"
-                                class="nav-link {{ request()->is('teacher/attendance/attendance_report*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-bar-chart-line-fill"></i>
-                                <p>Attendance Report</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ url('teacher/my_notice_board') }}"
-                        class="nav-link {{ request()->is('teacher/my_notice_board*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-pin-angle-fill"></i>
-                        <p>Notice Board</p>
-                    </a>
-                </li>
-
-                {{-- Teacher Homework Submenu --}}
-                @php
-                    $teacherHomeworkActive = request()->is([
-                        'teacher/homework/homework*',
-                        'teacher/homework/homework_report*',
-                    ]);
-                @endphp
-
-                <li class="nav-item {{ $teacherHomeworkActive ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ $teacherHomeworkActive ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-journal-text"></i>
-                        <p>Home Work <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-
-                    <ul class="nav nav-treeview">
-
-                        <li class="nav-item">
-                            <a href="{{ url('teacher/homework/homework') }}"
-                                class="nav-link {{ request()->is('teacher/homework/homework*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-pencil-fill"></i>
-                                <p>Homework</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ url('teacher/homework/homework_report') }}"
-                                class="nav-link {{ request()->is('teacher/homework/homework_report*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-file-earmark-bar-graph-fill"></i>
-                                <p>Homework Report</p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('teacher/account') }}"
-                        class="nav-link {{ request()->is('teacher/account*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-circle"></i>
-                        <p>My Account</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('teacher/profile/change_password') }}"
-                        class="nav-link {{ request()->is('teacher/change_password*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-lock-fill"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-            @endif
-
-
-            {{-- ================================================
-                     STUDENT MENU  (user_type == 3)
-                     ================================================ --}}
-            @if (Auth::user()->user_type == 3)
-                <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('student/dashboard') }}"
-                        class="nav-link {{ request()->is('student/dashboard') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_subject') }}"
-                        class="nav-link {{ request()->is('student/my_subject*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-journal-bookmark-fill"></i>
-                        <p>My Subjects</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_timetable') }}"
-                        class="nav-link {{ request()->is('student/my_timetable*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar3-week"></i>
-                        <p>My Timetable</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_exam_timetable') }}"
-                        class="nav-link {{ request()->is('student/my_exam_timetable*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar-event-fill"></i>
-                        <p>Exam Timetable</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_calender') }}"
-                        class="nav-link {{ request()->is('student/my_calender*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar3"></i>
-                        <p>My Calendar</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_exam_result') }}"
-                        class="nav-link {{ request()->is('student/my_exam_result*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-award-fill"></i>
-                        <p>Exam Results</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_attendance') }}"
-                        class="nav-link {{ request()->is('student/my_attendance*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-calendar-check"></i>
-                        <p>My Attendance</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/library/my_books') }}"
-                        class="nav-link {{ request()->is('student/library*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-book-fill"></i>
-                        <p>My Books</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/library/my_fines') }}"
-                        class="nav-link {{ request()->is('student/library/my_fines*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cash-coin"></i>
-                        <p>Library Fines</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_notice_board') }}"
-                        class="nav-link {{ request()->is('student/my_notice_board*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-pin-angle-fill"></i>
-                        <p>Notice Board</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_homework') }}"
-                        class="nav-link {{ request()->is('student/my_homework*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-pencil-square"></i>
-                        <p>My Homework</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_submitted_homework') }}"
-                        class="nav-link {{ request()->is('student/my_submitted_homework*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-check2-square"></i>
-                        <p>Submitted Homework</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/my_fees') }}"
-                        class="nav-link {{ request()->is('student/my_fees*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cash-coin"></i>
-                        <p>My Fees</p>
-                    </a>
-                </li>
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('student/account') }}"
-                        class="nav-link {{ request()->is('student/account*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-circle"></i>
-                        <p>My Account</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('student/profile/change_password') }}"
-                        class="nav-link {{ request()->is('student/change_password*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-lock-fill"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-            @endif
-
-
-            {{-- ================================================
-                     PARENT MENU  (user_type == 4)
-                     ================================================ --}}
-            @if (Auth::user()->user_type == 4)
-                <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('parent/dashboard') }}"
-                        class="nav-link {{ request()->is('parent/dashboard') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('parent/my_student') }}"
-                        class="nav-link {{ request()->is('parent/my_student*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-people-fill"></i>
-                        <p>My Children</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('parent/my_notice_board') }}"
-                        class="nav-link {{ request()->is('parent/my_notice_board*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-pin-angle-fill"></i>
-                        <p>Notice Board</p>
-                    </a>
-                </li>
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('parent/account') }}"
-                        class="nav-link {{ request()->is('parent/account*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-circle"></i>
-                        <p>My Account</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('parent/profile/change_password') }}"
-                        class="nav-link {{ request()->is('parent/change_password*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-lock-fill"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-            @endif
-
-
-            {{-- ================================================
-                     ACCOUNTANT MENU  (user_type == 5)
-                     ================================================ --}}
-            @if (Auth::user()->user_type == 5)
-                <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('accountant/dashboard') }}"
-                        class="nav-link {{ request()->is('accountant/dashboard*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Fee Management</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('accountant/fee/list') }}"
-                        class="nav-link {{ request()->is('accountant/fee*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cash-coin"></i>
-                        <p>Fee Collection</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('accountant/fee/payment_report') }}"
-                        class="nav-link {{ request()->is('accountant/fee/payment_report*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-bar-chart-line-fill"></i>
-                        <p>Payment Report</p>
-                    </a>
-                </li>
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('accountant/account') }}"
-                        class="nav-link {{ request()->is('accountant/account*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-circle"></i>
-                        <p>My Account</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('accountant/profile/change_password') }}"
-                        class="nav-link {{ request()->is('accountant/change_password*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-lock-fill"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-                {{-- Librarian  --}}
-            @endif
-            @if (Auth::user()->user_type == 6)
-                <li class="nav-header text-uppercase text-secondary small px-3 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Main</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('librarian/dashboard') }}"
-                        class="nav-link {{ request()->is('librarian/dashboard*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Book Management</li>
-                @php
-                    $adminLibraryActive = request()->is(['admin/library*']);
-                @endphp
-                <li class="nav-item {{ $adminLibraryActive ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ $adminLibraryActive ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-book-fill"></i>
-                        <p>Library <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ url('librarian/library/book/list') }}"
-                                class="nav-link {{ request()->is('librarian/library/book*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-journals"></i>
-                                <p>Books</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('librarian/library/issue/list') }}"
-                                class="nav-link {{ request()->is('librarian/library/issue*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-journal-arrow-up"></i>
-                                <p>Issue / Return</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('librarian/library/fine/list') }}"
-                                class="nav-link {{ request()->is('librarian/library/fine*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-cash-coin"></i>
-                                <p>Library Fines</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-
-
-                <li class="nav-header text-uppercase text-secondary small px-3 mt-2 mb-1"
-                    style="font-size:.67rem;letter-spacing:.08em;">Account</li>
-
-                <li class="nav-item">
-                    <a href="{{ url('librarian/my_account') }}"
-                        class="nav-link {{ request()->is('librarian/my_account*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-person-circle"></i>
-                        <p>My Account</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('librarian/profile/change_password') }}"
-                        class="nav-link {{ request()->is('librarian/change_password*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-lock-fill"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-            @endif
-
-
-            {{-- ================================================
-                     LOGOUT  (all users)
-                     ================================================ --}}
-            <li class="nav-item mt-3 border-top border-secondary pt-2">
-                <a href="{{ route('logout') }}" class="nav-link text-danger"
-                    onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
-                    <i class="nav-icon bi bi-box-arrow-right"></i>
-                    <p>Sign Out</p>
-                </a>
-                <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            </li>
 
             </ul>
         </nav>
     </div>
 </aside>
+
+<form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>

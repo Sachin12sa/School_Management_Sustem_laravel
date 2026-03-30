@@ -68,8 +68,13 @@ class ExaminationController extends Controller
     // examination schedule 
     public function exam_schedule(Request $request)
     {
-    $data['getClass'] = ClassModel::getClass();
-    $data['getExam'] = ExamModel::getExam();
+    $data['getClass']   = ClassModel::getClass();
+    $data['getExam']    = ExamModel::getExam();
+    // ✅ Pass sections for the selected class to the view
+    $data['getSections'] = collect();
+    if (!empty($request->get('class_id'))) {
+        $data['getSections'] = \App\Models\ClassSectionModel::getSectionsByClass($request->get('class_id'));
+    }
 
     $result = [];
 
@@ -320,16 +325,22 @@ class ExaminationController extends Controller
 
     if (!empty($request->get('exam_id')) && !empty($request->get('class_id'))) {
 
-        $class_id = $request->get('class_id');
-        $exam_id  = $request->get('exam_id');
+        $class_id   = $request->get('class_id');
+        $exam_id    = $request->get('exam_id');
+        $section_id = $request->get('section_id'); // ✅ section filter
 
         $data['getSubject'] = ExamScheduleModel::getSubject($exam_id, $class_id);
-        $data['getStudent'] = User::getStudentClass($class_id);
-      
+
+        // ✅ Filter students by section if provided, otherwise load whole class
+        if (!empty($section_id)) {
+            $data['getStudent'] = User::getStudentBySection($section_id);
+        } else {
+            $data['getStudent'] = User::getStudentClass($class_id);
+        }
+
         // fetch old marks
         $data['getMarks'] = MarksRegisterModel::getRegisterMarks($class_id, $exam_id);
     }
-    
 
     $data['header_title'] = 'Marks Register';
     return view('admin.examination.marks_register', $data);

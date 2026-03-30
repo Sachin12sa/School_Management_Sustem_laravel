@@ -24,6 +24,7 @@ class ParentController extends Controller
              
                 $request->validate([
                     'name'              => 'required|string|max:100',
+                    'middle_name'       => 'string|max:100',
                     'last_name'         => 'required|string|max:100',
                     'gender'            => 'required|in:Male,Female,Other',
                     'email'             => 'required|email|unique:users,email',
@@ -31,12 +32,13 @@ class ParentController extends Controller
                     'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                     'mobile_number'     => 'required|string|max:15|min:8',
                     'blood_group'       => 'nullable|string|max:10',
-                    'occupation'          => 'nullable|string|max:10',
-                    'address'            => 'nullable|string|max:10',
+                    'occupation'          => 'nullable|string|max:100',
+                    'address'            => 'nullable|string|max:255',
                 ]);
 
                 $student = new User;
                 $student->name = trim($request->name);
+                $student->middle_name = trim($request->middle_name);
                 $student->last_name = trim($request->last_name);
                 $student->gender = $request->gender;
                 $student->address = $request->address;
@@ -78,19 +80,21 @@ class ParentController extends Controller
             $request->validate([
                 
                     'name'              => 'required|string|max:100',
+                    'middle_name'       => 'string|max:100',
                     'last_name'         => 'required|string|max:100',
                     'gender'            => 'required|in:Male,Female,Other',
                     'status'            => 'required|in:0,1',
                     'profile_pic'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                     'mobile_number'     => 'required|string|max:15|min:8',
                     'blood_group'       => 'nullable|string|max:10',
-                    'occupation'          => 'nullable|string|max:10',
-                    'address'            => 'nullable|string|max:10',
+                    'occupation'          => 'nullable|string|max:100',
+                    'address'            => 'nullable|string|max:255',
                 ]);
 
                 $student = User::getSingle($id);
                 
                 $student->name = trim($request->name);
+                $student->middle_name = trim($request->middle_name);
                 $student->last_name = trim($request->last_name);
                 $student->gender = $request->gender;
                 $student->address = $request->address;
@@ -167,5 +171,55 @@ class ParentController extends Controller
         $data['header_title'] = '  My Student ';
         return view('parent.my_student', $data);
     }
-}
+    public function storeAjax(Request $request)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'name'          => 'required|string|max:100',
+            'middle_name'   => 'nullable|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required|min:5',
+            'gender'        => 'required|in:Male,Female,Other',
+            'mobile_number' => 'nullable|string|min:8|max:15',
+            'occupation'    => 'nullable|string|max:100',
+            'address'       => 'nullable|string|max:255',
+            'blood_group'   => 'nullable|string|max:10',
+            'status'        => 'required|in:0,1',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $parent                = new User;
+        $parent->name          = trim($request->name);
+        $parent->middle_name   = trim($request->middle_name ?? '');
+        $parent->last_name     = trim($request->last_name);
+        $parent->email         = trim($request->email);
+        $parent->password      = Hash::make($request->password);
+        $parent->user_type     = 4;
+        $parent->gender        = $request->gender;
+        $parent->mobile_number = trim($request->mobile_number ?? '');
+        $parent->occupation    = trim($request->occupation ?? '');
+        $parent->address       = trim($request->address ?? '');
+        $parent->blood_group   = trim($request->blood_group ?? '');
+        $parent->status        = $request->status;
+        $parent->is_delete     = 0;
+        $parent->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Parent created successfully.',
+            'parent'  => [
+                'id'            => $parent->id,
+                'name'          => $parent->name,
+                'last_name'     => $parent->last_name,
+                'email'         => $parent->email,
+                'mobile_number' => $parent->mobile_number,
+            ],
+        ]);
+    }
+}

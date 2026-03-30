@@ -10,6 +10,7 @@ class ExamScheduleModel extends Model
     protected $fillable = [
         'exam_id',
         'class_id',
+        'section_id',
         'exam_schedule_id',
         'subject_id',
         'exam_date',

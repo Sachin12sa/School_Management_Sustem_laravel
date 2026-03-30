@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Request;
+use Illuminate\Support\Facades\Request;
 class StudentAttendanceModel extends Model
 {
     protected $table = 'student_attendances'; 

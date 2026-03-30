@@ -58,7 +58,8 @@
                                                     style="width:38px;height:38px;object-fit:cover;">
                                             </td>
                                             <td>
-                                                <div class="fw-semibold small">{{ $row->name }} {{ $row->last_name }}
+                                                <div class="fw-semibold small">{{ $row->name }} {{ $row->middle_name }}
+                                                    {{ $row->last_name }}
                                                 </div>
                                                 @if ($row->qualification)
                                                     <div class="text-muted" style="font-size:.72rem;">
@@ -69,7 +70,7 @@
                                             <td class="small">{{ $row->mobile_number ?? '—' }}</td>
                                             <td class="small">{{ $row->gender ?? '—' }}</td>
                                             <td class="small">
-                                                {{ $row->admission_date ? \Carbon\Carbon::parse($row->admission_date)->format('d M Y') : '—' }}
+                                                @bs($row->date_of_joining)
                                             </td>
                                             <td>
                                                 @if ($row->status == 1)
@@ -79,13 +80,13 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ url('admin/accountant/edit/' . $row->id) }}"
+                                                <a href="{{ url('admin/librarian/edit/' . $row->id) }}"
                                                     class="btn btn-sm btn-outline-primary" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a href="{{ url('admin/accountant/delete/' . $row->id) }}"
+                                                <a href="{{ url('admin/librarian/delete/' . $row->id) }}"
                                                     class="btn btn-sm btn-outline-danger" title="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this accountant?')">
+                                                    onclick="return confirm('Are you sure you want to delete this librarian?')">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </td>
@@ -94,7 +95,7 @@
                                         <tr>
                                             <td colspan="9" class="text-center text-muted py-5">
                                                 <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                                No accountants found. <a href="{{ url('admin/accountant/add') }}">Add one
+                                                No librarians found. <a href="{{ url('admin/librarian/add') }}">Add one
                                                     now</a>.
                                             </td>
                                         </tr>

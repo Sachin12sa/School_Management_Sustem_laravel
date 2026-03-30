@@ -73,6 +73,12 @@
                                                         value="{{ old('name', $getRecord->name) }}" required>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Middle Name <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="middle_name" class="form-control"
+                                                        value="{{ old('middle_name', $getRecord->middle_name) }}">
+                                                </div>
+                                                <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Last Name <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text" name="last_name" class="form-control"
@@ -96,8 +102,9 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Date of Birth</label>
-                                                    <input type="date" name="date_of_birth" class="form-control"
+                                                    <x-bs-date-input name="date_of_birth" id="date_of_birth" required
                                                         value="{{ old('date_of_birth', $getRecord->date_of_birth) }}">
+                                                    </x-bs-date-input>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label fw-semibold">Marital Status</label>
@@ -137,8 +144,9 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Date of Joining</label>
-                                            <input type="date" name="date_of_joining" class="form-control"
-                                                value="{{ old('date_of_joining', $getRecord->admission_date) }}">
+                                            <x-bs-date-input name="date_of_joining" id="date_of_joining" required
+                                                value="{{ old('date_of_joining', $getRecord->date_of_joining) }}">
+                                            </x-bs-date-input>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Qualification</label>
@@ -223,8 +231,7 @@
 
                         {{-- Submit --}}
                         <div class="col-12 text-end pb-3">
-                            <a href="{{ url('admin/librarian/list') }}"
-                                class="btn btn-outline-secondary me-2">Cancel</a>
+                            <a href="{{ url('admin/librarian/list') }}" class="btn btn-outline-secondary me-2">Cancel</a>
                             <button type="submit" class="btn btn-primary px-4">
                                 <i class="bi bi-save me-1"></i> Update Librarian
                             </button>
@@ -238,7 +245,7 @@
     </main>
 @endsection
 
-@section('scripts')
+@section('script')
     <script>
         function previewImg(input) {
             if (input.files && input.files[0]) {

@@ -134,7 +134,7 @@
                                                 @endif
                                             </td>
                                             <td class="small text-center">
-                                                <span class="badge bg-danger bg-opacity-15 text-danger">{{ $daysLate }}
+                                                <span class="badge bg-danger bg-opacity-15 text-warning">{{ $daysLate }}
                                                     days</span>
                                             </td>
                                             <td>

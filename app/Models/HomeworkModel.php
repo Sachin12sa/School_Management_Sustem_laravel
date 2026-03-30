@@ -13,9 +13,10 @@ class HomeworkModel extends Model
         }
 static public function getRecord()
 {
-    $return = self::select('homeworks.*', 'classes.name as class_name', 'subjects.name as subject_name', 'users.name as created_by_name','users.last_name as created_by_last_name')
+    $return = self::select('homeworks.*', 'classes.name as class_name', 'class_sections.name as class_section_name', 'subjects.name as subject_name', 'users.name as created_by_name','users.last_name as created_by_last_name')
         ->join('users', 'users.id', '=', 'homeworks.created_by')
         ->join('classes', 'classes.id', '=', 'homeworks.class_id')
+        ->leftjoin('class_sections', 'class_sections.id', '=', 'homeworks.section_id')
         ->join('subjects', 'subjects.id', '=', 'homeworks.subject_id')
         ->where('homeworks.is_delete', '=', 0);
 
@@ -44,36 +45,31 @@ static public function getRecord()
 
     return $return;
 }
-static public function getRecordTeacher($class_ids)
-    {
-        $return = self::select('homeworks.*', 'classes.name as class_name', 'subjects.name as subject_name', 'users.name as created_by_name')
-            ->join('users', 'users.id', '=', 'homeworks.created_by')
-            ->join('classes', 'classes.id', '=', 'homeworks.class_id')
-            ->join('subjects', 'subjects.id', '=', 'homeworks.subject_id')
-            ->whereIn('homeworks.class_id', $class_ids) // Filter by Teacher's classes
-            ->where('homeworks.is_delete', '=', 0);
+static public function getRecordTeacher($class_ids, $filters = [])
+{
+    $return = self::select('homeworks.*', 'classes.name as class_name', 'class_sections.name as class_section_name', 'subjects.name as subject_name', 'users.name as created_by_name')
+        ->join('users', 'users.id', '=', 'homeworks.created_by')
+        ->leftJoin('class_sections', 'class_sections.id', '=', 'homeworks.section_id')
+        ->join('classes', 'classes.id', '=', 'homeworks.class_id')
+        ->join('subjects', 'subjects.id', '=', 'homeworks.subject_id')
+        ->whereIn('homeworks.class_id', $class_ids)
+        ->where('homeworks.is_delete', 0);
 
-        if (!empty(Request::get('class_name'))) {
-            $return = $return->where('classes.name', 'like', '%' . Request::get('class_name') . '%');
-        }
-        // Search by Subject Name
-        if (!empty(Request::get('subject_name'))) {
-            $return = $return->where('subjects.name', 'like', '%' . Request::get('subject_name') . '%');
-        }
-
-        // Search by Homework Date
-        if (!empty(Request::get('homework_date'))) {
-            $return = $return->whereDate('homeworks.homework_date', '=', Request::get('homework_date'));
-        }
-
-        // Search by Submission Date
-        if (!empty(Request::get('submission_date'))) {
-            $return = $return->whereDate('homeworks.submission_date', '=', Request::get('submission_date'));
+    if (!empty($filters['class_name'])) {
+        $return->where('classes.name', 'like', '%' . $filters['class_name'] . '%');
+    }
+    if (!empty($filters['subject_name'])) {
+        $return->where('subjects.name', 'like', '%' . $filters['subject_name'] . '%');
+    }
+    if (!empty($filters['homework_date'])) {
+        $return->whereDate('homeworks.homework_date', $filters['homework_date']);
+    }
+    if (!empty($filters['submission_date'])) {
+        $return->whereDate('homeworks.submission_date', $filters['submission_date']);
     }
 
-        $return = $return->orderBy('homeworks.id', 'desc')->paginate(20);
-        return $return;
-    }
+    return $return->orderByDesc('homeworks.id')->paginate(20);
+}
    static public function getRecordStudent($class_id,$student_id)
 {
     $return = self::select('homeworks.*', 'classes.name as class_name', 'subjects.name as subject_name', 'users.name as created_by_name')

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\ClassSubjectModel;
 use App\Models\ClassSubjectTimetableModel;
 use App\Models\WeekModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ClassSubjectModel extends Model
 {
@@ -13,6 +13,7 @@ class ClassSubjectModel extends Model
 
     protected $fillable = [
         'class_id',
+        'section_id',
         'subject_id',
         'status',
         'created_by',
@@ -28,10 +29,12 @@ class ClassSubjectModel extends Model
                 'classes.name as class_name',
                 'subjects.name as subject_name',
                 'users.name as created_by_name',
+                'class_sections.name as section_name',
                 'subjects.type as subject_type'
 
             )
             ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+            ->leftJoin('class_sections', 'class_sections.id', '=', 'class_subjects.section_id')
             ->join('classes', 'classes.id', '=', 'class_subjects.class_id')
             ->join('users', 'users.id', '=', 'class_subjects.created_by')
             ->where('class_subjects.is_delete','=',0);
@@ -50,22 +53,21 @@ class ClassSubjectModel extends Model
             return $return;
     }
     // getting subject for the student
-    static public function mySubject($class_id)
-    {
-        return self::select(
-                'class_subjects.*',
-                'subjects.name as subject_name',
-                'subjects.type as subject_type'
-            )
-            ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
-            ->join('classes', 'classes.id', '=', 'class_subjects.class_id')
-            ->join('users', 'users.id', '=', 'class_subjects.created_by')
-            ->where('class_subjects.class_id','=',$class_id)
-            ->where('class_subjects.is_delete','=',0)
-            ->where('class_subjects.status','=',0)
-            ->orderBy('class_subjects.id', 'desc')
-            ->get();
-    }
+    public static function mySubject($class_id)
+{
+    return self::select(
+            'class_subjects.subject_id',
+            'class_subjects.class_id',
+            DB::raw('MIN(class_subjects.id) as id'),
+            'subjects.name as subject_name',
+            'subjects.type as subject_type'
+        )
+        ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
+        ->where('class_subjects.class_id', $class_id)
+        ->where('class_subjects.is_delete', 0)
+        ->groupBy('class_subjects.subject_id', 'class_subjects.class_id', 'subjects.name', 'subjects.type')
+        ->get();
+}
     
      static public function getSingle($id){
         return ClassSubjectModel::find($id);
@@ -73,7 +75,7 @@ class ClassSubjectModel extends Model
     static public function deleteSubject($class_id){
         return self::where('class_id','=',$class_id)->delete();
     }
-        static public function getMyTimeTable($class_id, $subject_id)
+        static public function getMyTimeTable($class_id, $section_id, $subject_id)
         {
 
             $todayName = date('l');
@@ -83,6 +85,7 @@ class ClassSubjectModel extends Model
 
                 return ClassSubjectTimetableModel::getRecordClassSubject(
                     $class_id,
+                    $section_id,
                     $subject_id,
                     $getWeek->id 
                 );

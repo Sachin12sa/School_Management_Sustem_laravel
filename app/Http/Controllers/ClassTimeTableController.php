@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
+use App\Models\ClassSectionModel;
 use App\Models\ClassSubjectModel;
 use App\Models\ClassSubjectTimetableModel;
 use App\Models\Subject;
@@ -14,236 +14,286 @@ use Illuminate\Support\Facades\Auth;
 
 class ClassTimeTableController extends Controller
 {
-    public function list(Request $request)
-    {
-        $data['getClass'] = ClassModel::getClass();
-        $data['getSubject'] = [];
+    // ================= ADMIN LIST / EDIT =================
+    // Flow: Class → Section → Week Day → all subjects for that slot
 
-        if (!empty($request->class_id)) {
-            $data['getSubject'] = ClassSubjectModel::mySubject($request->class_id);
-        }
+   public function list(Request $request)
+{
+    $data['getClass']   = ClassModel::getClass();
+    $data['getWeeks']   = WeekModel::getRecord();
+    $data['getSection'] = [];
+    $data['slotData']   = [];
 
-        $getWeek = WeekModel::getRecord();
-        $week = [];
+    if (!empty($request->class_id)) {
+        $data['getSection'] = ClassSectionModel::getSectionsByClass($request->class_id);
+    }
 
-        foreach ($getWeek as $value) {
+    // Handle section_id = '0' (no section class) or real section
+    $sectionId = (!empty($request->section_id) && $request->section_id != '0')
+        ? $request->section_id
+        : null;
 
-            $row = [];  // ✅ use different variable
-            $row['id'] = $value->id;
-            $row['week_name'] = $value->name;
+    if (!empty($request->class_id) && !empty($request->week_id)) {
+        $subjects = ClassSubjectModel::mySubject($request->class_id);
 
-            if (!empty($request->class_id) && !empty($request->subject_id)) {
+        foreach ($subjects as $subject) {
+            // Build query conditionally
+            $query = [
+                'class_id'   => $request->class_id,
+                'subject_id' => $subject->subject_id,
+                'week_id'    => $request->week_id,
+            ];
 
-                $ClassSubject = ClassSubjectTimetableModel::getRecordClassSubject(
-                    $request->class_id,
-                    $request->subject_id,
-                    $value->id
-                );
-
-                if (!empty($ClassSubject)) {
-                    $row['start_time'] = $ClassSubject->start_time;
-                    $row['end_time'] = $ClassSubject->end_time;
-                    $row['room_number'] = $ClassSubject->room_number;
-                } else {
-                    $row['start_time'] = '';
-                    $row['end_time'] = '';
-                    $row['room_number'] = '';
-                }
-            } else {
-                $row['start_time'] = '';
-                $row['end_time'] = '';
-                $row['room_number'] = '';
+            if ($sectionId) {
+                $query['section_id'] = $sectionId;
             }
 
-            $week[] = $row;
+            $record = ClassSubjectTimetableModel::where($query)->first();
+
+            $data['slotData'][] = [
+                'subject_id'   => $subject->subject_id,
+                'subject_name' => $subject->subject_name,
+                'start_time'   => $record->start_time  ?? '',
+                'end_time'     => $record->end_time    ?? '',
+                'room_number'  => $record->room_number ?? '',
+            ];
+        }
+    }
+
+    $data['header_title'] = 'Class Timetable';
+    return view('admin.class_timetable.list', $data);
+}
+
+    // ================= AJAX: Get sections for a class =================
+
+    public function getSections(Request $request)
+{
+    $sections = ClassSectionModel::getSectionsByClass($request->class_id);
+    $html     = '<option value="">— Select Section —</option>';
+    foreach ($sections as $sec) {
+        $html .= '<option value="' . $sec->id . '">Section ' . $sec->name . '</option>';
+    }
+    return response()->json([
+        'section_html' => $html,
+        'sections'     => $sections,   // ← add this so JS knows if empty
+    ]);
+}
+
+    // ================= AJAX: Get slot data (class + section + week) =================
+    // Used when week day is selected — returns all subjects with existing times
+
+    public function getSlot(Request $request)
+{
+     $subjects = ClassSubjectModel::mySubject($request->class_id);
+    
+    // TEMP DEBUG — remove after fixing
+    if ($subjects->isEmpty()) {
+        return response()->json([
+            'success' => false, 
+            'debug'   => 'No subjects found for class_id: ' . $request->class_id,
+            'rows'    => []
+        ]);
+    }
+    $rows     = [];
+
+    foreach ($subjects as $subject) {
+        // Build query — section_id 0 means no section
+        $query = [
+            'class_id'   => $request->class_id,
+            'subject_id' => $subject->subject_id,
+            'week_id'    => $request->week_id,
+        ];
+
+        // Only filter by section if a real section was chosen
+        if (!empty($request->section_id) && $request->section_id != '0') {
+            $query['section_id'] = $request->section_id;
         }
 
-        $data['week'] = $week;
-        $data['getRecord'] = ClassSubjectModel::getRecord();
-        $data['header_title'] = 'Class TimeTable';
+        $record = ClassSubjectTimetableModel::where($query)->first();
 
-        return view('admin.class_timetable.list', $data);
+        $rows[] = [
+            'subject_id'   => $subject->subject_id,
+            'subject_name' => $subject->subject_name,
+            'start_time'   => $record->start_time  ?? '',
+            'end_time'     => $record->end_time    ?? '',
+            'room_number'  => $record->room_number ?? '',
+        ];
     }
+
+    return response()->json(['success' => true, 'rows' => $rows]);
+}
+
+    // ================= AJAX: Legacy get_subject (kept for other pages) =================
 
     public function get_subject(Request $request)
     {
-        // Temporary debug: This will show up in your Browser's Network Tab
-        // dd($request->all()); 
-
         $subjects = ClassSubjectModel::mySubject($request->class_id);
-
-        $html = '<option value="">Select</option>';
-        foreach ($subjects as $subject) {
-            $html .= '<option value="'.$subject->subject_id.'">'.$subject->subject_name.'</option>';
+        $html     = '<option value="">— Select Subject —</option>';
+        foreach ($subjects as $s) {
+            $html .= '<option value="' . $s->subject_id . '">' . $s->subject_name . '</option>';
         }
-
-        return response()->json(['html' => $html]);
+        return response()->json(['subject_html' => $html]);
     }
 
+    // ================= INSERT / UPDATE =================
+    // Saves all subjects for one class + section + week day in one go
 
 public function insert_update(Request $request)
 {
-    if (!empty($request->timetable)) {
+    $request->validate([
+        'class_id'  => 'required|integer',
+        'week_id'   => 'required|integer',
+        'timetable' => 'required|array',
+    ]);
 
-        foreach ($request->timetable as $timetable) {
+    // Treat '0' or empty as null for section
+    $sectionId = (!empty($request->section_id) && $request->section_id != '0')
+        ? $request->section_id
+        : null;
 
-            if (
-                !empty($timetable['week_id']) &&
-                !empty($timetable['start_time']) &&
-                !empty($timetable['end_time']) &&
-                !empty($timetable['room_number'])
-            ) {
+    $saved = 0;
+    foreach ($request->timetable as $row) {
+        if (empty($row['subject_id'])) continue;
 
-                ClassSubjectTimetableModel::updateOrCreate(
-                    [
-                        'class_id'   => $request->class_id,
-                        'subject_id' => $request->subject_id,
-                        'week_id'    => $timetable['week_id'],
-                    ],
-                    [
-                        'start_time'  => $timetable['start_time'],
-                        'end_time'    => $timetable['end_time'],
-                        'room_number' => $timetable['room_number'],
-                    ]
-                );
-            }
+
+        $hasData = !empty($row['start_time'])
+                || !empty($row['end_time'])
+                || !empty(trim($row['room_number'] ?? ''));
+
+        $match = [
+            'class_id'   => $request->class_id,
+            'section_id' => $sectionId,
+            'subject_id' => $row['subject_id'],
+            'week_id'    => $request->week_id,
+        ];
+
+        if ($hasData) {
+            ClassSubjectTimetableModel::updateOrCreate($match, [
+                'start_time'  => $row['start_time']  ?? null,
+                'end_time'    => $row['end_time']    ?? null,
+                'room_number' => trim($row['room_number'] ?? ''),
+            ]);
+            $saved++;
+        } else {
+            ClassSubjectTimetableModel::where($match)->delete();
         }
     }
 
-    return redirect()->back()->with('success', 'Class TimeTable Successfully Saved');
+    return redirect(url('admin/class_timetable/list') . '?' . http_build_query([
+        'class_id'   => $request->class_id,
+        'section_id' => $request->section_id,
+        'week_id'    => $request->week_id,
+    ]))->with('success', "Timetable saved — {$saved} subject(s) scheduled.");
 }
 
-// Student side myTimetable
-   public function myTimetable()
-        {
-            $result = [];
+    // ================= STUDENT TIMETABLE =================
 
-            $getRecord = ClassSubjectModel::mySubject(Auth::user()->class_id);
+    public function myTimetable()
+{
+    $weeks    = WeekModel::getRecord();
+    $subjects = ClassSubjectModel::mySubject(Auth::user()->class_id);
+    $today    = strtolower(date('l'));
 
-            foreach ($getRecord as $subject) {
+    $result = [];
+    foreach ($weeks as $week) {
+        $slots = [];
+        foreach ($subjects as $subject) {
+            $record = ClassSubjectTimetableModel::where([
+                'class_id'   => $subject->class_id,
+                'section_id' => Auth::user()->section_id,
+                'subject_id' => $subject->subject_id,
+                'week_id'    => $week->id,
+            ])->first();
 
-                $data = []; // reset for each subject
-                $data['subject_name'] = $subject->subject_name;
-
-                $weeks = [];
-                $getWeek = WeekModel::getRecord();
-
-                foreach ($getWeek as $week) {
-
-                    $dataW = [];
-                   
-                    $dataW['week_name'] = $week->name;
-                    
-
-                    $classSubject = ClassSubjectTimetableModel::getRecordClassSubject(
-                        $subject->class_id,
-                        $subject->subject_id,
-                        $week->id
-                    );
-
-                    if (!empty($classSubject)) {
-                        $dataW['start_time']  = $classSubject->start_time;
-                        $dataW['end_time']    = $classSubject->end_time;
-                        $dataW['room_number'] = $classSubject->room_number;
-                    } else {
-                        $dataW['start_time']  = '';
-                        $dataW['end_time']    = '';
-                        $dataW['room_number'] = '';
-                    }
-
-                    $weeks[] = $dataW;
-                }
-
-                $data['week'] = $weeks; // attach weeks to subject
-                $result[] = $data;
+            if ($record && $record->start_time) {
+                $slots[] = [
+                    'subject_name' => $subject->subject_name,
+                    'start_time'   => $record->start_time,
+                    'end_time'     => $record->end_time,
+                    'room_number'  => $record->room_number,
+                ];
             }
-            
-            $data['getRecord'] = $result;
-            $data['header_title'] = 'My TimeTable';
-
-            return view('student.my_timetable', $data);
         }
 
-// teacher side mytimetable myTimetableTeacher
-    public function myTimetableTeacher($class_id, $subject_id)
-        {
-            $data['getClass'] = ClassModel::getSingle($class_id);
-            $data['getSubject'] = Subject::getSingle($subject_id);
+        // Sort slots by start_time
+        usort($slots, fn($a, $b) => $a['start_time'] <=> $b['start_time']);
 
-            $weeks = WeekModel::getRecord();
+        $result[] = [
+            'week_name' => $week->name,
+            'is_today'  => strtolower($week->name) === $today,
+            'slots'     => $slots,
+        ];
+    }
 
-            // Get all timetable records for this class & subject
-            $timetable = ClassSubjectTimetableModel::getAllRecordClassSubject($class_id, $subject_id);
+    return view('student.my_timetable', [
+        'getRecord'    => $result,
+        'header_title' => 'My Timetable',
+    ]);
+}
 
-            $result = [];
+    // ================= TEACHER TIMETABLE =================
 
-            foreach ($weeks as $week) {
+    public function myTimetableTeacher($class_id, $section_id, $subject_id)
+    {
+       
+        $data['getClass']   = ClassModel::getSingle($class_id);
+        $data['getSection'] = ClassSectionModel::getSingle($section_id);
+        $data['getSubject'] = Subject::getSingle($subject_id);
 
-                $dataW = [];
-                $dataW['week_name'] = $week->name;
+        $weeks     = WeekModel::getRecord();
+        $timetable = ClassSubjectTimetableModel::where([
+            'class_id'   => $class_id,
+            'section_id' => $section_id,
+            'subject_id' => $subject_id,
+        ])->get();
 
-                // Find matching timetable record for this week
-                $match = $timetable->where('week_id', $week->id)->first();
-
-                if ($match) {
-                    $dataW['start_time']  = $match->start_time;
-                    $dataW['end_time']    = $match->end_time;
-                    $dataW['room_number'] = $match->room_number;
-                } else {
-                    $dataW['start_time']  = '';
-                    $dataW['end_time']    = '';
-                    $dataW['room_number'] = '';
-                }
-
-                $result[] = $dataW;
+        $result = [];
+        foreach ($weeks as $week) {
+            $row   = ['week_name' => $week->name, 'start_time' => '', 'end_time' => '', 'room_number' => ''];
+            $match = $timetable->where('week_id', $week->id)->first();
+            if ($match) {
+                $row['start_time']  = $match->start_time;
+                $row['end_time']    = $match->end_time;
+                $row['room_number'] = $match->room_number;
             }
-
-            $data['weeks'] = $result;
-            $data['header_title'] = 'My TimeTable';
-
-            return view('teacher.my_timetable', $data);
+            $result[] = $row;
         }
 
-        // parent side to see child timetable 
-        public function myTimetableParent($class_id, $subject_id, $student_id)
-        {
-            $user = User::getSingle($student_id);
-            $data['getUser']=$user;
-            $data['getClass'] = ClassModel::getSingle($class_id);
-            $data['getSubject'] = Subject::getSingle($subject_id);
+        $data['weeks']        = $result;
+        $data['header_title'] = 'My TimeTable';
+        return view('teacher.my_timetable', $data);
+    }
 
-            $weeks = WeekModel::getRecord();
+    // ================= PARENT TIMETABLE =================
 
-            // Get all timetable records for this class & subject
-            $timetable = ClassSubjectTimetableModel::getAllRecordClassSubject($class_id, $subject_id);
+    public function myTimetableParent($class_id, $subject_id, $student_id, $section_id)
+    {
+        $data['getUser']    = User::getSingle($student_id);
+        $data['getClass']   = ClassModel::getSingle($class_id);
+        $data['getSection'] = ClassSectionModel::getSingle($section_id);
+        $data['getSubject'] = Subject::getSingle($subject_id);
 
-            $result = [];
+        $weeks     = WeekModel::getRecord();
+        $timetable = ClassSubjectTimetableModel::where([
+            'class_id'   => $class_id,
+            'section_id' => $section_id,
+            'subject_id' => $subject_id,
+        ])->get();
 
-            foreach ($weeks as $week) {
-
-                $dataW = [];
-                $dataW['week_name'] = $week->name;
-
-                // Find matching timetable record for this week
-                $match = $timetable->where('week_id', $week->id)->first();
-
-                if ($match) {
-                    $dataW['start_time']  = $match->start_time;
-                    $dataW['end_time']    = $match->end_time;
-                    $dataW['room_number'] = $match->room_number;
-                } else {
-                    $dataW['start_time']  = '';
-                    $dataW['end_time']    = '';
-                    $dataW['room_number'] = '';
-                }
-
-                $result[] = $dataW;
+        $result = [];
+        foreach ($weeks as $week) {
+            $row   = ['week_name' => $week->name, 'start_time' => '', 'end_time' => '', 'room_number' => ''];
+            $match = $timetable->where('week_id', $week->id)->first();
+            if ($match) {
+                $row['start_time']  = $match->start_time;
+                $row['end_time']    = $match->end_time;
+                $row['room_number'] = $match->room_number;
             }
-
-            $data['weeks'] = $result;
-            $data['header_title'] = 'My TimeTable';
-
-            return view('parent.my_timetable', $data);
+            $result[] = $row;
         }
 
+        $data['weeks']        = $result;
+        $data['header_title'] = 'My TimeTable';
+        return view('parent.my_timetable', $data);
+    }
 }

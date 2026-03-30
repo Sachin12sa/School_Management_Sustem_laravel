@@ -12,7 +12,10 @@
                     </div>
                     <div class="col-sm-6 text-sm-end">
                         <a href="{{ url('admin/library/fine/report') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-bar-chart-line me-1"></i>Fine Report
+                            <i class="bi bi-bar-chart-line me-1"></i> Fine Report
+                        </a>
+                        <a href="{{ url('admin/library/return_policy') }}" class="btn btn-outline-secondary btn-sm ms-1">
+                            <i class="bi bi-journal-text me-1"></i> Return Policy
                         </a>
                     </div>
                 </div>
@@ -33,18 +36,17 @@
                     </div>
                 @endif
 
-                {{-- ── SUMMARY CARDS ───────────────────────────────── --}}
+                {{-- Summary Cards --}}
                 <div class="row g-3 mb-3">
                     <div class="col-6 col-xl-3">
                         <div class="card border-0 shadow-sm rounded-3">
                             <div class="card-body d-flex align-items-center gap-3 p-3">
                                 <div
-                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(220,53,69,.12);
-                                 color:#dc3545;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(220,53,69,.12);color:#dc3545;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
                                     <i class="bi bi-hourglass-split"></i>
                                 </div>
                                 <div>
-                                    <div class="text-muted small">Unpaid</div>
+                                    <div class="text-muted small">Unpaid Fines</div>
                                     <div class="fw-bold fs-5 text-danger">Rs.
                                         {{ number_format($fineSummary['unpaid_total'], 2) }}</div>
                                     <div class="text-muted" style="font-size:.7rem;">{{ $fineSummary['unpaid_count'] }}
@@ -57,8 +59,7 @@
                         <div class="card border-0 shadow-sm rounded-3">
                             <div class="card-body d-flex align-items-center gap-3 p-3">
                                 <div
-                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(255,193,7,.12);
-                                 color:#b89200;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(255,193,7,.12);color:#b89200;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
                                     <i class="bi bi-arrow-up-circle"></i>
                                 </div>
                                 <div>
@@ -75,8 +76,7 @@
                         <div class="card border-0 shadow-sm rounded-3">
                             <div class="card-body d-flex align-items-center gap-3 p-3">
                                 <div
-                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(25,135,84,.12);
-                                 color:#198754;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(25,135,84,.12);color:#198754;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
                                     <i class="bi bi-check-circle-fill"></i>
                                 </div>
                                 <div>
@@ -91,8 +91,7 @@
                         <div class="card border-0 shadow-sm rounded-3">
                             <div class="card-body d-flex align-items-center gap-3 p-3">
                                 <div
-                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(108,117,125,.12);
-                                 color:#6c757d;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+                                    style="width:44px;height:44px;border-radius:.5rem;background:rgba(108,117,125,.12);color:#6c757d;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
                                     <i class="bi bi-slash-circle"></i>
                                 </div>
                                 <div>
@@ -105,25 +104,50 @@
                     </div>
                 </div>
 
-                {{-- ── TABS ──────────────────────────────────────────── --}}
-                @php $activeTab = request('tab', 'unpaid'); @endphp
+                @php
+                    $activeTab = $tab ?? 'unpaid';
+                    $hasDmg = isset($hasDamageCols) && $hasDamageCols;
+                @endphp
 
                 <div class="card border-0 shadow-sm rounded-3">
-                    {{-- Tab header --}}
+
+                    {{-- Tabs --}}
                     <div class="card-header bg-white border-bottom p-0">
                         <ul class="nav nav-tabs border-0 px-3 pt-2">
-                            @foreach ([
-            'unpaid' => ['label' => 'Unpaid', 'icon' => 'bi-hourglass-split', 'count' => $fineSummary['unpaid_count'], 'badge' => 'bg-danger'],
-            'accruing' => ['label' => 'Accruing', 'icon' => 'bi-arrow-up-circle', 'count' => $fineSummary['accruing_count'], 'badge' => 'bg-warning text-dark'],
-            'paid' => ['label' => 'Collected', 'icon' => 'bi-check-circle', 'count' => null, 'badge' => 'bg-success'],
-            'waived' => ['label' => 'Waived', 'icon' => 'bi-slash-circle', 'count' => null, 'badge' => 'bg-secondary'],
-        ] as $tabKey => $tabInfo)
+                            @php
+                                $tabs = [
+                                    'unpaid' => [
+                                        'label' => 'Unpaid',
+                                        'icon' => 'bi-hourglass-split',
+                                        'count' => $fineSummary['unpaid_count'],
+                                        'badge' => 'bg-danger',
+                                    ],
+                                    'overdue' => [
+                                        'label' => 'Accruing',
+                                        'icon' => 'bi-arrow-up-circle',
+                                        'count' => $fineSummary['accruing_count'],
+                                        'badge' => 'bg-warning text-dark',
+                                    ],
+                                    'paid' => [
+                                        'label' => 'Collected',
+                                        'icon' => 'bi-check-circle',
+                                        'count' => null,
+                                        'badge' => 'bg-success',
+                                    ],
+                                    'waived' => [
+                                        'label' => 'Waived',
+                                        'icon' => 'bi-slash-circle',
+                                        'count' => null,
+                                        'badge' => 'bg-secondary',
+                                    ],
+                                ];
+                            @endphp
+                            @foreach ($tabs as $tabKey => $tabInfo)
                                 <li class="nav-item">
                                     <a class="nav-link {{ $activeTab === $tabKey ? 'active fw-semibold' : '' }}"
                                         href="{{ url()->current() }}?tab={{ $tabKey }}">
-                                        <i class="bi {{ $tabInfo['icon'] }} me-1"></i>
-                                        {{ $tabInfo['label'] }}
-                                        @if ($tabInfo['count'] > 0)
+                                        <i class="bi {{ $tabInfo['icon'] }} me-1"></i>{{ $tabInfo['label'] }}
+                                        @if (($tabInfo['count'] ?? 0) > 0)
                                             <span
                                                 class="badge {{ $tabInfo['badge'] }} ms-1">{{ $tabInfo['count'] }}</span>
                                         @endif
@@ -133,7 +157,7 @@
                         </ul>
                     </div>
 
-                    {{-- Filter bar --}}
+                    {{-- Filter --}}
                     <div class="px-3 py-2 border-bottom bg-light">
                         <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
                             <input type="hidden" name="tab" value="{{ $activeTab }}">
@@ -141,8 +165,10 @@
                                 style="width:200px;" placeholder="Search member..." value="{{ request('member_name') }}">
                             <select name="member_type" class="form-select form-select-sm" style="width:140px;">
                                 <option value="">All Members</option>
-                                <option value="2" {{ request('member_type') === '2' ? 'selected' : '' }}>Teachers</option>
-                                <option value="3" {{ request('member_type') === '3' ? 'selected' : '' }}>Students</option>
+                                <option value="2" {{ request('member_type') === '2' ? 'selected' : '' }}>Teachers
+                                </option>
+                                <option value="3" {{ request('member_type') === '3' ? 'selected' : '' }}>Students
+                                </option>
                             </select>
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <i class="bi bi-funnel me-1"></i>Filter
@@ -163,12 +189,18 @@
                                         <th>Book</th>
                                         <th>Due Date</th>
                                         <th>Return Date</th>
-                                        @if ($activeTab === 'accruing')
-                                            <th class="text-center">Days Overdue</th>
-                                            <th>Rate</th>
+                                        @if (in_array($activeTab, ['unpaid', 'overdue']))
+                                            <th class="text-center">Days Late</th>
+                                            <th>Rate/Day</th>
                                         @endif
-                                        <th>Fine Amount</th>
-                                        <th>Fine Status</th>
+                                        @if ($hasDmg && in_array($activeTab, ['unpaid', 'paid', 'waived']))
+                                            <th>Condition</th>
+                                        @endif
+                                        <th>Fine</th>
+                                        @if ($hasDmg && in_array($activeTab, ['unpaid', 'paid', 'waived']))
+                                            <th>Damage</th>
+                                        @endif
+                                        <th>Status</th>
                                         @if ($activeTab === 'paid')
                                             <th>Paid On</th>
                                             <th>Method</th>
@@ -177,7 +209,7 @@
                                             <th>Waived By</th>
                                             <th>Reason</th>
                                         @endif
-                                        @if (in_array($activeTab, ['unpaid', 'accruing']))
+                                        @if (in_array($activeTab, ['unpaid', 'overdue']))
                                             <th>Actions</th>
                                         @endif
                                     </tr>
@@ -185,82 +217,151 @@
                                 <tbody>
                                     @forelse($getRecord as $i => $row)
                                         @php
-                                            $dueDateStr = \App\Models\BookIssue::safeDate($row->due_date);
-                                            $returnDateStr = $row->return_date
-                                                ? \App\Models\BookIssue::safeDate($row->return_date)
+                                            // ── Safe dates — substr works on Carbon, datetime, and date strings ──
+                                            $dueDateStr = substr((string) $row->due_date, 0, 10);
+                                            $retDateStr = $row->return_date
+                                                ? substr((string) $row->return_date, 0, 10)
+                                                : null;
+                                            $paidDateStr = $row->fine_paid_at
+                                                ? substr((string) $row->fine_paid_at, 0, 10)
                                                 : null;
 
-                                            // Live fine calculation
-                                            if ($row->status === 'overdue' && $row->fine_per_day > 0) {
-                                                $daysOverdue = \Carbon\Carbon::createFromFormat('Y-m-d', $dueDateStr)
-                                                    ->startOfDay()
-                                                    ->diffInDays(now()->startOfDay());
-                                                $displayFine = $daysOverdue * $row->fine_per_day;
+                                            // days_late computed by DB DATEDIFF in controller select
+                                            $daysLate = (int) ($row->days_late ?? 0);
+
+                                            // Display fine
+                                            if ($activeTab === 'overdue' && (int) ($row->fine_per_day ?? 0) > 0) {
+                                                $displayFine = $daysLate * (int) $row->fine_per_day;
                                             } else {
-                                                $daysOverdue = 0;
-                                                $displayFine = $row->fine_amount ?? 0;
+                                                $displayFine = (float) ($row->fine_amount ?? 0);
                                             }
+
+                                            // Badges — inline match(), NO accessor on stdClass
+                                            $fsBadge = match ($row->fine_status ?? 'none') {
+                                                'unpaid' => '<span class="badge bg-danger">Unpaid</span>',
+                                                'paid' => '<span class="badge bg-success">Paid</span>',
+                                                'waived' => '<span class="badge bg-secondary">Waived</span>',
+                                                default
+                                                    => '<span class="badge bg-light text-muted border">None</span>',
+                                            };
+                                            $methodClass = match ($row->fine_payment_method ?? '') {
+                                                'cash' => 'bg-success',
+                                                'bank' => 'bg-info text-dark',
+                                                'online' => 'bg-warning text-dark',
+                                                default => 'bg-secondary',
+                                            };
+                                            $condition = $hasDmg ? $row->book_condition ?? 'good' : 'good';
+                                            $condBadge = match ($condition) {
+                                                'damaged' => '<span class="badge bg-warning text-dark">Damaged</span>',
+                                                'torn' => '<span class="badge bg-danger">Torn</span>',
+                                                'lost' => '<span class="badge bg-dark">Lost</span>',
+                                                default
+                                                    => '<span class="badge bg-success bg-opacity-15 text-success">Good</span>',
+                                            };
+                                            $damageCharge = $hasDmg ? (float) ($row->damage_charge ?? 0) : 0;
+                                            $fineColour = match ($activeTab) {
+                                                'paid' => 'text-success',
+                                                'waived' => 'text-secondary',
+                                                default => 'text-danger',
+                                            };
+                                            // Late return but fine_per_day was never set — still shows unpaid
+                                            $zeroRateLate =
+                                                $activeTab === 'unpaid' &&
+                                                $daysLate > 0 &&
+                                                (int) ($row->fine_per_day ?? 0) === 0 &&
+                                                $displayFine == 0 &&
+                                                $damageCharge == 0;
                                         @endphp
-                                        <tr>
+                                        <tr class="{{ $activeTab === 'overdue' ? 'table-warning' : '' }}">
                                             <td class="small text-muted">{{ $getRecord->firstItem() + $i }}</td>
+
                                             <td>
-                                                <div class="fw-semibold small">
-                                                    {{ $row->member_name }} {{ $row->member_last_name }}
-                                                </div>
-                                                <span class="badge bg-secondary bg-opacity-15 text-secondary"
-                                                    style="font-size:.65rem;">
-                                                    {{ $row->member_type == 2 ? 'Teacher' : 'Student' }}
+                                                <div class="fw-semibold small">{{ $row->member_name }}
+                                                    {{ $row->member_last_name }}</div>
+                                                <span class="badge bg-primary" style="font-size:.65rem;">
+                                                    {{ ($row->member_type ?? 0) == 2 ? 'Teacher' : 'Student' }}
                                                 </span>
+                                                @if ($row->admission_number ?? false)
+                                                    <div class="text-muted" style="font-size:.63rem;">
+                                                        {{ $row->admission_number }}</div>
+                                                @endif
                                             </td>
+
                                             <td class="small fw-semibold">{{ $row->book_title }}</td>
+
                                             <td class="small text-danger fw-semibold">
-                                                {{ \Carbon\Carbon::createFromFormat('Y-m-d', $dueDateStr)->format('d M Y') }}
+                                                {{ \Carbon\Carbon::parse($dueDateStr)->format('d M Y') }}
                                             </td>
+
                                             <td class="small">
-                                                @if ($returnDateStr)
-                                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d', $returnDateStr)->format('d M Y') }}
+                                                @if ($retDateStr)
+                                                    {{ \Carbon\Carbon::parse($retDateStr)->format('d M Y') }}
                                                 @else
                                                     <span class="text-muted">Not returned</span>
                                                 @endif
                                             </td>
 
-                                            @if ($activeTab === 'accruing')
+                                            @if (in_array($activeTab, ['unpaid', 'overdue']))
                                                 <td class="text-center">
-                                                    <span class="badge bg-danger">{{ $daysOverdue }} days</span>
+                                                    @if ($daysLate > 0)
+                                                        <span class="badge bg-danger">{{ $daysLate }} days</span>
+                                                    @else
+                                                        <span class="text-muted small">—</span>
+                                                    @endif
                                                 </td>
-                                                <td class="small">Rs. {{ $row->fine_per_day }}/day</td>
+                                                <td class="small">
+                                                    @if ((int) ($row->fine_per_day ?? 0) > 0)
+                                                        Rs. {{ $row->fine_per_day }}/day
+                                                    @else
+                                                        <span class="text-muted">—</span>
+                                                    @endif
+                                                </td>
+                                            @endif
+
+                                            @if ($hasDmg && in_array($activeTab, ['unpaid', 'paid', 'waived']))
+                                                <td>{!! $condBadge !!}</td>
                                             @endif
 
                                             <td>
-                                                <span
-                                                    class="fw-bold {{ in_array($activeTab, ['unpaid', 'accruing']) ? 'text-danger' : ($activeTab === 'paid' ? 'text-success' : 'text-secondary') }}">
-                                                    Rs. {{ number_format($displayFine, 2) }}
-                                                </span>
-                                                @if ($activeTab === 'accruing')
-                                                    <div class="text-muted" style="font-size:.65rem;">increasing daily
+                                                @if ($zeroRateLate)
+                                                    <span class="text-muted small">Rs. 0.00</span>
+                                                    <div class="text-warning fw-semibold" style="font-size:.65rem;">
+                                                        <i
+                                                            class="bi bi-exclamation-triangle me-1"></i>{{ $daysLate }}d
+                                                        late, no rate set
                                                     </div>
+                                                @else
+                                                    <span class="fw-bold {{ $fineColour }}">
+                                                        Rs. {{ number_format($displayFine, 2) }}
+                                                    </span>
+                                                    @if ($activeTab === 'overdue')
+                                                        <div class="text-muted" style="font-size:.63rem;">increasing daily
+                                                        </div>
+                                                    @endif
                                                 @endif
                                             </td>
 
-                                            <td>{!! $row->fine_status_badge !!}</td>
+                                            @if ($hasDmg && in_array($activeTab, ['unpaid', 'paid', 'waived']))
+                                                <td class="small">
+                                                    @if ($damageCharge > 0)
+                                                        <span class="fw-semibold text-danger">Rs.
+                                                            {{ number_format($damageCharge, 2) }}</span>
+                                                    @else
+                                                        <span class="text-muted">—</span>
+                                                    @endif
+                                                </td>
+                                            @endif
+
+                                            <td>{!! $fsBadge !!}</td>
 
                                             @if ($activeTab === 'paid')
                                                 <td class="small">
-                                                    {{ $row->fine_paid_at
-                                                        ? \Carbon\Carbon::createFromFormat('Y-m-d', \App\Models\BookIssue::safeDate($row->fine_paid_at))->format('d M Y')
-                                                        : '—' }}
+                                                    {{ $paidDateStr ? \Carbon\Carbon::parse($paidDateStr)->format('d M Y') : '—' }}
                                                 </td>
                                                 <td>
-                                                    @if ($row->fine_payment_method)
+                                                    @if ($row->fine_payment_method ?? false)
                                                         <span
-                                                            class="badge
-                                                    {{ $row->fine_payment_method === 'cash'
-                                                        ? 'bg-success'
-                                                        : ($row->fine_payment_method === 'bank'
-                                                            ? 'bg-info text-dark'
-                                                            : 'bg-warning text-dark') }}">
-                                                            {{ ucfirst($row->fine_payment_method) }}
-                                                        </span>
+                                                            class="badge {{ $methodClass }}">{{ ucfirst($row->fine_payment_method) }}</span>
                                                     @else
                                                         <span class="text-muted">—</span>
                                                     @endif
@@ -268,20 +369,19 @@
                                             @endif
 
                                             @if ($activeTab === 'waived')
-                                                <td class="small">
-                                                    {{ $row->fineCollector ? $row->fineCollector->name : '—' }}
-                                                </td>
-                                                <td class="small text-muted">{{ $row->fine_note ?? '—' }}</td>
+                                                <td class="small">{{ trim($row->collector_name ?? '') ?: '—' }}</td>
+                                                <td class="small text-muted" style="max-width:200px;">
+                                                    {{ $row->fine_note ?? '—' }}</td>
                                             @endif
 
-                                            @if (in_array($activeTab, ['unpaid', 'accruing']))
+                                            @if (in_array($activeTab, ['unpaid', 'overdue']))
                                                 <td>
                                                     <a href="{{ url('admin/library/fine/collect/' . $row->id) }}"
                                                         class="btn btn-sm btn-success mb-1">
                                                         <i class="bi bi-cash me-1"></i>Collect
                                                     </a>
                                                     <button type="button" class="btn btn-sm btn-outline-secondary"
-                                                        onclick="showWaive({{ $row->id }}, '{{ addslashes($row->member_name . ' ' . $row->member_last_name) }}', {{ $displayFine }})">
+                                                        onclick="showWaive({{ $row->id }},'{{ addslashes(($row->member_name ?? '') . ' ' . ($row->member_last_name ?? '')) }}',{{ round($displayFine, 2) }})">
                                                         <i class="bi bi-slash-circle me-1"></i>Waive
                                                     </button>
                                                 </td>
@@ -289,21 +389,21 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center text-muted py-5">
+                                            <td colspan="14" class="text-center text-muted py-5">
                                                 @if ($activeTab === 'paid')
                                                     <i
                                                         class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>No
                                                     collected fines yet.
                                                 @elseif($activeTab === 'waived')
                                                     <i class="bi bi-slash-circle fs-3 d-block mb-2"></i>No waived fines.
-                                                @elseif($activeTab === 'accruing')
+                                                @elseif($activeTab === 'overdue')
                                                     <i
                                                         class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>No
-                                                    overdue books with fines.
+                                                    overdue books.
                                                 @else
                                                     <i
                                                         class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>No
-                                                    unpaid fines.
+                                                    unpaid fines — all clear!
                                                 @endif
                                             </td>
                                         </tr>
@@ -321,13 +421,11 @@
         </div>
     </main>
 
-    {{-- Waive Modal --}}
+    {{-- Waive modal --}}
     <div id="waiveOverlay"
-        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;
-            align-items:center;justify-content:center;">
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
         <div
-            style="background:#fff;border-radius:.75rem;padding:1.5rem;
-                width:100%;max-width:420px;margin:1rem;box-shadow:0 1rem 3rem rgba(0,0,0,.2);">
+            style="background:#fff;border-radius:.75rem;padding:1.5rem;width:100%;max-width:420px;margin:1rem;box-shadow:0 1rem 3rem rgba(0,0,0,.2);">
             <h6 class="fw-semibold mb-1">Waive Fine</h6>
             <p class="text-muted small mb-3" id="waiveDesc"></p>
             <form method="POST" id="waiveForm">
@@ -350,13 +448,12 @@
 
     <script>
         function showWaive(id, name, amount) {
-            document.getElementById('waiveOverlay').style.display = 'flex';
-            document.getElementById('waiveDesc').textContent =
-                'Waive Rs. ' + parseFloat(amount).toLocaleString('en-IN', {
-                    minimumFractionDigits: 2
-                }) +
-                ' fine for ' + name + '?';
+            var fmt = 'Rs. ' + parseFloat(amount).toLocaleString('en-IN', {
+                minimumFractionDigits: 2
+            });
+            document.getElementById('waiveDesc').textContent = 'Waive ' + fmt + ' fine for ' + name + '?';
             document.getElementById('waiveForm').action = '/admin/library/fine/waive/' + id;
+            document.getElementById('waiveOverlay').style.display = 'flex';
         }
 
         function hideWaive() {
